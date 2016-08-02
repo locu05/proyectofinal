@@ -16,7 +16,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
 import proyectofinal.autocodes.adapter.ParticipantArrayAdapter;
@@ -30,6 +32,7 @@ public class GroupActivity extends AppCompatActivity {
     TextView errorMsg;
     Context context;
     List<Participant> participantList;
+    Map<String,String> intentValues = new HashMap<String,String>();
 
     @Override
     protected void onResume() {
@@ -50,8 +53,8 @@ public class GroupActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String value = extras.getString(AutocodesIntentConstants.GROUP_ID);
-            Log.e("LA POSITION ERA", value);
+            intentValues.put(AutocodesIntentConstants.GROUP_ID, extras.getString(AutocodesIntentConstants.GROUP_ID));
+            intentValues.put(AutocodesIntentConstants.GROUP_NAME, extras.getString(AutocodesIntentConstants.GROUP_NAME));
         }
 
     }
@@ -82,6 +85,8 @@ public class GroupActivity extends AppCompatActivity {
 
                     ListView listView = (ListView) findViewById(R.id.groupView);
                     listView.setAdapter(participantAdapter);
+                    TextView textView = (TextView) findViewById(R.id.groupName);
+                    textView.setText(intentValues.get(AutocodesIntentConstants.GROUP_NAME));
 
 
                 } catch (JSONException e) {
