@@ -6,14 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-<<<<<<< HEAD
 import android.view.View;
 import android.widget.Button;
-=======
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
->>>>>>> d6682ae5a21e69b37312a0530508e0e5b2cb90b7
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,7 +55,7 @@ public class ListGroupActivity extends AppCompatActivity {
             Log.e("LOGIN", "UserId on " + at2.getUserId());
             getFriends(at2);
         }
-        groupList = new ArrayList<Grupo>();
+        groupList = new ArrayList<Group>();
         RequestParams params = new RequestParams();
         params.put("userid","ACA-VA-EL-ID-DEL-USUARIO-ACTUAL");
         Log.e("Preparing rest call", params.toString());
