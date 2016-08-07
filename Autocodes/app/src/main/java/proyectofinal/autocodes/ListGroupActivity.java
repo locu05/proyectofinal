@@ -1,9 +1,12 @@
 package proyectofinal.autocodes;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,18 +21,18 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 import proyectofinal.autocodes.adapter.GroupArrayAdapter;
-import proyectofinal.autocodes.model.Grupo;
+import proyectofinal.autocodes.model.Group;
 
 public class ListGroupActivity extends AppCompatActivity {
 
     TextView errorMsg;
     Context context;
-    List<Grupo> groupList;
+    List<Group> groupList;
 
     @Override
     protected void onResume() {
         super.onResume();
-        groupList = new ArrayList<Grupo>();
+        groupList = new ArrayList<Group>();
         RequestParams params = new RequestParams();
         params.put("userid","ACA-VA-EL-ID-DEL-USUARIO-ACTUAL");
         Log.e("Preparing rest call", params.toString());
@@ -41,6 +44,15 @@ public class ListGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_listgroup);
+
+        Button goButton = (Button) findViewById(R.id.createButton);
+        goButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, CreateGroupActivity.class);
+                startActivity(intent);
+            }});
 
     }
 
@@ -55,11 +67,11 @@ public class ListGroupActivity extends AppCompatActivity {
                     Log.e("Response:", obj.toString());
 
                         for(int i = 0 ; i< obj.getJSONArray("grupos").length() ; i++) {
-                            Grupo grupo = new Grupo();
+                            Group group = new Group();
                             JSONObject jsonGroup = (JSONObject) obj.getJSONArray("grupos").get(i);
-                            grupo.setId((Integer) jsonGroup.get("id"));
-                            grupo.setName((String) jsonGroup.get("nombre"));
-                            groupList.add(grupo);
+                            group.setId((Integer) jsonGroup.get("id"));
+                            group.setName((String) jsonGroup.get("nombre"));
+                            groupList.add(group);
                         }
 
                         GroupArrayAdapter groupAdapter = new GroupArrayAdapter(context, groupList);

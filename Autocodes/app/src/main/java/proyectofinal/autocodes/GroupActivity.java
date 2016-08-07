@@ -23,7 +23,6 @@ import java.util.Map;
 import cz.msebera.android.httpclient.Header;
 import proyectofinal.autocodes.adapter.ParticipantArrayAdapter;
 import proyectofinal.autocodes.constant.AutocodesIntentConstants;
-import proyectofinal.autocodes.model.Grupo;
 import proyectofinal.autocodes.model.Participant;
 
 
@@ -70,7 +69,7 @@ public class GroupActivity extends AppCompatActivity {
                     Log.e("Response:", obj.toString());
 
 //                    for(int i = 0 ; i< obj.getJSONArray("grupos").length() ; i++) {
-//                        Grupo grupo = new Grupo();
+//                        Group grupo = new Group();
 //                        JSONObject jsonGroup = (JSONObject) obj.getJSONArray("grupos").get(i);
 //                        grupo.setId((Integer) jsonGroup.get("id"));
 //                        grupo.setName((String) jsonGroup.get("nombre"));

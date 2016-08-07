@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="140dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Descripcion del contenido"
+            android:scaleType="centerCrop"
+            android:src="@drawable/search_background_social" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <!-- -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/login_page_social_login_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:backgroundTint="@android:color/transparent"
+                android:backgroundTintMode="@android:color/transparent"
+                android:cursorVisible="true"
+                android:drawableBottom="@android:color/transparent"
+                android:ems="10"
+                android:hint="Inserte nombre de grupo"
+                android:inputType="textNoSuggestions"
+                android:singleLine="true"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
+                android:textSize="20sp"
+                android:layout_alignParentLeft="true"/>
+
+            <Button
+                android:id="@+id/submitGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confirmar"
+                android:layout_alignParentRight="true"/>
+
+        </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <!-- -->
+
+        <!--<proyectofinal.autocodes.view.FloatLabeledEditText-->
+            <!--android:id="@+id/groupNameToCreate"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:layout_margin="10dp"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="50sp"-->
+            <!--app:typeface="robotoLight" />-->
+
+        <!--android:gravity="center"-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="20dp"
+            android:background="@drawable/search_bar_background_travel"
+            android:gravity="center_vertical" >
+
+            <proyectofinal.autocodes.font.MaterialDesignIconsTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="@string/fontello_search"
+                android:textColor="@color/material_blue_grey_800"
+                android:textSize="18dp"
+                tools:ignore="SpUsage" />
+
+            <EditText
+                android:id="@+id/search_field"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:inputType="text"
+                android:hint="Buscar amigos..."
+                android:textColor="@color/material_blue_grey_800" />
+
+            <proyectofinal.autocodes.font.MaterialDesignIconsTextView
+                android:id="@+id/search_x"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="@string/fontello_x_mark"
+                android:textColor="@color/material_blue_grey_800"
+                android:textSize="18dp"
+                tools:ignore="SpUsage" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.nhaarman.listviewanimations.itemmanipulation.DynamicListView
+            android:id="@+id/dynamic_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_weight="1"
+            android:minHeight="40dp"/>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentBottom="true">
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#c0c0c0"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Amigos agregados"
+        android:layout_gravity="center"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        style="@style/TextViewAppearance.Body1" />
+
+            <!-- -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/seatLegendLayout">
+
+                <FrameLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_gridtableLayout"
+                        android:layout_width="900dp"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <GridView
+                            android:id="@+id/participantAddedView"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_margin="4dp"
+                            android:columnWidth="60dp"
+                            android:gravity="center"
+                            android:numColumns="9"
+                            android:horizontalSpacing="1dp"
+                            android:scrollbarAlwaysDrawHorizontalTrack="true"
+                            android:scrollbarAlwaysDrawVerticalTrack="true"
+                            android:scrollbars="horizontal"
+                            android:stretchMode="none"
+                            android:verticalSpacing="1dp">
+
+                        </GridView>
+
+
+                    </LinearLayout>
+                </FrameLayout>
+            </HorizontalScrollView>
+            <!-- -->
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
