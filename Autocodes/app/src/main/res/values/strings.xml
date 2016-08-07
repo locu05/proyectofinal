@@ -177,4 +177,20 @@
     <!-- For Update -->
     <string name="confirm_exit">Press Back button again to exit</string>
 
+    <string name="facebook_app_id">1806552889564628</string>
+    <string name="fb_login_protocol_scheme">fb1806552889564628</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+
+    <!--- PREFERENCES -->
+    <string name="pref_sync">Preference test</string>
+
+
+    <!--- MENU ITEMS -->
+    <string name="pref_title">Settings</string>
+    <string name="logout">Log out</string>
+
 </resources>

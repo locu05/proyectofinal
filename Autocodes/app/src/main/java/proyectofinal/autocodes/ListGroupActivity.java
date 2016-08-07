@@ -1,22 +1,37 @@
 package proyectofinal.autocodes;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+<<<<<<< HEAD
 import android.view.View;
 import android.widget.Button;
+=======
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+>>>>>>> d6682ae5a21e69b37312a0530508e0e5b2cb90b7
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.FacebookRequestError;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.loopj.android.http.*;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -32,17 +47,74 @@ public class ListGroupActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        groupList = new ArrayList<Group>();
+        //Chequea credenciales
+        AccessToken at2 = AccessToken.getCurrentAccessToken();
+        if (at2 == null){
+            Log.e("LOGIN", "User NOT LOGGED, REDIRECTING");
+            //Mandar al login si no esta logueado
+            Intent goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(goToNextActivity);
+        } else {
+            Log.e("LOGIN", "UserId on " + at2.getUserId());
+            getFriends(at2);
+        }
+        groupList = new ArrayList<Grupo>();
         RequestParams params = new RequestParams();
         params.put("userid","ACA-VA-EL-ID-DEL-USUARIO-ACTUAL");
         Log.e("Preparing rest call", params.toString());
         invokeWS(params);
     }
 
+    private void getFriends(AccessToken at ){
+        GraphRequest req = GraphRequest.newMyFriendsRequest(at, new GraphRequest.GraphJSONArrayCallback() {
+            @Override
+            public void onCompleted(JSONArray objects, GraphResponse response) {
+                Log.e("KEY", "Respondio");
+                FacebookRequestError error = response.getError();
+                if(error != null){
+                    String err = error.getErrorMessage();
+                    Log.e("KEY", err);
+                }
+                Log.e("RESP", response.getRawResponse());
+                try {
+                    JSONObject obj = (JSONObject) objects.get(0);
+                    Iterator<?> it = obj.keys();
+                    while (it.hasNext()){
+                        Log.e("KEY", (String) it.next());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        req.executeAsync();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.go_to_settings: {
+                Intent goToNextActivity = new Intent(getApplicationContext(), PreferencesActivity.class);
+                startActivity(goToNextActivity);
+                return true;
+            }
+            case R.id.logout_button: {
+                LoginManager.getInstance().logOut();
+                Intent goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(goToNextActivity);
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+
         setContentView(R.layout.activity_listgroup);
 
         Button goButton = (Button) findViewById(R.id.createButton);
@@ -53,6 +125,14 @@ public class ListGroupActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, CreateGroupActivity.class);
                 startActivity(intent);
             }});
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options, menu);
+        return true;
 
     }
 

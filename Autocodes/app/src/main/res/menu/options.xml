@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/go_to_settings"
+        android:icon="@android:drawable/btn_minus"
+        android:title="@string/pref_title"/>
+    <item android:id="@+id/logout_button"
+        android:icon="@android:drawable/btn_minus"
+        android:title="@string/logout"/>
+</menu>
