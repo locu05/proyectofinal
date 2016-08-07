@@ -41,7 +41,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-
+/*
         AccessTokenTracker accessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(
@@ -67,7 +67,7 @@ public class LoginFragment extends Fragment {
                 }
             }
         };
-
+*/
     }
 
     @Override
@@ -109,7 +109,7 @@ public class LoginFragment extends Fragment {
             public void onSuccess(LoginResult loginResult) {
                 Log.e("LOGIN", "LOGIN OK");
                 Toast.makeText(getContext(), "LogIn successful", Toast.LENGTH_LONG);
-
+                getActivity().finish();
             }
 
             @Override

@@ -10,6 +10,10 @@
 
     <!--- PREFERENCES -->
     <string name="pref_sync">Preference test</string>
+
+
+    <!--- MENU ITEMS -->
     <string name="pref_title">Settings</string>
+    <string name="logout">Log out</string>
 
 </resources>

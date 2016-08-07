@@ -18,6 +18,7 @@ import com.facebook.FacebookRequestError;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.loopj.android.http.*;
 
 import org.json.JSONArray;
@@ -88,10 +89,17 @@ public class ListGroupActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.go_to_settings:
+            case R.id.go_to_settings: {
                 Intent goToNextActivity = new Intent(getApplicationContext(), PreferencesActivity.class);
                 startActivity(goToNextActivity);
                 return true;
+            }
+            case R.id.logout_button: {
+                LoginManager.getInstance().logOut();
+                Intent goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(goToNextActivity);
+                return true;
+            }
             default:
                 return super.onOptionsItemSelected(item);
         }
