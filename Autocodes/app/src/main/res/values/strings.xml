@@ -65,7 +65,12 @@
     <string name="fontello_heart_full">&#xe9b6;</string>
     <string name="fontello_drag_and_drop">&#xe988;</string>
 
+    <!-- Font awesome Icons -->
+    <string name="fa_car">&#xf1b9;</string>
+
+
     <!-- Material Design Icons -->
+    <string name="material_icon_car">&#xf125;</string>\
     <string name="material_icon_account">&#xe800;</string>
     <string name="material_icon_account_multiple">&#xe8dc;</string>
     <string name="material_icon_bookmark">&#xe921;</string>

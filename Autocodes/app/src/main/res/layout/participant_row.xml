@@ -1,8 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="128dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:padding="8dp">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -13,8 +15,12 @@
             android:src="@drawable/user"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:contentDescription="Hola"
+            android:contentDescription="Avatar"
             android:scaleType="centerInside" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
         <TextView
             android:id="@+id/participantName"
             android:layout_width="wrap_content"
@@ -25,8 +31,21 @@
             android:textColor="@android:color/black"
             android:textSize="19sp"
             />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/driverState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@android:color/transparent"
+                android:text="OK TO DRIVE"
+                android:textColor="@android:color/holo_green_light"
+                android:textSize="15sp"
+                />
+        </LinearLayout>
 
+
+</LinearLayout>
+<!--
     <Button
         android:id="@+id/selectDriver"
         android:layout_width="wrap_content"
@@ -35,6 +54,24 @@
         android:layout_alignParentTop="true"
 
         android:text="Seleccionar" />
+-->
+   <!-- <proyectofinal.autocodes.font.MaterialDesignIconsTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:text="@string/material_icon_check_empty"
+        android:textColor="@color/material_blue_grey_800"
+        android:textSize="36dp"
+        tools:ignore="SpUsage" /> -->
+
+    <CheckBox android:id="@+id/checkbox_driver"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        />
 
 
 </RelativeLayout>

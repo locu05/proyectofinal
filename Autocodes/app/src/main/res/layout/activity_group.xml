@@ -1,15 +1,56 @@
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:padding="8dp"
+        android:id="@+id/group_header"
+        android:layout_height="wrap_content" >
 
     <TextView
         android:id="@+id/groupName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nombre del group" />
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:textSize="19sp"
+        android:layout_alignParentLeft="true"
+        android:text="Cargando..." />
+
+    <TextView
+        android:id="@+id/groupStatus"
+        android:layout_width="wrap_content"
+        android:layout_margin="1dp"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/groupName"
+        android:text="DESACTIVADO" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Activar"
+        android:layout_alignParentRight="true"
+        android:id="@+id/button"
+        android:layout_gravity="right" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#c0c0c0"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/group_header"
+        />
 
     <ListView
         android:id="@+id/groupView"
@@ -21,7 +62,9 @@
         android:cacheColorHint="@android:color/transparent"
         android:divider="#CCCCCC"
         android:dividerHeight="1dp"
-        android:paddingLeft="2dp" >
+        android:paddingLeft="2dp"
+        android:layout_below="@id/separator"
+        >
     </ListView>
 
-</LinearLayout>
+</RelativeLayout>

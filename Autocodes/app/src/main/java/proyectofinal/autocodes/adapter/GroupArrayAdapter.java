@@ -38,7 +38,16 @@ public class GroupArrayAdapter extends ArrayAdapter<Group> {
         TextView nameGroup = (TextView) convertView.findViewById(R.id.namegroup);
         nameGroup.setText(group.getName());
 
-        Button goButton = (Button) convertView.findViewById(R.id.goButton);
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), GroupActivity.class);
+                intent.putExtra(AutocodesIntentConstants.GROUP_ID, String.valueOf(group.getId()));
+                intent.putExtra(AutocodesIntentConstants.GROUP_NAME, String.valueOf(group.getName()));
+                getContext().startActivity(intent);
+            }
+        });
+       /* Button goButton = (Button) convertView.findViewById(R.id.goButton);
         goButton.setTag(position); //For passing the list item index
         goButton.setOnClickListener(new View.OnClickListener() {
 
@@ -49,7 +58,7 @@ public class GroupArrayAdapter extends ArrayAdapter<Group> {
                 intent.putExtra(AutocodesIntentConstants.GROUP_NAME, String.valueOf(group.getName()));
                 getContext().startActivity(intent);
         }});
-
+*/
         return convertView;
     }
 }

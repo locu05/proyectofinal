@@ -37,7 +37,6 @@ import proyectofinal.autocodes.model.Group;
 
 public class ListGroupActivity extends AppCompatActivity {
 
-    TextView errorMsg;
     Context context;
     List<Group> groupList;
 
@@ -102,6 +101,11 @@ public class ListGroupActivity extends AppCompatActivity {
                 startActivity(goToNextActivity);
                 return true;
             }
+            case R.id.new_group: {
+                Intent goToNextActivity = new Intent(getApplicationContext(), CreateGroupActivity.class);
+                startActivity(goToNextActivity);
+                return true;
+            }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -113,7 +117,7 @@ public class ListGroupActivity extends AppCompatActivity {
         context = this;
 
         setContentView(R.layout.activity_listgroup);
-
+/*
         Button goButton = (Button) findViewById(R.id.createButton);
         goButton.setOnClickListener(new View.OnClickListener() {
 
@@ -122,7 +126,7 @@ public class ListGroupActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, CreateGroupActivity.class);
                 startActivity(intent);
             }});
-
+*/
     }
 
     @Override
