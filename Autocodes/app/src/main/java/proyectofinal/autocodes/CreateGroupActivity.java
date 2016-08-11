@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.icu.text.MessagePattern;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -26,6 +28,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import proyectofinal.autocodes.adapter.ParticipantAddedArrayAdapter;
 import proyectofinal.autocodes.adapter.ParticipantDefaultAdapter;
 
+import proyectofinal.autocodes.constant.AutocodesIntentConstants;
 import proyectofinal.autocodes.model.Participant;
 import proyectofinal.autocodes.view.FloatLabeledEditText;
 
@@ -36,11 +39,12 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
     private ArrayList<Participant> participantSearcheableList;
     private ArrayList<Participant> participantShowableList;
     private DynamicListView mDynamicListView;
+    private Button submitGroup;
     private GridView participantsAddedListView;
     private List<Participant> participantAddedList;
+    private EditText groupNameToCreate;
     BaseAdapter participantDefaultAdapter;
     ParticipantAddedArrayAdapter participantAddedArrayAdapter;
-    private FloatLabeledEditText groupNameToCreate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +52,11 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
         setContentView(R.layout.activity_create_group);
         setUpImageLoader();
 
+        groupNameToCreate = (EditText) findViewById(R.id.groupNameToCreate);
         mSearchField = (EditText) findViewById(R.id.search_field);
         mXMark = (TextView) findViewById(R.id.search_x);
         participantsAddedListView = (GridView) findViewById(R.id.participantAddedView);
-//        groupNameToCreate = (FloatLabeledEditText) findViewById(R.id.groupNameToCreate);
-//        groupNameToCreate.setText("Grupo de amigos");
+        submitGroup = (Button) findViewById(R.id.submitGroup);
 
         participantsAddedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View v, int position, long id) {
@@ -114,6 +118,23 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
                 ((BaseAdapter)participantsAddedListView.getAdapter()).notifyDataSetChanged();
                 ((BaseAdapter)mDynamicListView.getAdapter()).notifyDataSetChanged();
                 mSearchField.setText("");
+            }
+        });
+
+        submitGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(participantAddedList.isEmpty()) {
+                    Toast.makeText(CreateGroupActivity.this, "Debe agregar participantes al grupo " +
+                            "para continuar", Toast.LENGTH_LONG).show();
+                }else if("".equals(groupNameToCreate.getText().toString())) {
+                    Toast.makeText(CreateGroupActivity.this, "Debe asignar un nombre al grupo " +
+                            "para continuar", Toast.LENGTH_LONG).show();
+                } else {
+                    Intent intent = new Intent(CreateGroupActivity.this, ListGroupActivity.class);
+                    CreateGroupActivity.this.startActivity(intent);
+                }
+
             }
         });
     }

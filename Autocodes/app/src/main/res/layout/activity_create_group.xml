@@ -31,7 +31,7 @@
             android:orientation="vertical" >
 
             <EditText
-                android:id="@+id/login_page_social_login_text"
+                android:id="@+id/groupNameToCreate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -49,14 +49,26 @@
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white"
                 android:textSize="20sp"
-                android:layout_alignParentLeft="true"/>
+                android:layout_alignParentLeft="true"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="10dp"/>
 
-            <Button
-                android:id="@+id/submitGroup"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Confirmar"
-                android:layout_alignParentRight="true"/>
+                android:layout_alignParentRight="true"
+                android:paddingRight="16dp">
+
+                <Button
+                    android:id="@+id/submitGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Confirmar"
+                    android:paddingTop="10dp" />
+            </LinearLayout>
+
+
 
         </RelativeLayout>
 
