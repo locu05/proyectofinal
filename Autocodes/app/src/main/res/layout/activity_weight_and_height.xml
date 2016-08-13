@@ -15,6 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
             android:text="Al parecer es la primera vez que ingresa, por favor inserte su peso y altura"
             app:typeface="robotoRegular"
             android:paddingBottom="20dp"
@@ -22,6 +23,7 @@
             style="@style/TextViewAppearance.Headline2"/>
 
         <View
+            android:id="@+id/viewWeightAndHeight"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@android:color/darker_gray"
@@ -31,6 +33,7 @@
             android:id="@+id/lin_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/viewWeightAndHeight"
             android:paddingTop="20dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
@@ -101,7 +104,25 @@
                     app:typeface="robotoRegular"
                     style="@style/TextViewAppearance.Headline3"/>
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:paddingTop="30dp"
+                    android:layout_below="@id/textView2">
+
+                        <Button
+                            android:id="@+id/submitWeightAndHeight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Confirmar"/>
+
+                </LinearLayout>
+
+
                 </RelativeLayout>
+
+
 
 
         </LinearLayout>

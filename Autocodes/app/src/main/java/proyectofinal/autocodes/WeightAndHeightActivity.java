@@ -1,7 +1,10 @@
 package proyectofinal.autocodes;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,6 +15,7 @@ public class WeightAndHeightActivity extends AppCompatActivity {
     private TextView textViewWeight;
     private SeekBar seekBarHeight;
     private TextView textViewHeight;
+    private Button confirm;
 
 
     @Override
@@ -61,6 +65,14 @@ public class WeightAndHeightActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             } });
+
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: aca va el request con los datos
+                finish();
+            }
+        });
     }
     // A private method to help us initialize our variables.
     private void initializeVariables() {
@@ -68,6 +80,7 @@ public class WeightAndHeightActivity extends AppCompatActivity {
         textViewWeight = (TextView) findViewById(R.id.textView1);
         seekBarHeight = (SeekBar) findViewById(R.id.seekBar2);
         textViewHeight = (TextView) findViewById(R.id.textView2);
+        confirm = (Button) findViewById(R.id.submitWeightAndHeight);
     }
 
 }

@@ -1,9 +1,11 @@
 package proyectofinal.autocodes;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,10 +38,11 @@ import cz.msebera.android.httpclient.Header;
 import proyectofinal.autocodes.adapter.GroupArrayAdapter;
 import proyectofinal.autocodes.model.Group;
 
-public class ListGroupActivity extends FragmentActivity {
+public class ListGroupActivity extends AppCompatActivity {
 
     Context context;
     List<Group> groupList;
+    boolean value = true;
 
     @Override
     protected void onResume() {
@@ -55,8 +58,10 @@ public class ListGroupActivity extends FragmentActivity {
             Log.e("LOGIN", "UserId on " + at2.getUserId());
             getFriends(at2);
             //TODO: ir a la base y chequear peso y altura
-            if(true) {
+
+            if(value) {
                 Intent intent = new Intent(getApplicationContext(), WeightAndHeightActivity.class);
+                value = false;
                 startActivity(intent);
             }
 

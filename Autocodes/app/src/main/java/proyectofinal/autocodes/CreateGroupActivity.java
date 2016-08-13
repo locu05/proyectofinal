@@ -132,7 +132,7 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
                             "para continuar", Toast.LENGTH_LONG).show();
                 } else {
                     Intent intent = new Intent(CreateGroupActivity.this, ListGroupActivity.class);
-                    CreateGroupActivity.this.startActivity(intent);
+                    finish();
                 }
 
             }
