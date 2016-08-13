@@ -4,7 +4,7 @@
     <string name="app_name">Autocodes</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    
+
     <string name="drawer_icon_splash_screens">&#xe862;</string>
     <string name="drawer_icon_progress_bars">&#xeaab;</string>
     <!-- <string name="drawer_icon_buttons">&#xe802;</string> -->
@@ -27,7 +27,7 @@
     <string name="drawer_icon_blog">&#xe91b;</string>
     <string name="drawer_icon_git_hub">&#xe99b;</string>
     <string name="drawer_icon_instagram">&#xe9f5;</string>
-	
+
     <!-- Navigation Drawer icon titles -->
     <string name="drawer_title_splash_screens">Splash Screens</string>
     <string name="drawer_title_progress_bars">Progress Bars</string>
@@ -187,7 +187,6 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
 
 
     <!--- PREFERENCES -->

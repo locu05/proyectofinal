@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -35,7 +36,7 @@ import cz.msebera.android.httpclient.Header;
 import proyectofinal.autocodes.adapter.GroupArrayAdapter;
 import proyectofinal.autocodes.model.Group;
 
-public class ListGroupActivity extends AppCompatActivity {
+public class ListGroupActivity extends FragmentActivity {
 
     Context context;
     List<Group> groupList;
@@ -53,6 +54,12 @@ public class ListGroupActivity extends AppCompatActivity {
         } else {
             Log.e("LOGIN", "UserId on " + at2.getUserId());
             getFriends(at2);
+            //TODO: ir a la base y chequear peso y altura
+            if(true) {
+                Intent intent = new Intent(getApplicationContext(), WeightAndHeightActivity.class);
+                startActivity(intent);
+            }
+
         }
         groupList = new ArrayList<Group>();
         RequestParams params = new RequestParams();
@@ -117,16 +124,7 @@ public class ListGroupActivity extends AppCompatActivity {
         context = this;
 
         setContentView(R.layout.activity_listgroup);
-/*
-        Button goButton = (Button) findViewById(R.id.createButton);
-        goButton.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, CreateGroupActivity.class);
-                startActivity(intent);
-            }});
-*/
     }
 
     @Override
