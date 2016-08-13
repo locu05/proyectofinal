@@ -26,7 +26,6 @@
         android:layout_below="@id/namegroup"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:textColor="@android:color/holo_green_light"
         app:typeface="robotoRegular"
         android:text="Grupo activo" />
 

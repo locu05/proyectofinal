@@ -43,6 +43,7 @@ public class ListGroupActivity extends AppCompatActivity {
     Context context;
     List<Group> groupList;
     boolean value = true;
+    String serverBaseUrl = "http://107.170.81.44:3002";
 
     @Override
     protected void onResume() {
@@ -56,23 +57,16 @@ public class ListGroupActivity extends AppCompatActivity {
             startActivity(goToNextActivity);
         } else {
             Log.e("LOGIN", "UserId on " + at2.getUserId());
-            getFriends(at2);
-            //TODO: ir a la base y chequear peso y altura
-
-            if(value) {
-                Intent intent = new Intent(getApplicationContext(), WeightAndHeightActivity.class);
-                value = false;
-                startActivity(intent);
-            }
-
+            getUserInfo(at2.getUserId());
         }
+/*
         groupList = new ArrayList<Group>();
         RequestParams params = new RequestParams();
         params.put("userid","ACA-VA-EL-ID-DEL-USUARIO-ACTUAL");
         Log.e("Preparing rest call", params.toString());
         invokeWS(params);
-    }
-
+*/    }
+/*
     private void getFriends(AccessToken at ){
         GraphRequest req = GraphRequest.newMyFriendsRequest(at, new GraphRequest.GraphJSONArrayCallback() {
             @Override
@@ -97,7 +91,7 @@ public class ListGroupActivity extends AppCompatActivity {
         });
         req.executeAsync();
     }
-
+*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -139,6 +133,38 @@ public class ListGroupActivity extends AppCompatActivity {
         return true;
 
     }
+
+    public void getUserInfo(String userId){
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get( serverBaseUrl + "/user/" + userId,null ,new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+                    Log.e("Response:", "" + statusCode);
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                // When Http response code is '404'
+                if(statusCode == 404){
+                    Intent intent = new Intent(getApplicationContext(), WeightAndHeightActivity.class);
+                    startActivity(intent);
+                }
+                // When Http response code is '500'
+                else if(statusCode == 500){
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                else{
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+
+        });
+    }
+
+
 
     public void invokeWS(RequestParams params){
         AsyncHttpClient client = new AsyncHttpClient();
