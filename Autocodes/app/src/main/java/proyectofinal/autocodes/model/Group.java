@@ -7,6 +7,7 @@ public class Group {
 
     Integer id;
     String name;
+    int active;
 
     public Integer getId() {
         return id;
@@ -22,5 +23,13 @@ public class Group {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getActive() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = active;
     }
 }

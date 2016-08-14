@@ -37,6 +37,8 @@ public class GroupArrayAdapter extends ArrayAdapter<Group> {
 
         TextView nameGroup = (TextView) convertView.findViewById(R.id.namegroup);
         nameGroup.setText(group.getName());
+        TextView groupStatus = (TextView) convertView.findViewById(R.id.groupstatuslistgroups);
+        groupStatus.setText(group.getActive()==0?"Inactivo":"Activo");
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override

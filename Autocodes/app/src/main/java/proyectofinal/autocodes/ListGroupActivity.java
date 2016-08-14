@@ -1,37 +1,24 @@
 package proyectofinal.autocodes;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
-import com.facebook.FacebookRequestError;
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.loopj.android.http.*;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -59,13 +46,11 @@ public class ListGroupActivity extends AppCompatActivity {
             Log.e("LOGIN", "UserId on " + at2.getUserId());
             getUserInfo(at2.getUserId());
         }
-/*
+
         groupList = new ArrayList<Group>();
-        RequestParams params = new RequestParams();
-        params.put("userid","ACA-VA-EL-ID-DEL-USUARIO-ACTUAL");
-        Log.e("Preparing rest call", params.toString());
-        invokeWS(params);
-*/    }
+        getGroups(at2.getUserId());
+
+    }
 /*
     private void getFriends(AccessToken at ){
         GraphRequest req = GraphRequest.newMyFriendsRequest(at, new GraphRequest.GraphJSONArrayCallback() {
@@ -136,12 +121,18 @@ public class ListGroupActivity extends AppCompatActivity {
 
     public void getUserInfo(String userId){
         AsyncHttpClient client = new AsyncHttpClient();
+        Log.e("Preparing Request", "Calling /user with id " + userId);
         client.get( serverBaseUrl + "/user/" + userId,null ,new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-
-                    Log.e("Response:", "" + statusCode);
-
+                JSONObject obj = null;
+                try {
+                    obj = new JSONObject(new String(responseBody));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.e("ServerResponse", "/user " + statusCode);
+                Log.e("JsonResponse", "/user " + obj.toString());
             }
 
             @Override
@@ -166,21 +157,24 @@ public class ListGroupActivity extends AppCompatActivity {
 
 
 
-    public void invokeWS(RequestParams params){
+    public void getGroups(String userId){
         AsyncHttpClient client = new AsyncHttpClient();
-        client.get("http://107.170.81.44:3000/getgroups",params ,new AsyncHttpResponseHandler() {
+        Log.e("Preparing Request", "Calling /groups with userId: " + userId);
+        client.get(serverBaseUrl + "/groups/" + userId ,null ,new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 
                 try {
                     JSONObject obj = new JSONObject(new String(responseBody));
-                    Log.e("Response:", obj.toString());
+                    Log.e("ServerResponse", "/groups " + statusCode);
+                    Log.e("JsonResponse", "/groups " + obj.toString());
 
-                        for(int i = 0 ; i< obj.getJSONArray("grupos").length() ; i++) {
+                        for(int i = 0 ; i< obj.getJSONArray("groups").length() ; i++) {
                             Group group = new Group();
-                            JSONObject jsonGroup = (JSONObject) obj.getJSONArray("grupos").get(i);
-                            group.setId((Integer) jsonGroup.get("id"));
-                            group.setName((String) jsonGroup.get("nombre"));
+                            JSONObject jsonGroup = (JSONObject) obj.getJSONArray("groups").get(i);
+                            group.setId((Integer) jsonGroup.get("group_id"));
+                            group.setName((String) jsonGroup.get("name"));
+                            group.setActive((Integer) jsonGroup.get("active"));
                             groupList.add(group);
                         }
 

@@ -1,12 +1,11 @@
 package proyectofinal.autocodes;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
-import android.icu.text.MessagePattern;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,21 +17,35 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.FacebookRequestError;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
+import proyectofinal.autocodes.adapter.GroupArrayAdapter;
 import proyectofinal.autocodes.adapter.ParticipantAddedArrayAdapter;
 import proyectofinal.autocodes.adapter.ParticipantDefaultAdapter;
 
-import proyectofinal.autocodes.constant.AutocodesIntentConstants;
+import proyectofinal.autocodes.model.Group;
 import proyectofinal.autocodes.model.Participant;
-import proyectofinal.autocodes.view.FloatLabeledEditText;
 
 public class CreateGroupActivity extends Activity implements OnClickListener {
+
+    String serverBaseUrl = "http://107.170.81.44:3002";
 
     private EditText mSearchField;
     private TextView mXMark;
@@ -67,7 +80,8 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
             }
         });
 
-        fetchData();
+        getFriendList2();
+        getFriendList();
 
         mXMark.setOnClickListener(this);
 
@@ -97,9 +111,6 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
                             .contains(searchText.toLowerCase())) {
                         participantShowableList.add(participant);
                     }
-                }
-                for (Participant p : participantShowableList) {
-                    Log.e("Muestro", p.getName());
                 }
 
                 ((BaseAdapter)mDynamicListView.getAdapter()).notifyDataSetChanged();
@@ -131,7 +142,7 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
                     Toast.makeText(CreateGroupActivity.this, "Debe asignar un nombre al grupo " +
                             "para continuar", Toast.LENGTH_LONG).show();
                 } else {
-                    Intent intent = new Intent(CreateGroupActivity.this, ListGroupActivity.class);
+//                    createGroup(participantAddedList, groupNameToCreate.getText(), Profile.getCurrentProfile().getId());
                     finish();
                 }
 
@@ -146,7 +157,10 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
         gridView.setAdapter(participantAddedArrayAdapter);
     }
 
-    private void fetchData() {
+
+
+    private void getFriendList2() {
+
         participantSearcheableList = new ArrayList<Participant>();
         participantShowableList = new ArrayList<Participant>();
         participantAddedList = new ArrayList<Participant>();
@@ -192,5 +206,30 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
         participantDefaultAdapter = new ParticipantDefaultAdapter(this,
                 participantShowableList, false);
         mDynamicListView.setAdapter(participantDefaultAdapter);
+    }
+
+    public void getFriendList(){
+        AccessToken at = AccessToken.getCurrentAccessToken();
+        GraphRequest req = GraphRequest.newMyFriendsRequest(at, new GraphRequest.GraphJSONArrayCallback() {
+            @Override
+            public void onCompleted(JSONArray objects, GraphResponse response) {
+                FacebookRequestError error = response.getError();
+                if(error != null){
+                    String err = error.getErrorMessage();
+                }
+                Log.e("FacebookResponse:", response.getRawResponse());
+                try {
+                    JSONObject obj = (JSONObject) objects.get(0);
+                    Iterator<?> it = obj.keys();
+                    while (it.hasNext()){
+                        Participant p1 = new Participant(1,"Fede","http://pengaja.com/uiapptemplate/newphotos/profileimages/0.jpg",  R.string.fontello_heart_empty);
+                        Log.e("KEY", (String) it.next());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        req.executeAsync();
     }
 }

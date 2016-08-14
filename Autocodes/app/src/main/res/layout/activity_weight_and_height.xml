@@ -63,33 +63,42 @@
                     android:layout_marginTop="26dp"
                     android:max="180"/>
 
-                <proyectofinal.autocodes.font.RobotoTextView
-                    android:id="@+id/textView1"
+                <LinearLayout
+                    android:id="@+id/layoutTextView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/seekBar1"
-                    android:layout_marginTop="14dp"
-                    app:typeface="robotoRegular"
-                    style="@style/TextViewAppearance.Headline3"/>
-<!--
-                <proyectofinal.autocodes.font.RobotoTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/textView1"
-                    android:layout_below="@+id/seekBar1"
-                    android:layout_marginTop="14dp"
-                    android:text="Kgs"
-                    app:typeface="robotoRegular"
-                    style="@style/TextViewAppearance.Headline2"/>
--->
+                    android:layout_below="@+id/seekBar1">
+
+                        <proyectofinal.autocodes.font.RobotoTextView
+                            android:id="@+id/textView1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:padding="2dp"
+                            app:typeface="robotoRegular"
+                            style="@style/TextViewAppearance.Headline3"/>
+
+                        <proyectofinal.autocodes.font.RobotoTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="2dp"
+                            android:layout_marginTop="14dp"
+                            android:text="Kgs"
+                            app:typeface="robotoRegular"
+                            style="@style/TextViewAppearance.Headline2"/>
+
+
+                </LinearLayout>
+
+
                 <proyectofinal.autocodes.font.RobotoTextView
                     android:id="@+id/textViewAltura"
                     android:paddingTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@id/textView1"
+                    android:layout_below="@id/layoutTextView1"
                     android:text="Altura"
                     app:typeface="robotoRegular"
                     style="@style/TextViewAppearance.Headline2"/>
@@ -103,32 +112,41 @@
                     android:layout_marginTop="26dp"
                     android:max="230"/>
 
+                <LinearLayout
+                    android:id="@+id/layoutTextView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/seekBar2">
+
                 <proyectofinal.autocodes.font.RobotoTextView
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/seekBar2"
                     android:layout_marginTop="14dp"
+                    android:padding="2dp"
                     app:typeface="robotoRegular"
                     style="@style/TextViewAppearance.Headline3"/>
-<!--
+
                 <proyectofinal.autocodes.font.RobotoTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/textView2"
-                    android:layout_below="@+id/seekBar2"
                     android:layout_marginTop="14dp"
+                    android:padding="2dp"
                     android:text=" Mts"
                     app:typeface="robotoRegular"
                     style="@style/TextViewAppearance.Headline2"/>
--->
+
+
+                </LinearLayout>
+
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:paddingTop="30dp"
-                    android:layout_below="@id/textView2">
+                    android:layout_below="@id/layoutTextView2">
 
                         <Button
                             android:id="@+id/submitWeightAndHeight"

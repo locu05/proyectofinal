@@ -19,7 +19,7 @@
         app:typeface="robotoRegular"
         android:text="Name" />
     <proyectofinal.autocodes.font.RobotoTextView
-        android:id="@+id/groupstatus"
+        android:id="@+id/groupstatuslistgroups"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="10sp"
@@ -27,7 +27,7 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         app:typeface="robotoRegular"
-        android:text="Grupo activo" />
+        android:text="Cargando estado.." />
 
 
 
