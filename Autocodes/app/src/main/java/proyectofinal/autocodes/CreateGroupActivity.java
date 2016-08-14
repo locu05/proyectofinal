@@ -1,5 +1,6 @@
 package proyectofinal.autocodes;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +26,7 @@ import com.facebook.AccessToken;
 import com.facebook.FacebookRequestError;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.Profile;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
@@ -36,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
 import proyectofinal.autocodes.adapter.GroupArrayAdapter;
 import proyectofinal.autocodes.adapter.ParticipantAddedArrayAdapter;
 import proyectofinal.autocodes.adapter.ParticipantDefaultAdapter;
@@ -80,14 +83,18 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
             }
         });
 
-        getFriendList2();
-        getFriendList();
+        participantSearcheableList = new ArrayList<Participant>();
+        participantShowableList = new ArrayList<Participant>();
+        participantAddedList = new ArrayList<Participant>();
+
 
         mXMark.setOnClickListener(this);
 
         mDynamicListView = (DynamicListView) findViewById(R.id.dynamic_listview);
         populateDynamicList();
         populateParticipantsAddedList();
+
+        getFriendList();
 
         mSearchField.addTextChangedListener(new TextWatcher() {
 
@@ -142,11 +149,57 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
                     Toast.makeText(CreateGroupActivity.this, "Debe asignar un nombre al grupo " +
                             "para continuar", Toast.LENGTH_LONG).show();
                 } else {
-//                    createGroup(participantAddedList, groupNameToCreate.getText(), Profile.getCurrentProfile().getId());
+                    try {
+                        createGroup(participantAddedList, groupNameToCreate.getText().toString(), Profile.getCurrentProfile().getId());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     finish();
                 }
 
             }
+        });
+    }
+
+    private void createGroup(List<Participant> participantAddedList, String groupName, String id) throws JSONException, UnsupportedEncodingException {
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        JSONObject obj = new JSONObject();
+        obj.put("name", groupName);
+        JSONArray users = new JSONArray();
+        for(Participant participant : participantAddedList) {
+            users.put(participant.getId());
+        }
+        users.put(id);
+        obj.put("users",users);
+        obj.put("admin", id);
+        StringEntity entity = new StringEntity(obj.toString());
+        Log.e("Preparing rest call", "Rest call /group: " + obj.toString());
+
+        client.post(getApplicationContext(), serverBaseUrl + "/group", entity, "application/json", new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                Log.e("ServerResponse:", "Status Code from /group post " + statusCode);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                // When Http response code is '404'
+                if(statusCode == 404){
+                    Toast.makeText(getApplicationContext(), "Couldn't get specified resource", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code is '500'
+                else if(statusCode == 500){
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                else{
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+
         });
     }
 
@@ -155,35 +208,6 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
 
         GridView gridView = (GridView) findViewById(R.id.participantAddedView);
         gridView.setAdapter(participantAddedArrayAdapter);
-    }
-
-
-
-    private void getFriendList2() {
-
-        participantSearcheableList = new ArrayList<Participant>();
-        participantShowableList = new ArrayList<Participant>();
-        participantAddedList = new ArrayList<Participant>();
-        Participant p1 = new Participant(1,"Fede","http://pengaja.com/uiapptemplate/newphotos/profileimages/0.jpg",  R.string.fontello_heart_empty);
-        Participant p2 = new Participant(2,"Lucas","http://pengaja.com/uiapptemplate/newphotos/profileimages/1.jpg",  R.string.fontello_heart_empty);
-        Participant p3 = new Participant(3,"Hernan","http://pengaja.com/uiapptemplate/newphotos/profileimages/2.jpg",  R.string.fontello_heart_empty);
-        Participant p4 = new Participant(4,"Gaby","http://pengaja.com/uiapptemplate/newphotos/profileimages/3.jpg",  R.string.fontello_heart_empty);
-        Participant p5 = new Participant(5,"Otro gato","http://pengaja.com/uiapptemplate/newphotos/profileimages/4.jpg",  R.string.fontello_heart_empty);
-        Participant p6 = new Participant(6,"El chavo","http://pengaja.com/uiapptemplate/newphotos/profileimages/5.jpg",  R.string.fontello_heart_empty);
-        Participant p7 = new Participant(7,"La chilindrina","http://pengaja.com/uiapptemplate/newphotos/profileimages/6.jpg",  R.string.fontello_heart_empty);
-        Participant p8 = new Participant(8,"Don ramon","http://pengaja.com/uiapptemplate/newphotos/profileimages/7.jpg",  R.string.fontello_heart_empty);
-
-        participantSearcheableList.add(p1);
-        participantSearcheableList.add(p2);
-        participantSearcheableList.add(p3);
-        participantSearcheableList.add(p4);
-        participantSearcheableList.add(p5);
-        participantSearcheableList.add(p6);
-        participantSearcheableList.add(p7);
-        participantSearcheableList.add(p8);
-
-        participantShowableList.addAll(participantSearcheableList);
-
     }
 
     private void setUpImageLoader() {
@@ -219,15 +243,18 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
                 }
                 Log.e("FacebookResponse:", response.getRawResponse());
                 try {
-                    JSONObject obj = (JSONObject) objects.get(0);
-                    Iterator<?> it = obj.keys();
-                    while (it.hasNext()){
-                        Participant p1 = new Participant(1,"Fede","http://pengaja.com/uiapptemplate/newphotos/profileimages/0.jpg",  R.string.fontello_heart_empty);
-                        Log.e("KEY", (String) it.next());
+                    JSONArray friendList = (JSONArray) objects;
+                    for(int i = 0 ; i < friendList.length() ; i ++) {
+                        JSONObject friend = (JSONObject) friendList.get(i);
+                        Participant participant = new Participant(Long.valueOf(friend.getString("id")),friend.getString("name"),"http://graph.facebook.com/"+friend.getString("id")+"/picture",  R.string.fontello_heart_empty);
+                        participantSearcheableList.add(participant);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                participantShowableList.addAll(participantSearcheableList);
+                ((BaseAdapter)participantsAddedListView.getAdapter()).notifyDataSetChanged();
+                ((BaseAdapter)mDynamicListView.getAdapter()).notifyDataSetChanged();
             }
         });
         req.executeAsync();

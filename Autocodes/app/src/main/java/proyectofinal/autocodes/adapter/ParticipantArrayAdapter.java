@@ -25,8 +25,6 @@ import proyectofinal.autocodes.model.Participant;
  */
 public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
 
-    public int currentDriver = -1;
-
     public ParticipantArrayAdapter(Context context, List<Participant> participants) {
         super(context, 0, participants);
     }
@@ -61,8 +59,8 @@ public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                currentDriver = participant.getId();
-                Log.e("Driver state changed:", b + " " + String.valueOf(currentDriver));
+//                currentDriver = participant.getId();
+//                Log.e("Driver state changed:", b + " " + String.valueOf(currentDriver));
 
             }
         });

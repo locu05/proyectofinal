@@ -77,9 +77,9 @@ public class GroupActivity extends AppCompatActivity {
 //                        participantList.add(grupo);
 //                    }
 
-                    participantList.add(new Participant("Martin",1));
-                    participantList.add(new Participant("Fede",2));
-                    participantList.add(new Participant("Lucas",3));
+                    participantList.add(new Participant("Martin",Long.valueOf(1)));
+                    participantList.add(new Participant("Fede",Long.valueOf(2)));
+                    participantList.add(new Participant("Lucas",Long.valueOf(3)));
 
                     ParticipantArrayAdapter participantAdapter = new ParticipantArrayAdapter(context, participantList);
 

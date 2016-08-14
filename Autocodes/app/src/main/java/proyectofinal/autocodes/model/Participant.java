@@ -5,18 +5,18 @@ package proyectofinal.autocodes.model;
  */
 public class Participant {
 
-    Integer id;
+    Long id;
     String name;
     String imageUrl;
     int iconRes;
     boolean showable;
 
-    public Participant(String name, Integer id) {
+    public Participant(String name, Long id) {
         this.name = name;
         this.id = id;
     }
 
-    public Participant(Integer id, String name, String imageUrl, int iconRes) {
+    public Participant(Long id, String name, String imageUrl, int iconRes) {
         this.id = id;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -24,11 +24,11 @@ public class Participant {
         showable = true;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
