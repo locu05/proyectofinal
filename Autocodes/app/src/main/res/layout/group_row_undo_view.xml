@@ -24,7 +24,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/linearSwipe">
 
         <proyectofinal.autocodes.font.RobotoTextView
             android:layout_width="match_parent"
@@ -33,13 +35,13 @@
             android:gravity="center"
             android:text="Desliza para eliminar"
             android:textColor="@color/white"
-            android:textSize="25sp"
+            android:textSize="20sp"
             app:typeface="robotoThin" />
 
         <LinearLayout
             android:id="@+id/undo_button_social"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="144dp"
             android:layout_weight="2"
             android:background="@color/main_color_500"
             android:gravity="center"
@@ -65,5 +67,56 @@
                 app:typeface="robotoThin" />
         </LinearLayout>
     </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/linearSwipe">
+
+        <proyectofinal.autocodes.font.RobotoTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Toca para cancelar"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:typeface="robotoThin" />
+
+        <LinearLayout
+            android:id="@+id/undo_button_delete"
+            android:layout_width="match_parent"
+            android:layout_height="144dp"
+            android:layout_weight="2"
+            android:background="@color/main_color_500"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <proyectofinal.autocodes.font.MaterialDesignIconsTextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|bottom"
+                android:text="@string/fontello_x_mark"
+                android:textColor="@android:color/white"
+                android:textSize="32dp" />
+
+            <proyectofinal.autocodes.font.RobotoTextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="Toca"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                app:typeface="robotoThin" />
+        </LinearLayout>
+    </LinearLayout>
+
+
 
 </RelativeLayout>

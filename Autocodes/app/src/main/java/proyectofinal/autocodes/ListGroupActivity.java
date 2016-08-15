@@ -39,12 +39,13 @@ public class ListGroupActivity extends AppCompatActivity {
     boolean value = true;
     String serverBaseUrl = "http://107.170.81.44:3002";
     DynamicListView listView;
+    AccessToken at2 = AccessToken.getCurrentAccessToken();
 
     @Override
     protected void onResume() {
         super.onResume();
         //Chequea credenciales
-        AccessToken at2 = AccessToken.getCurrentAccessToken();
+
         groupList.clear();
         ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
         if (at2 == null){
@@ -97,10 +98,17 @@ public class ListGroupActivity extends AppCompatActivity {
         SimpleSwipeUndoAdapter swipeUndoAdapter = new SimpleSwipeUndoAdapter(
                 groupAdapter, this, new OnDismissCallback() {
             @Override
-            public void onDismiss(@NonNull final ViewGroup listView,
+            public void onDismiss(@NonNull final ViewGroup lv,
                                   @NonNull final int[] reverseSortedPositions) {
                 for (int position : reverseSortedPositions) {
-                    Log.e("DEBAGING", "calling on dismiss del simpleswipe ese");
+//                    if(admin){
+                        deleteGroup(groupList.get(position));
+                    groupList.remove(groupList.get(position));
+                    ((BaseAdapter)listView.getAdapter()).notifyDataSetChanged();
+//                    } else {
+//                        exitGroup(groupList.get(position), at2.getUserId());
+//                    }
+
                 }
             }
         });
@@ -110,6 +118,35 @@ public class ListGroupActivity extends AppCompatActivity {
         listView.enableSimpleSwipeUndo();
 
 
+    }
+
+    private void deleteGroup(final Group group) {
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        Log.e(LogConstants.PREPARING_REQUEST, "Calling /groups delete with groupId: " + group.getId());
+        client.delete(serverBaseUrl + "/group/" + group.getId() ,null ,new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    Log.e(LogConstants.SERVER_RESPONSE, "/group delete " + statusCode);
+
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                // When Http response code is '404'
+                if(statusCode == 404){
+                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code is '500'
+                else if(statusCode == 500){
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                else{
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+
+        });
     }
 
     @Override

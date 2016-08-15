@@ -76,7 +76,7 @@ public class GroupArrayAdapter extends ArrayAdapter<Group>
     @NonNull
     @Override
     public View getUndoClickView(@NonNull View view) {
-        return view.findViewById(R.id.undo_button_social);
+        return view.findViewById(R.id.undo_button_delete);
     }
 
     public void remove(int position) {
