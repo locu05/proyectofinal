@@ -3,17 +3,23 @@ package proyectofinal.autocodes;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.loopj.android.http.*;
+import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.OnDismissCallback;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.undo.SimpleSwipeUndoAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +29,7 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 import proyectofinal.autocodes.adapter.GroupArrayAdapter;
+import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
 
 public class ListGroupActivity extends AppCompatActivity {
@@ -31,52 +38,28 @@ public class ListGroupActivity extends AppCompatActivity {
     List<Group> groupList;
     boolean value = true;
     String serverBaseUrl = "http://107.170.81.44:3002";
+    DynamicListView listView;
 
     @Override
     protected void onResume() {
         super.onResume();
         //Chequea credenciales
         AccessToken at2 = AccessToken.getCurrentAccessToken();
+        groupList.clear();
+        ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
         if (at2 == null){
-            Log.e("LOGIN", "User NOT LOGGED, REDIRECTING");
+            Log.e(LogConstants.LOGIN, "User NOT LOGGED, REDIRECTING");
             //Mandar al login si no esta logueado
             Intent goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(goToNextActivity);
         } else {
-            Log.e("LOGIN", "UserId on " + at2.getUserId());
+            Log.e(LogConstants.LOGIN, "UserId on " + at2.getUserId());
             getUserInfo(at2.getUserId());
         }
-
-        groupList = new ArrayList<Group>();
         getGroups(at2.getUserId());
 
     }
-/*
-    private void getFriends(AccessToken at ){
-        GraphRequest req = GraphRequest.newMyFriendsRequest(at, new GraphRequest.GraphJSONArrayCallback() {
-            @Override
-            public void onCompleted(JSONArray objects, GraphResponse response) {
-                Log.e("KEY", "Respondio");
-                FacebookRequestError error = response.getError();
-                if(error != null){
-                    String err = error.getErrorMessage();
-                    Log.e("KEY", err);
-                }
-                Log.e("RESP", response.getRawResponse());
-                try {
-                    JSONObject obj = (JSONObject) objects.get(0);
-                    Iterator<?> it = obj.keys();
-                    while (it.hasNext()){
-                        Log.e("KEY", (String) it.next());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        req.executeAsync();
-    }
-*/
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -106,8 +89,26 @@ public class ListGroupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
-
         setContentView(R.layout.activity_listgroup);
+        groupList = new ArrayList<Group>();
+        final GroupArrayAdapter groupAdapter = new GroupArrayAdapter(context, groupList);
+        listView = (DynamicListView) findViewById(R.id.groupListView);
+
+        SimpleSwipeUndoAdapter swipeUndoAdapter = new SimpleSwipeUndoAdapter(
+                groupAdapter, this, new OnDismissCallback() {
+            @Override
+            public void onDismiss(@NonNull final ViewGroup listView,
+                                  @NonNull final int[] reverseSortedPositions) {
+                for (int position : reverseSortedPositions) {
+                    Log.e("DEBAGING", "calling on dismiss del simpleswipe ese");
+                }
+            }
+        });
+
+        swipeUndoAdapter.setAbsListView(listView);
+        listView.setAdapter(swipeUndoAdapter);
+        listView.enableSimpleSwipeUndo();
+
 
     }
 
@@ -121,7 +122,7 @@ public class ListGroupActivity extends AppCompatActivity {
 
     public void getUserInfo(String userId){
         AsyncHttpClient client = new AsyncHttpClient();
-        Log.e("Preparing Request", "Calling /user with id " + userId);
+        Log.e(LogConstants.PREPARING_REQUEST, "Calling /user with id " + userId);
         client.get( serverBaseUrl + "/user/" + userId,null ,new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -131,8 +132,8 @@ public class ListGroupActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.e("ServerResponse", "/user " + statusCode);
-                Log.e("JsonResponse", "/user " + obj.toString());
+                Log.e(LogConstants.SERVER_RESPONSE, "/user " + statusCode);
+                Log.e(LogConstants.JSON_RESPONSE, "/user " + obj.toString());
             }
 
             @Override
@@ -159,15 +160,15 @@ public class ListGroupActivity extends AppCompatActivity {
 
     public void getGroups(String userId){
         AsyncHttpClient client = new AsyncHttpClient();
-        Log.e("Preparing Request", "Calling /groups with userId: " + userId);
+        Log.e(LogConstants.PREPARING_REQUEST, "Calling /groups with userId: " + userId);
         client.get(serverBaseUrl + "/groups/" + userId ,null ,new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 
                 try {
                     JSONObject obj = new JSONObject(new String(responseBody));
-                    Log.e("ServerResponse", "/groups " + statusCode);
-                    Log.e("JsonResponse", "/groups " + obj.toString());
+                    Log.e(LogConstants.SERVER_RESPONSE, "/groups " + statusCode);
+                    Log.e(LogConstants.JSON_RESPONSE, "/groups " + obj.toString());
 
                         for(int i = 0 ; i< obj.getJSONArray("groups").length() ; i++) {
                             Group group = new Group();
@@ -178,10 +179,7 @@ public class ListGroupActivity extends AppCompatActivity {
                             groupList.add(group);
                         }
 
-                        GroupArrayAdapter groupAdapter = new GroupArrayAdapter(context, groupList);
-
-                        ListView listView = (ListView) findViewById(R.id.groupListView);
-                        listView.setAdapter(groupAdapter);
+                    ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
 
 
                 } catch (JSONException e) {

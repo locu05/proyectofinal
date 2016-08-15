@@ -43,6 +43,7 @@ import proyectofinal.autocodes.adapter.GroupArrayAdapter;
 import proyectofinal.autocodes.adapter.ParticipantAddedArrayAdapter;
 import proyectofinal.autocodes.adapter.ParticipantDefaultAdapter;
 
+import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
 import proyectofinal.autocodes.model.Participant;
 
@@ -156,7 +157,6 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
-                    finish();
                 }
 
             }
@@ -176,12 +176,13 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
         obj.put("users",users);
         obj.put("admin", id);
         StringEntity entity = new StringEntity(obj.toString());
-        Log.e("Preparing rest call", "Rest call /group: " + obj.toString());
+        Log.e(LogConstants.PREPARING_REQUEST, "Rest call /group: " + obj.toString());
 
         client.post(getApplicationContext(), serverBaseUrl + "/group", entity, "application/json", new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                Log.e("ServerResponse:", "Status Code from /group post " + statusCode);
+                Log.e(LogConstants.SERVER_RESPONSE, "Status Code from /group post " + statusCode);
+                finish();
             }
 
             @Override
@@ -241,12 +242,12 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
                 if(error != null){
                     String err = error.getErrorMessage();
                 }
-                Log.e("FacebookResponse:", response.getRawResponse());
+                Log.e(LogConstants.FACEBOOK_RESPONSE, response.getRawResponse());
                 try {
                     JSONArray friendList = (JSONArray) objects;
                     for(int i = 0 ; i < friendList.length() ; i ++) {
                         JSONObject friend = (JSONObject) friendList.get(i);
-                        Participant participant = new Participant(Long.valueOf(friend.getString("id")),friend.getString("name"),"http://graph.facebook.com/"+friend.getString("id")+"/picture",  R.string.fontello_heart_empty);
+                        Participant participant = new Participant(friend.getString("id"),friend.getString("name"),"http://graph.facebook.com/"+friend.getString("id")+"/picture",  R.string.fontello_heart_empty);
                         participantSearcheableList.add(participant);
                     }
                 } catch (JSONException e) {

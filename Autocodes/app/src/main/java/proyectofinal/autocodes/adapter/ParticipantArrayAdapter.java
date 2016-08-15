@@ -2,6 +2,7 @@ package proyectofinal.autocodes.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.icu.text.MessagePattern;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import proyectofinal.autocodes.GroupActivity;
@@ -24,9 +26,13 @@ import proyectofinal.autocodes.model.Participant;
  * Created by locu on 30/7/16.
  */
 public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
+    List<Participant> participants;
+    List<CheckBox> checkBoxes;
 
     public ParticipantArrayAdapter(Context context, List<Participant> participants) {
         super(context, 0, participants);
+        this.participants = participants;
+        checkBoxes = new ArrayList<CheckBox>();
     }
 
     @Override
@@ -40,30 +46,39 @@ public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
 
         TextView participantName = (TextView) convertView.findViewById(R.id.participantName);
         participantName.setText(participant.getName());
-/*
-        Button goButton = (Button) convertView.findViewById(R.id.selectDriver);
-        goButton.setTag(position); //For passing the list item index
-        goButton.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), GroupActivity.class);
-                intent.putExtra(AutocodesIntentConstants.PARTICIPANT_ID, String.valueOf(participant.getId()));
-                getContext().startActivity(intent);
-        }});
-*/
-
-        CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkbox_driver);
+        final CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkbox_driver);
+        participant.setCheckBox(checkBox);
+        if(participant.isDriver()) {
+            participant.getCheckBox().setChecked(true);
+        }
         checkBox.setTag(position); //For passing the list item index
-
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                currentDriver = participant.getId();
-//                Log.e("Driver state changed:", b + " " + String.valueOf(currentDriver));
+            public void onClick(View view) {
+                CheckBox currentCheckBox = (CheckBox) view;
+                if(!checkBox.isChecked()){
+                    checkBox.setChecked(false);
+                    for(Participant p : participants) {
+                        if(p.getId().equals(participant.getId())) {
+                            p.setDriver(false);
+                        }
+                    }
+                } else {
+                    checkBox.setChecked(true);
+                    for(Participant p : participants) {
+                        if(p.getId().equals(participant.getId())) {
+                            p.setDriver(true);
+                        } else {
+                            p.setDriver(false);
+                            p.getCheckBox().setChecked(false);
+                        }
+                    }
+                }
 
             }
         });
+
         return convertView;
     }
 }

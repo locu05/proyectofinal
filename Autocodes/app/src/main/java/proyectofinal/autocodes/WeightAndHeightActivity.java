@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
+import proyectofinal.autocodes.constant.LogConstants;
 
 public class WeightAndHeightActivity extends AppCompatActivity {
 
@@ -113,7 +114,7 @@ public class WeightAndHeightActivity extends AppCompatActivity {
         client.post(getApplicationContext(), serverBaseUrl + "/user", entity, "application/json", new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                Log.e("Response:", "" + statusCode);
+                Log.e(LogConstants.SERVER_RESPONSE, "" + statusCode);
 
             }
 

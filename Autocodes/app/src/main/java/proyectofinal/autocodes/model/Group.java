@@ -8,6 +8,7 @@ public class Group {
     Integer id;
     String name;
     int active;
+    String driverId;
 
     public Integer getId() {
         return id;
@@ -31,5 +32,13 @@ public class Group {
 
     public void setActive(int active) {
         this.active = active;
+    }
+
+    public String getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(String driverId) {
+        this.driverId = driverId;
     }
 }

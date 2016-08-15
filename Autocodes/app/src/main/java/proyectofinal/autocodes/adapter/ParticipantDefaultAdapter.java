@@ -50,7 +50,7 @@ public class ParticipantDefaultAdapter extends BaseAdapter implements Swappable,
 
 	@Override
 	public long getItemId(int position) {
-		return participantList.get(position).getId();
+		return Long.valueOf(participantList.get(position).getId());
 	}
 
 	@Override

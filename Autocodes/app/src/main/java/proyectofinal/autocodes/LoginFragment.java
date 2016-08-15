@@ -32,6 +32,8 @@ import org.json.JSONObject;
 
 import java.util.Iterator;
 
+import proyectofinal.autocodes.constant.LogConstants;
+
 
 public class LoginFragment extends Fragment {
     CallbackManager callbackManager;
@@ -107,21 +109,21 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.e("LOGIN", "LOGIN OK");
+                Log.e(LogConstants.LOGIN, "LOGIN OK");
                 Toast.makeText(getContext(), "LogIn successful", Toast.LENGTH_LONG);
                 getActivity().finish();
             }
 
             @Override
             public void onCancel() {
-                Log.e("LOGIN", "LOGIN CANCELED");
+                Log.e(LogConstants.LOGIN, "LOGIN CANCELED");
                 Toast.makeText(getContext(), "Error logging in", Toast.LENGTH_LONG);
 
             }
 
             @Override
             public void onError(FacebookException error) {
-                Log.e("LOGIN", "LOGIN ERROR");
+                Log.e(LogConstants.LOGIN, "LOGIN ERROR");
                 Toast.makeText(getContext(), "Error logging in", Toast.LENGTH_LONG);
             }
         });

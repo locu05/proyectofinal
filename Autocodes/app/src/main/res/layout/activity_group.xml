@@ -29,7 +29,7 @@
         android:textSize="14sp"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/groupName"
-        android:text="DESACTIVADO" />
+        android:text="Cargando..." />
 
 
     <Button
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:text="Activar"
         android:layout_alignParentRight="true"
-        android:id="@+id/button"
+        android:id="@+id/activateGroup"
         android:layout_gravity="right" />
 
     </RelativeLayout>
