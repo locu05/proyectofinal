@@ -1,16 +1,69 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="144dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
 
-    <TextView
+    <ImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/group_row_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/login_bkg"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/material_grey_300"
+        android:contentDescription="@string/cd_main_image"
+        android:scaleType="centerCrop" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#cc700707" />
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="UNDO TEXTVIEW"/>
+        android:layout_weight="1"
+        android:gravity="center">
 
-    <TextView
-        android:id="@+id/group_undo_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="UNDO BUTTON ?"/>
+        <proyectofinal.autocodes.font.RobotoTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Desliza para eliminar"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            app:typeface="robotoThin" />
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/undo_button_social"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@color/main_color_500"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <proyectofinal.autocodes.font.MaterialDesignIconsTextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|bottom"
+                android:text="@string/material_icon_go_right"
+                android:textColor="@android:color/white"
+                android:textSize="32dp" />
+
+            <proyectofinal.autocodes.font.RobotoTextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="Desliza"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                app:typeface="robotoThin" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

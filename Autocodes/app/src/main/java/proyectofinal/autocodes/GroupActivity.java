@@ -45,6 +45,7 @@ public class GroupActivity extends AppCompatActivity {
     TextView textView;
     String serverBaseUrl = "http://107.170.81.44:3002";
     Button activateGroup;
+    Button deactivateGroup;
     Group group;
 
     @Override
@@ -74,7 +75,21 @@ public class GroupActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.groupView);
         listView.setAdapter(participantAdapter);
         activateGroup = (Button) findViewById(R.id.activateGroup);
+        deactivateGroup = (Button) findViewById(R.id.deactivateGroup);
         groupStatus = (TextView) findViewById(R.id.groupStatus);
+
+        deactivateGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    deactivateGroup(intentValues.get(AutocodesIntentConstants.GROUP_ID));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         activateGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +115,39 @@ public class GroupActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void deactivateGroup(String groupId) throws JSONException, UnsupportedEncodingException {
+        Log.e(LogConstants.BEHAVIOUR_LOG, "Deactivating group: " + groupId);
+        JSONObject jsonRequest = new JSONObject();
+        jsonRequest.put("group_id", groupId);
+        AsyncHttpClient client = new AsyncHttpClient();
+        Log.e(LogConstants.PREPARING_REQUEST, "Post /group/deactivate with values " + jsonRequest.toString());
+        StringEntity entity = new StringEntity(jsonRequest.toString());
+        client.post(getApplicationContext(), serverBaseUrl + "/group/deactivate", entity, "application/json", new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                Log.e(LogConstants.SERVER_RESPONSE, "Status Code from /group/deactivate post " + statusCode);
+                finish();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                // When Http response code is '404'
+                if(statusCode == 404){
+                    Toast.makeText(getApplicationContext(), "Couldn't get specified resource", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code is '500'
+                else if(statusCode == 500){
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                else{
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+
+        });
     }
 
     private void activateGroup(String groupId, String driverId) throws JSONException, UnsupportedEncodingException {
@@ -163,6 +211,14 @@ public class GroupActivity extends AppCompatActivity {
                     groupStatus.setText((group.getActive()==1)?"Activo":"Inactivo");
 
                     ((BaseAdapter)listView.getAdapter()).notifyDataSetChanged();
+
+                    if(group.getActive()==1){
+                        activateGroup.setVisibility(View.INVISIBLE);
+                        deactivateGroup.setVisibility(View.VISIBLE);
+                    } else {
+                        activateGroup.setVisibility(View.VISIBLE);
+                        deactivateGroup.setVisibility(View.INVISIBLE);
+                    }
 
 
 
