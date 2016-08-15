@@ -1,22 +1,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="144dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingBottom="30dp"
-    android:paddingTop="30dp"
-    android:paddingLeft="30dp"
-    android:paddingRight="30dp"
-
     android:orientation="horizontal">
+
+    <ImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/group_row_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/login_bkg"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/material_grey_300"
+        android:contentDescription="@string/cd_main_image"
+        android:scaleType="centerCrop" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#cc000000" />
 
     <proyectofinal.autocodes.font.RobotoTextView
         android:id="@+id/namegroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         android:gravity="center"
-        app:typeface="robotoRegular"
+        android:textColor="@color/white"
+        app:typeface="robotoThin"
         android:text="Name" />
     <proyectofinal.autocodes.font.RobotoTextView
         android:id="@+id/groupstatuslistgroups"
@@ -26,7 +38,8 @@
         android:layout_below="@id/namegroup"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        app:typeface="robotoRegular"
+        android:textColor="@color/white"
+        app:typeface="robotoThin"
         android:text="Cargando estado.." />
 
 
