@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,7 +20,9 @@ import java.util.List;
 import proyectofinal.autocodes.GroupActivity;
 import proyectofinal.autocodes.R;
 import proyectofinal.autocodes.constant.AutocodesIntentConstants;
+import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Participant;
+import proyectofinal.autocodes.util.ImageUtil;
 
 
 /**
@@ -46,6 +49,10 @@ public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
 
         TextView participantName = (TextView) convertView.findViewById(R.id.participantName);
         participantName.setText(participant.getName());
+
+        ImageView imageView = (ImageView) convertView.findViewById((R.id.user_avatar));
+        Log.e(LogConstants.FACEBOOK_RESPONSE, participant.getImageUrl().toString() );
+        ImageUtil.displayImage(imageView, participant.getImageUrl(), null);
 
         final CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkbox_driver);
         participant.setCheckBox(checkBox);

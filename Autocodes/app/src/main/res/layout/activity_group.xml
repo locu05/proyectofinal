@@ -2,7 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" >
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#aa000000" />
+
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -10,24 +17,26 @@
         android:id="@+id/group_header"
         android:layout_height="wrap_content" >
 
-    <TextView
+    <proyectofinal.autocodes.font.RobotoTextView
         android:id="@+id/groupName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:gravity="center"
         android:textSize="19sp"
         android:layout_alignParentLeft="true"
+        app:typeface="robotoRegular"
         android:text="Cargando..." />
 
-    <TextView
+    <proyectofinal.autocodes.font.RobotoTextView
         android:id="@+id/groupStatus"
         android:layout_width="wrap_content"
         android:layout_margin="1dp"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:textSize="14sp"
         android:layout_alignParentLeft="true"
+        app:typeface="robotoCondensed"
         android:layout_below="@id/groupName"
         android:text="Cargando..." />
 

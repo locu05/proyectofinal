@@ -1,14 +1,18 @@
 package proyectofinal.autocodes.model;
 
+import java.io.Serializable;
+
 /**
  * Created by locu on 30/7/16.
  */
-public class Group {
+public class Group implements Serializable {
 
     Integer id;
     String name;
     int active;
     String driverId;
+
+    private static final long serialVersionUID = 7526472295623423447L;
 
     public Integer getId() {
         return id;

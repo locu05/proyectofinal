@@ -1,13 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="128dp"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+
         <ImageView
             android:id="@+id/user_avatar"
             android:layout_width="100dp"
@@ -21,23 +23,26 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-        <TextView
+        <proyectofinal.autocodes.font.RobotoTextView
             android:id="@+id/participantName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:background="@android:color/transparent"
             android:text="Name"
-            android:textColor="@android:color/black"
+            app:typeface="robotoBold"
+            android:textColor="@android:color/white"
             android:textSize="19sp"
             />
-            <TextView
+            <proyectofinal.autocodes.font.RobotoTextView
                 android:id="@+id/driverState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:background="@android:color/transparent"
                 android:text="OK TO DRIVE"
+                app:typeface="robotoLight"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:textColor="@android:color/holo_green_light"
                 android:textSize="15sp"
                 />

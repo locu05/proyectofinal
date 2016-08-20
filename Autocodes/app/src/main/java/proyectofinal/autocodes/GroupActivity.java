@@ -1,6 +1,7 @@
 package proyectofinal.autocodes;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +35,7 @@ import proyectofinal.autocodes.constant.AutocodesIntentConstants;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
 import proyectofinal.autocodes.model.Participant;
+import proyectofinal.autocodes.service.TrackingService;
 
 
 public class GroupActivity extends AppCompatActivity {
@@ -67,6 +71,7 @@ public class GroupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        setUpImageLoader();
         participantList = new ArrayList<Participant>();
         group = new Group();
         setContentView(R.layout.activity_group);
@@ -128,6 +133,8 @@ public class GroupActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 Log.e(LogConstants.SERVER_RESPONSE, "Status Code from /group/deactivate post " + statusCode);
+                Intent intent = new Intent(context, TrackingService.class);
+                stopService(intent);
                 finish();
             }
 
@@ -162,6 +169,9 @@ public class GroupActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 Log.e(LogConstants.SERVER_RESPONSE, "Status Code from /group/activate post " + statusCode);
+                Intent intent = new Intent(context, TrackingService.class);
+                intent.putExtra("group", group);
+                startService(intent);
                 finish();
             }
 
@@ -183,6 +193,12 @@ public class GroupActivity extends AppCompatActivity {
 
         });
     }
+    private void setUpImageLoader() {
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        if (!imageLoader.isInited()) {
+            imageLoader.init(ImageLoaderConfiguration.createDefault(this));
+        }
+    }
 
     public void getGroupInformation(String groupId){
         AsyncHttpClient client = new AsyncHttpClient();
@@ -198,7 +214,7 @@ public class GroupActivity extends AppCompatActivity {
                     JSONArray users = obj.getJSONArray("users");
                     for(int i = 0 ; i< users.length() ; i++) {
                        JSONObject user = (JSONObject) users.get(i);
-                       Participant p = new Participant(user.getString("name"), user.getString("user_fb_id"));
+                       Participant p = new Participant(user.getString("user_fb_id"), user.getString("name"),"http://graph.facebook.com/"+user.getString("user_fb_id")+"/picture?type=large",  R.string.fontello_heart_empty);
                         if(user.getString("user_fb_id").equals(obj.getString("driver"))){
                             p.setDriver(true);
                         }
