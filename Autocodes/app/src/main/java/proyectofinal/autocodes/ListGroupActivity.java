@@ -56,8 +56,9 @@ public class ListGroupActivity extends AppCompatActivity {
         } else {
             Log.e(LogConstants.LOGIN, "UserId on " + at2.getUserId());
             getUserInfo(at2.getUserId());
+            getGroups(at2.getUserId());
         }
-        getGroups(at2.getUserId());
+
 
     }
 
