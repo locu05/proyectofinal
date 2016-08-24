@@ -22,6 +22,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.AccessToken;
 import com.facebook.FacebookRequestError;
 import com.facebook.GraphRequest;
@@ -51,6 +55,7 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
 
     String serverBaseUrl = "http://107.170.81.44:3002";
 
+    private long mRequestStartTimeCreateGroup;
     private EditText mSearchField;
     private TextView mXMark;
     private ArrayList<Participant> participantSearcheableList;
@@ -163,9 +168,10 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
         });
     }
 
-    private void createGroup(List<Participant> participantAddedList, String groupName, String id) throws JSONException, UnsupportedEncodingException {
-        AsyncHttpClient client = new AsyncHttpClient();
+    private void createGroup(List<Participant> participantAddedList, String groupName, String id)
+            throws JSONException, UnsupportedEncodingException {
 
+        mRequestStartTimeCreateGroup = System.currentTimeMillis();
         JSONObject obj = new JSONObject();
         obj.put("name", groupName);
         JSONArray users = new JSONArray();
@@ -177,31 +183,67 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
         obj.put("admin", id);
         StringEntity entity = new StringEntity(obj.toString());
         Log.e(LogConstants.PREPARING_REQUEST, "Rest call /group: " + obj.toString());
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.POST, serverBaseUrl + "/group", obj, new Response.Listener<JSONObject>() {
 
-        client.post(getApplicationContext(), serverBaseUrl + "/group", entity, "application/json", new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                Log.e(LogConstants.SERVER_RESPONSE, "Status Code from /group post " + statusCode);
-                finish();
-            }
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeCreateGroup;
+                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                        Log.e(LogConstants.SERVER_RESPONSE, "/group delete onResponse");
+                        finish();
+                    }
+                }, new Response.ErrorListener() {
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                // When Http response code is '404'
-                if(statusCode == 404){
-                    Toast.makeText(getApplicationContext(), "Couldn't get specified resource", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if(statusCode == 500){
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else{
-                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeCreateGroup;
+                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                        Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
 
-        });
+                    }
+                });
+
+        AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
+
+//        AsyncHttpClient client = new AsyncHttpClient();
+//
+//        JSONObject obj = new JSONObject();
+//        obj.put("name", groupName);
+//        JSONArray users = new JSONArray();
+//        for(Participant participant : participantAddedList) {
+//            users.put(participant.getId());
+//        }
+//        users.put(id);
+//        obj.put("users",users);
+//        obj.put("admin", id);
+//        StringEntity entity = new StringEntity(obj.toString());
+//        Log.e(LogConstants.PREPARING_REQUEST, "Rest call /group: " + obj.toString());
+//
+//        client.post(getApplicationContext(), serverBaseUrl + "/group", entity, "application/json", new AsyncHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                Log.e(LogConstants.SERVER_RESPONSE, "Status Code from /group post " + statusCode);
+//                finish();
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+//                // When Http response code is '404'
+//                if(statusCode == 404){
+//                    Toast.makeText(getApplicationContext(), "Couldn't get specified resource", Toast.LENGTH_LONG).show();
+//                }
+//                // When Http response code is '500'
+//                else if(statusCode == 500){
+//                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+//                }
+//                // When Http response code other than 404, 500
+//                else{
+//                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//        });
     }
 
     private void populateParticipantsAddedList() {

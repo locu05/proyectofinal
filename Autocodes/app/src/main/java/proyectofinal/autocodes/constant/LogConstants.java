@@ -12,4 +12,5 @@ public class LogConstants {
     public static final String BEHAVIOUR_LOG = "Behaviour Log";
     public static final String FACEBOOK_RESPONSE = "Facebook Response";
     public static final String LOGIN = "LOGIN";
+    public static final String TIME_SERVER_RESPONSE = "Response Time";
 }

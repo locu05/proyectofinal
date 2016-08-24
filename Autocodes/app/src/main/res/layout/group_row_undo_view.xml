@@ -9,7 +9,7 @@
         android:id="@+id/group_row_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/login_bkg"
+        android:src="@drawable/listadegrupo"
         android:layout_gravity="center_horizontal"
         android:background="@color/material_grey_300"
         android:contentDescription="@string/cd_main_image"

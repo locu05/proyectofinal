@@ -14,6 +14,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.loopj.android.http.*;
@@ -34,6 +38,8 @@ import proyectofinal.autocodes.model.Group;
 
 public class ListGroupActivity extends AppCompatActivity {
 
+    private long mRequestStartTimeUser;
+    private long mRequestStartTimeGroup;
     Context context;
     List<Group> groupList;
     boolean value = true;
@@ -123,31 +129,54 @@ public class ListGroupActivity extends AppCompatActivity {
 
     private void deleteGroup(final Group group) {
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        Log.e(LogConstants.PREPARING_REQUEST, "Calling /groups delete with groupId: " + group.getId());
-        client.delete(serverBaseUrl + "/group/" + group.getId() ,null ,new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    Log.e(LogConstants.SERVER_RESPONSE, "/group delete " + statusCode);
+        mRequestStartTimeUser = System.currentTimeMillis();
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.DELETE, serverBaseUrl + "/group/" + group.getId(), null, new Response.Listener<JSONObject>() {
 
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                // When Http response code is '404'
-                if(statusCode == 404){
-                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if(statusCode == 500){
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else{
-                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUser;
+                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                        Log.e(LogConstants.SERVER_RESPONSE, "/group delete onResponse");
+                    }
+                }, new Response.ErrorListener() {
 
-        });
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUser;
+                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                        Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+
+                    }
+                });
+
+        AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
+
+//        AsyncHttpClient client = new AsyncHttpClient();
+//        Log.e(LogConstants.PREPARING_REQUEST, "Calling /groups delete with groupId: " + group.getId());
+//        client.delete(serverBaseUrl + "/group/" + group.getId() ,null ,new AsyncHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                    Log.e(LogConstants.SERVER_RESPONSE, "/group delete " + statusCode);
+//
+//            }
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+//                // When Http response code is '404'
+//                if(statusCode == 404){
+//                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+//                }
+//                // When Http response code is '500'
+//                else if(statusCode == 500){
+//                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+//                }
+//                // When Http response code other than 404, 500
+//                else{
+//                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//        });
     }
 
     @Override
@@ -159,91 +188,157 @@ public class ListGroupActivity extends AppCompatActivity {
     }
 
     public void getUserInfo(String userId){
-        AsyncHttpClient client = new AsyncHttpClient();
-        Log.e(LogConstants.PREPARING_REQUEST, "Calling /user with id " + userId);
-        client.get( serverBaseUrl + "/user/" + userId,null ,new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                JSONObject obj = null;
-                try {
-                    obj = new JSONObject(new String(responseBody));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.e(LogConstants.SERVER_RESPONSE, "/user " + statusCode);
-                Log.e(LogConstants.JSON_RESPONSE, "/user " + obj.toString());
-            }
+        mRequestStartTimeUser = System.currentTimeMillis();
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+            (Request.Method.GET, serverBaseUrl + "/user/" + userId, null, new Response.Listener<JSONObject>() {
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                // When Http response code is '404'
-                if(statusCode == 404){
-                    Intent intent = new Intent(getApplicationContext(), WeightAndHeightActivity.class);
-                    startActivity(intent);
+                @Override
+                public void onResponse(JSONObject response) {
+                    long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUser;
+                    Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                    Log.e(LogConstants.JSON_RESPONSE, "/user " + response.toString());
                 }
-                // When Http response code is '500'
-                else if(statusCode == 500){
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else{
-                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
+            }, new Response.ErrorListener() {
 
-        });
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUser;
+                    Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                    Log.e(LogConstants.SERVER_RESPONSE, "Status Code:" + String.valueOf(error.networkResponse.statusCode));
+
+                }
+            });
+
+        AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
+
+
+//        AsyncHttpClient client = new AsyncHttpClient();
+//        Log.e(LogConstants.PREPARING_REQUEST, "Calling /user with id " + userId);
+//        client.get( serverBaseUrl + "/user/" + userId,null ,new AsyncHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                JSONObject obj = null;
+//                try {
+//                    obj = new JSONObject(new String(responseBody));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                Log.e(LogConstants.SERVER_RESPONSE, "/user " + statusCode);
+//                Log.e(LogConstants.JSON_RESPONSE, "/user " + obj.toString());
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+//                // When Http response code is '404'
+//                if(statusCode == 404){
+//                    Intent intent = new Intent(getApplicationContext(), WeightAndHeightActivity.class);
+//                    startActivity(intent);
+//                }
+//                // When Http response code is '500'
+//                else if(statusCode == 500){
+//                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+//                }
+//                // When Http response code other than 404, 500
+//                else{
+//                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//        });
+
+
     }
 
 
 
     public void getGroups(String userId){
-        AsyncHttpClient client = new AsyncHttpClient();
-        Log.e(LogConstants.PREPARING_REQUEST, "Calling /groups with userId: " + userId);
-        client.get(serverBaseUrl + "/groups/" + userId ,null ,new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+        mRequestStartTimeGroup = System.currentTimeMillis();
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+            (Request.Method.GET, serverBaseUrl + "/groups/" + userId, null, new Response.Listener<JSONObject>() {
 
-                try {
-                    JSONObject obj = new JSONObject(new String(responseBody));
-                    Log.e(LogConstants.SERVER_RESPONSE, "/groups " + statusCode);
-                    Log.e(LogConstants.JSON_RESPONSE, "/groups " + obj.toString());
-
-                        for(int i = 0 ; i< obj.getJSONArray("groups").length() ; i++) {
+                @Override
+                public void onResponse(JSONObject response) {
+                    long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeGroup;
+                    Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                    Log.e(LogConstants.JSON_RESPONSE, "/groups " + response.toString());
+                    try {
+                    for(int i = 0 ; i< response.getJSONArray("groups").length() ; i++) {
                             Group group = new Group();
-                            JSONObject jsonGroup = (JSONObject) obj.getJSONArray("groups").get(i);
+                            JSONObject jsonGroup = (JSONObject) response.getJSONArray("groups").get(i);
                             group.setId((Integer) jsonGroup.get("group_id"));
                             group.setName((String) jsonGroup.get("name"));
                             group.setActive((Integer) jsonGroup.get("active"));
                             groupList.add(group);
-                        }
-
-                    ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
-
-
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
+                        }}
+                    catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
 
-                }
-            }
+                    }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                // When Http response code is '404'
-                if(statusCode == 404){
-                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                    ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
                 }
-                // When Http response code is '500'
-                else if(statusCode == 500){
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else{
-                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
+            }, new Response.ErrorListener() {
 
-        });
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeGroup;
+                    Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                    Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+
+                }
+            });
+
+        AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
+
+
+//        AsyncHttpClient client = new AsyncHttpClient();
+//        Log.e(LogConstants.PREPARING_REQUEST, "Calling /groups with userId: " + userId);
+//        client.get(serverBaseUrl + "/groups/" + userId ,null ,new AsyncHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//
+//                try {
+//                    JSONObject obj = new JSONObject(new String(responseBody));
+//                    Log.e(LogConstants.SERVER_RESPONSE, "/groups " + statusCode);
+//                    Log.e(LogConstants.JSON_RESPONSE, "/groups " + obj.toString());
+//
+//                        for(int i = 0 ; i< obj.getJSONArray("groups").length() ; i++) {
+//                            Group group = new Group();
+//                            JSONObject jsonGroup = (JSONObject) obj.getJSONArray("groups").get(i);
+//                            group.setId((Integer) jsonGroup.get("group_id"));
+//                            group.setName((String) jsonGroup.get("name"));
+//                            group.setActive((Integer) jsonGroup.get("active"));
+//                            groupList.add(group);
+//                        }
+//
+//                    ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+//
+//
+//                } catch (JSONException e) {
+//                    // TODO Auto-generated catch block
+//                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+//                    e.printStackTrace();
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+//                // When Http response code is '404'
+//                if(statusCode == 404){
+//                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+//                }
+//                // When Http response code is '500'
+//                else if(statusCode == 500){
+//                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+//                }
+//                // When Http response code other than 404, 500
+//                else{
+//                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//        });
     }
 }

@@ -10,6 +10,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.loopj.android.http.AsyncHttpClient;
@@ -32,6 +36,7 @@ public class WeightAndHeightActivity extends AppCompatActivity {
     private TextView textViewHeight;
     private Button confirm;
     String serverBaseUrl = "http://107.170.81.44:3002";
+    private long mRequestStartTimeCreateUser;
 
 
     @Override
@@ -86,7 +91,6 @@ public class WeightAndHeightActivity extends AppCompatActivity {
             public void onClick(View view) {
                 try {
                     createUser(Integer.valueOf(textViewWeight.getText().toString()), Float.valueOf((Float.valueOf( textViewHeight.getText().toString() ) * 100)).intValue());
-                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (UnsupportedEncodingException e) {
@@ -98,6 +102,7 @@ public class WeightAndHeightActivity extends AppCompatActivity {
     }
 
     public void createUser(int weight, int height) throws JSONException, UnsupportedEncodingException {
+        mRequestStartTimeCreateUser = System.currentTimeMillis();
         Profile userProfile = Profile.getCurrentProfile();
         String fullName = userProfile.getFirstName() + " "  + userProfile.getMiddleName() + " " + userProfile.getLastName();
         JSONObject obj = new JSONObject();
@@ -107,34 +112,57 @@ public class WeightAndHeightActivity extends AppCompatActivity {
         obj.put("height", height);
         obj.put("user_fb_id",userProfile.getId());
 
-        AsyncHttpClient client = new AsyncHttpClient();
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.POST, serverBaseUrl + "/user", obj, new Response.Listener<JSONObject>() {
 
-        StringEntity entity = new StringEntity(obj.toString());
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeCreateUser;
+                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                        Log.e(LogConstants.SERVER_RESPONSE, "/user post onResponse");
+                        finish();
+                    }
+                }, new Response.ErrorListener() {
 
-        client.post(getApplicationContext(), serverBaseUrl + "/user", entity, "application/json", new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                Log.e(LogConstants.SERVER_RESPONSE, "" + statusCode);
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeCreateUser;
+                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                        Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
 
-            }
+                    }
+                });
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                // When Http response code is '404'
-                if(statusCode == 404){
-                    Toast.makeText(getApplicationContext(), "Couldn't get specified resource", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if(statusCode == 500){
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else{
-                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
+        AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
 
-        });
+//        AsyncHttpClient client = new AsyncHttpClient();
+//
+//        StringEntity entity = new StringEntity(obj.toString());
+//
+//        client.post(getApplicationContext(), serverBaseUrl + "/user", entity, "application/json", new AsyncHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                Log.e(LogConstants.SERVER_RESPONSE, "" + statusCode);
+//
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+//                // When Http response code is '404'
+//                if(statusCode == 404){
+//                    Toast.makeText(getApplicationContext(), "Couldn't get specified resource", Toast.LENGTH_LONG).show();
+//                }
+//                // When Http response code is '500'
+//                else if(statusCode == 500){
+//                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+//                }
+//                // When Http response code other than 404, 500
+//                else{
+//                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//        });
     }
     // A private method to help us initialize our variables.
     private void initializeVariables() {
