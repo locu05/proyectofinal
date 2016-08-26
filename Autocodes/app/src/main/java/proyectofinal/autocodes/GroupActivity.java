@@ -341,7 +341,11 @@ public class GroupActivity extends AppCompatActivity {
 //
 //                    ((BaseAdapter)listView.getAdapter()).notifyDataSetChanged();
 //
-//                    if(group.getActive()==1){
+//                    if(group.g
+//
+//
+//
+// etActive()==1){
 //                        activateGroup.setVisibility(View.INVISIBLE);
 //                        deactivateGroup.setVisibility(View.VISIBLE);
 //                    } else {

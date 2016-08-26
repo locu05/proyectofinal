@@ -13,6 +13,50 @@
         android:divider="#CCCCCC"
         android:dividerHeight="1dp">
     </com.nhaarman.listviewanimations.itemmanipulation.DynamicListView>
+    <!-- -->
+    <RelativeLayout
+        android:id="@id/android:empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!--
+        The progress bar widget
+        Set invisible if no items are available on completion of async. load.
+        Defaults to visible so is automatically shown on start up/initial search/load.
+        -->
+        <!--<ProgressBar-->
+            <!--android:id="@+id/progressbar_loading"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--/>-->
+        <proyectofinal.autocodes.view.ProgressWheel
+            android:id="@+id/progressbar_loading"
+            style="@style/ProgressBarStyle.Main"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginRight="18dp"
+            android:layout_centerInParent="true"/>
+
+        <!--
+        The "no data" indicator
+        Set visible if no items are available on completion of async. load.
+        Defaults to hidden so isn't shown until initial load/search is complete
+        and has failed to find any items.
+        -->
+        <TextView
+            android:id="@+id/busy_EmptyIndicator"
+            android:text="NO ITEMS"
+            android:textIsSelectable="false"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            />
+
+    </RelativeLayout>
+    <!-- -->
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"

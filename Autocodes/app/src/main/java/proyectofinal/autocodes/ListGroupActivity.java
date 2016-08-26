@@ -1,17 +1,24 @@
 package proyectofinal.autocodes;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -35,6 +42,9 @@ import cz.msebera.android.httpclient.Header;
 import proyectofinal.autocodes.adapter.GroupArrayAdapter;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
+import proyectofinal.autocodes.service.FetchActiveGroupService;
+import proyectofinal.autocodes.service.TrackingService;
+import proyectofinal.autocodes.view.ProgressWheel;
 
 public class ListGroupActivity extends AppCompatActivity {
 
@@ -46,14 +56,32 @@ public class ListGroupActivity extends AppCompatActivity {
     String serverBaseUrl = "http://107.170.81.44:3002";
     DynamicListView listView;
     AccessToken at2 = AccessToken.getCurrentAccessToken();
+    BroadcastReceiver receiver;
+    ProgressWheel progress;
+    TextView emptyList;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver((receiver),
+                new IntentFilter("ActiveGroup")
+        );
+    }
+
+    @Override
+    protected void onStop() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        super.onStop();
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //Chequea credenciales
-
         groupList.clear();
         ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+        progress.setVisibility(View.VISIBLE);
+        progress.spin();
+        emptyList.setVisibility(View.GONE);
         if (at2 == null){
             Log.e(LogConstants.LOGIN, "User NOT LOGGED, REDIRECTING");
             //Mandar al login si no esta logueado
@@ -98,9 +126,15 @@ public class ListGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_listgroup);
+        Intent intent = new Intent(context, FetchActiveGroupService.class);
+        intent.putExtra("userId", at2.getUserId());
+        startService(intent);
         groupList = new ArrayList<Group>();
         final GroupArrayAdapter groupAdapter = new GroupArrayAdapter(context, groupList);
         listView = (DynamicListView) findViewById(R.id.groupListView);
+        progress =(ProgressWheel) findViewById(R.id.progressbar_loading);
+        emptyList = (TextView) findViewById(R.id.busy_EmptyIndicator);
+
 
         SimpleSwipeUndoAdapter swipeUndoAdapter = new SimpleSwipeUndoAdapter(
                 groupAdapter, this, new OnDismissCallback() {
@@ -123,6 +157,14 @@ public class ListGroupActivity extends AppCompatActivity {
         swipeUndoAdapter.setAbsListView(listView);
         listView.setAdapter(swipeUndoAdapter);
         listView.enableSimpleSwipeUndo();
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String s = intent.getStringExtra("ActiveGroupMessage");
+                Log.e("MENSAJE RECIBIDO", s);
+            }
+        };
 
 
     }
@@ -204,7 +246,12 @@ public class ListGroupActivity extends AppCompatActivity {
                 public void onErrorResponse(VolleyError error) {
                     long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUser;
                     Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                    Log.e(LogConstants.SERVER_RESPONSE, "Status Code:" + String.valueOf(error.networkResponse.statusCode));
+                    if(error.networkResponse!=null){
+                        Log.e(LogConstants.SERVER_RESPONSE, "Status Code:" + String.valueOf(error.networkResponse.statusCode));
+                    } else {
+                        Log.e(LogConstants.SERVER_RESPONSE, "Status Code:" + String.valueOf(error.getMessage()));
+                    }
+
 
                 }
             });
@@ -277,6 +324,14 @@ public class ListGroupActivity extends AppCompatActivity {
                     }
 
                     ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+                    if(groupList.size()==0) {
+                        emptyList.setVisibility(View.VISIBLE);
+                        progress.setVisibility(View.GONE);
+                        progress.stopSpinning();
+                    } else {
+                        progress.setVisibility(View.GONE);
+                        progress.stopSpinning();
+                    }
                 }
             }, new Response.ErrorListener() {
 

@@ -40,7 +40,7 @@
         <attr name="rippleBackground" format="color" />
         <attr name="rippleDelayClick" format="boolean" />
         <attr name="ripplePersistent" format="boolean" />
-		<attr name="rippleInAdapter" format="boolean"/>
+        <attr name="rippleInAdapter" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="ProgressWheel">
         <attr name="text" format="string" />
@@ -54,6 +54,7 @@
         <attr name="circleColor" format="color" />
         <attr name="radius" format="dimension" />
         <attr name="barWidth" format="dimension" />
+        <attr name="barLength2" format="dimension" />
         <attr name="contourColor" format="color" />
         <attr name="contourSize" format="dimension" />
     </declare-styleable>
@@ -505,7 +506,7 @@ input languages enabled.
             <enum name="robotoThinItalic" value="15" />
         </attr>
     </declare-styleable>
-    
+
     <!-- Shape image view -->
     <attr name="siArrowPosition">
         <enum name="left" value="0" />

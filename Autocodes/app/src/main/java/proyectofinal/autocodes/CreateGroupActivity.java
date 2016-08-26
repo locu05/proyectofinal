@@ -156,6 +156,7 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
                             "para continuar", Toast.LENGTH_LONG).show();
                 } else {
                     try {
+                        submitGroup.setEnabled(false);
                         createGroup(participantAddedList, groupNameToCreate.getText().toString(), Profile.getCurrentProfile().getId());
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -200,6 +201,7 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
                         long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeCreateGroup;
                         Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
                         Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+                        submitGroup.setEnabled(true);
 
                     }
                 });

@@ -12,24 +12,23 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import proyectofinal.autocodes.R;
+import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
 
 
 public class TrackingService extends Service {
     public static int ONGOING_NOTIFICATION_ID = 1564150;
 
-    private static final String LOG_TAG = "ForegroundService";
 
     @Override
     public void onCreate() {
-        Log.i(LOG_TAG, "Service created");
-
+        Log.i(LogConstants.LOG_TAG, "Service created");
         super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-            Log.i(LOG_TAG, "Received Start Foreground Intent ");
+            Log.i(LogConstants.LOG_TAG, "Received Start Foreground Intent ");
         Group group = (Group) intent.getSerializableExtra("group");
 
         NotificationCompat.Builder mBuilder =
@@ -46,7 +45,7 @@ public class TrackingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(LOG_TAG, "Service destroyed");
+        Log.i(LogConstants.LOG_TAG, "Service destroyed");
     }
 
     @Nullable

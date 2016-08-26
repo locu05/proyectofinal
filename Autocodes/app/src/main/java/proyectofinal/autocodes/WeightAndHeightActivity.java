@@ -90,6 +90,7 @@ public class WeightAndHeightActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
+                    confirm.setEnabled(false);
                     createUser(Integer.valueOf(textViewWeight.getText().toString()), Float.valueOf((Float.valueOf( textViewHeight.getText().toString() ) * 100)).intValue());
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -129,6 +130,7 @@ public class WeightAndHeightActivity extends AppCompatActivity {
                         long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeCreateUser;
                         Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
                         Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+                        confirm.setEnabled(true);
 
                     }
                 });
