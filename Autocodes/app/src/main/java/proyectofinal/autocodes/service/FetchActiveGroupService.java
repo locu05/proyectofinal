@@ -23,6 +23,7 @@ public class FetchActiveGroupService extends Service {
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
     LocalBroadcastManager broadcaster;
+    private boolean mRunning;
 
     @Override
     public void onCreate() {
@@ -36,20 +37,25 @@ public class FetchActiveGroupService extends Service {
         mServiceLooper = thread.getLooper();
         // start the service using the background handler
         mServiceHandler = new ServiceHandler(mServiceLooper);
+        mRunning = false;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(LogConstants.FETCH_ACTIVE_GROUP_SERVICE, "Started fetch active group service");
-        String userId = (String) intent.getStringExtra("userId");
-        Toast.makeText(this, "onStartCommand " + userId, Toast.LENGTH_SHORT).show();
+        if (!mRunning) {
+            mRunning = true;
+            Log.e(LogConstants.FETCH_ACTIVE_GROUP_SERVICE, "Started fetch active group service");
+            String userId = (String) intent.getStringExtra("userId");
+            Toast.makeText(this, "onStartCommand " + userId, Toast.LENGTH_SHORT).show();
 
-        // call a new service handler. The service ID can be used to identify the service
-        Message message = mServiceHandler.obtainMessage();
-        message.arg1 = startId;
-        mServiceHandler.sendMessage(message);
+            // call a new service handler. The service ID can be used to identify the service
+            Message message = mServiceHandler.obtainMessage();
+            message.arg1 = startId;
+            mServiceHandler.sendMessage(message);
 
-        return START_STICKY;
+            return START_STICKY;
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
 //    protected void showToast(final String msg){
