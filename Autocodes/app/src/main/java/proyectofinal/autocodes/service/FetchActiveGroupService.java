@@ -53,7 +53,7 @@ public class FetchActiveGroupService extends Service {
             message.arg1 = startId;
             mServiceHandler.sendMessage(message);
 
-            return START_STICKY;
+            return START_NOT_STICKY;
         }
         return super.onStartCommand(intent, flags, startId);
     }
