@@ -79,6 +79,7 @@ public class ListGroupActivity extends AppCompatActivity {
         super.onResume();
         groupList.clear();
         ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+        at2 = AccessToken.getCurrentAccessToken();
         progress.setVisibility(View.VISIBLE);
         progress.spin();
         emptyList.setVisibility(View.GONE);
