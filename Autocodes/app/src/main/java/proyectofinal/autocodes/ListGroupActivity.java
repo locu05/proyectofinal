@@ -9,15 +9,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +24,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
-import com.loopj.android.http.*;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.OnDismissCallback;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.undo.SimpleSwipeUndoAdapter;
@@ -38,19 +34,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.msebera.android.httpclient.Header;
 import proyectofinal.autocodes.adapter.GroupArrayAdapter;
+import proyectofinal.autocodes.constant.AutocodesIntentConstants;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
 import proyectofinal.autocodes.service.FetchActiveGroupService;
-import proyectofinal.autocodes.service.TrackingService;
 import proyectofinal.autocodes.view.ProgressWheel;
 
 public class ListGroupActivity extends AppCompatActivity {
 
     private long mRequestStartTimeUser;
     private long mRequestStartTimeGroup;
-    Context context;
+    Context listGroupActivityContext;
     List<Group> groupList;
     boolean value = true;
     String serverBaseUrl = "http://107.170.81.44:3002";
@@ -92,7 +87,7 @@ public class ListGroupActivity extends AppCompatActivity {
             Log.e(LogConstants.LOGIN, "UserId on " + at2.getUserId());
             getUserInfo(at2.getUserId());
             getGroups(at2.getUserId());
-            Intent intent = new Intent(context, FetchActiveGroupService.class);
+            Intent intent = new Intent(listGroupActivityContext, FetchActiveGroupService.class);
             intent.putExtra("userId", at2.getUserId());
             startService(intent);
         }
@@ -128,11 +123,11 @@ public class ListGroupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = this;
+        listGroupActivityContext = this;
         at2 = AccessToken.getCurrentAccessToken();
         setContentView(R.layout.activity_listgroup);
         groupList = new ArrayList<Group>();
-        final GroupArrayAdapter groupAdapter = new GroupArrayAdapter(context, groupList);
+        final GroupArrayAdapter groupAdapter = new GroupArrayAdapter(listGroupActivityContext, groupList);
         listView = (DynamicListView) findViewById(R.id.groupListView);
         progress =(ProgressWheel) findViewById(R.id.progressbar_loading);
         emptyList = (TextView) findViewById(R.id.busy_EmptyIndicator);
@@ -160,13 +155,23 @@ public class ListGroupActivity extends AppCompatActivity {
         listView.setAdapter(swipeUndoAdapter);
         listView.enableSimpleSwipeUndo();
 
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String s = intent.getStringExtra("ActiveGroupMessage");
-                Log.e("MENSAJE RECIBIDO", s);
-            }
-        };
+//        receiver = new BroadcastReceiver() {
+//
+//            boolean hasAlreadyTransitionedToGroup = false;
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//
+//                if(!hasAlreadyTransitionedToGroup) {
+//                    Group group = (Group) intent.getSerializableExtra("ActiveGroupMessage");
+//                    Intent intentGroup = new Intent(getApplicationContext(), GroupActivity.class);
+//                    intentGroup.putExtra(AutocodesIntentConstants.GROUP_ID, String.valueOf(group.getId()));
+//                    intentGroup.putExtra(AutocodesIntentConstants.GROUP_NAME, String.valueOf(group.getName()));
+//                    listGroupActivityContext.startActivity(intentGroup);
+//                    hasAlreadyTransitionedToGroup = true;
+//                }
+//
+//            }
+//        };
 
 
     }

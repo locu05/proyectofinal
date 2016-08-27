@@ -164,7 +164,7 @@ public class GroupActivity extends AppCompatActivity {
 //            @Override
 //            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 //                Log.e(LogConstants.SERVER_RESPONSE, "Status Code from /group/deactivate post " + statusCode);
-//                Intent intent = new Intent(context, TrackingService.class);
+//                Intent intent = new Intent(listGroupActivityContext, TrackingService.class);
 //                stopService(intent);
 //                finish();
 //            }
@@ -204,9 +204,9 @@ public class GroupActivity extends AppCompatActivity {
                         long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeActivateGroup;
                         Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
                         Log.e(LogConstants.SERVER_RESPONSE, "/group/activate post onResponse");
-                        Intent intent = new Intent(context, TrackingService.class);
-                        intent.putExtra("group", group);
-                        startService(intent);
+//                        Intent intent = new Intent(listGroupActivityContext, TrackingService.class);
+//                        intent.putExtra("group", group);
+//                        startService(intent);
                         finish();
                     }
                 }, new Response.ErrorListener() {
@@ -226,7 +226,7 @@ public class GroupActivity extends AppCompatActivity {
 //            @Override
 //            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 //                Log.e(LogConstants.SERVER_RESPONSE, "Status Code from /group/activate post " + statusCode);
-//                Intent intent = new Intent(context, TrackingService.class);
+//                Intent intent = new Intent(listGroupActivityContext, TrackingService.class);
 //                intent.putExtra("group", group);
 //                startService(intent);
 //                finish();
