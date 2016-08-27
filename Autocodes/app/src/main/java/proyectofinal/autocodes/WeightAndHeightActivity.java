@@ -94,8 +94,10 @@ public class WeightAndHeightActivity extends AppCompatActivity {
                     createUser(Integer.valueOf(textViewWeight.getText().toString()), Float.valueOf((Float.valueOf( textViewHeight.getText().toString() ) * 100)).intValue());
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    confirm.setEnabled(true);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
+                    confirm.setEnabled(true);
                 }
             }
         });
