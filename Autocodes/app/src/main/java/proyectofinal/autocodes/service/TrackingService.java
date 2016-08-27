@@ -20,6 +20,7 @@ import proyectofinal.autocodes.model.Group;
 
 
 public class TrackingService extends Service {
+    boolean mRunning = false;
     public static int ONGOING_NOTIFICATION_ID = 1564150;
 
 
@@ -31,26 +32,30 @@ public class TrackingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (!mRunning) {
+            mRunning = true;
             Log.i(LogConstants.LOG_TAG, "Received Start Foreground Intent ");
-        Group group = (Group) intent.getSerializableExtra("group");
+            Group group = (Group) intent.getSerializableExtra("group");
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_directions_car)
-                        .setContentTitle(group.getName())
-                        .setContentText("Conductor - OK");
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_directions_car)
+                            .setContentTitle(group.getName())
+                            .setContentText("Conductor - OK");
 
-        startForeground(ONGOING_NOTIFICATION_ID, mBuilder.build());
+            startForeground(ONGOING_NOTIFICATION_ID, mBuilder.build());
 
-        try {
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-            r.play();
-        } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                r.play();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return START_STICKY;
         }
-
-        return START_STICKY;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override

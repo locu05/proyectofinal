@@ -134,6 +134,8 @@ public class FetchActiveGroupService extends Service {
                                         if(error.networkResponse!=null){
                                             Log.i(LogConstants.SERVER_RESPONSE, "Status Code:" + String.valueOf(error.networkResponse.statusCode));
                                             Log.i(LogConstants.FETCH_ACTIVE_GROUP_SERVICE, "There are no active groups...");
+                                            Intent intent = new Intent(getApplicationContext(), TrackingService.class);
+                                            stopService(intent);
                                         } else {
                                             Log.e(LogConstants.SERVER_RESPONSE, "Status Code:" + String.valueOf(error.getMessage()));
                                         }
