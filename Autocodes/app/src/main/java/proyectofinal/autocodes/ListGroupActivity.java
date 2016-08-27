@@ -55,7 +55,7 @@ public class ListGroupActivity extends AppCompatActivity {
     boolean value = true;
     String serverBaseUrl = "http://107.170.81.44:3002";
     DynamicListView listView;
-    AccessToken at2 = AccessToken.getCurrentAccessToken();
+    AccessToken at2;
     BroadcastReceiver receiver;
     ProgressWheel progress;
     TextView emptyList;
@@ -79,6 +79,7 @@ public class ListGroupActivity extends AppCompatActivity {
         super.onResume();
         groupList.clear();
         ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+        at2 = AccessToken.getCurrentAccessToken();
         progress.setVisibility(View.VISIBLE);
         progress.spin();
         emptyList.setVisibility(View.GONE);
