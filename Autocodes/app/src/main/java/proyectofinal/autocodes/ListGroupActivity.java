@@ -91,6 +91,9 @@ public class ListGroupActivity extends AppCompatActivity {
             Log.e(LogConstants.LOGIN, "UserId on " + at2.getUserId());
             getUserInfo(at2.getUserId());
             getGroups(at2.getUserId());
+            Intent intent = new Intent(context, FetchActiveGroupService.class);
+            intent.putExtra("userId", at2.getUserId());
+            startService(intent);
         }
 
 
@@ -126,9 +129,6 @@ public class ListGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_listgroup);
-        Intent intent = new Intent(context, FetchActiveGroupService.class);
-        intent.putExtra("userId", at2.getUserId());
-        startService(intent);
         groupList = new ArrayList<Group>();
         final GroupArrayAdapter groupAdapter = new GroupArrayAdapter(context, groupList);
         listView = (DynamicListView) findViewById(R.id.groupListView);
