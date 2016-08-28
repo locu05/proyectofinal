@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#aa000000"
+    tools:context="proyectofinal.autocodes.DriverStatusActivity">
+
+
+    <proyectofinal.autocodes.font.RobotoTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Lucas Hamie"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:id="@+id/driverName"
+        android:layout_alignParentTop="true" />
+
+    <ImageView
+        android:id="@+id/driver_avatar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/user"
+        android:layout_below="@id/driverName"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="Avatar"
+        android:scaleType="centerInside" />
+
+    <proyectofinal.autocodes.font.RobotoTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Alcohol en sangre: "
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:id="@+id/bacLabel"
+            android:layout_below="@id/driver_avatar" />
+
+        <proyectofinal.autocodes.font.RobotoTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="0,3 g/L "
+            android:textSize="40sp"
+            android:textColor="@color/cpb_green"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/bacTv"
+            android:layout_below="@id/bacLabel"
+            />
+
+
+
+    <proyectofinal.autocodes.font.RobotoTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="APTO PARA MANEJAR"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:id="@+id/aptoLabel"
+        android:layout_below="@id/bacTv" />
+
+
+
+</RelativeLayout>

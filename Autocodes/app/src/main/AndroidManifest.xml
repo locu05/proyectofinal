@@ -38,12 +38,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".PreferencesActivity" />
-        <activity android:name=".WeightAndHeightActivity"></activity>
+        <activity android:name=".WeightAndHeightActivity" />
 
-        <service android:name=".service.TrackingService" >
-        </service>
-        <service android:name=".service.FetchActiveGroupService" >
-        </service>
+        <service android:name=".service.TrackingService"></service>
+        <service android:name=".service.FetchActiveGroupService"></service>
+
+        <activity android:name=".DriverStatusActivity"></activity>
     </application>
 
 </manifest>

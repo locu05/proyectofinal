@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:background="@android:color/transparent"
-                android:text="OK TO DRIVE"
+                android:text="Participante"
                 app:typeface="robotoLight"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:textColor="@android:color/holo_green_light"

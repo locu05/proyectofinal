@@ -4,16 +4,15 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
+import proyectofinal.autocodes.DriverStatusActivity;
 import proyectofinal.autocodes.R;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
@@ -22,7 +21,7 @@ import proyectofinal.autocodes.model.Group;
 public class TrackingService extends Service {
     boolean mRunning = false;
     public static int ONGOING_NOTIFICATION_ID = 1564150;
-
+    Group group;
 
     @Override
     public void onCreate() {
@@ -35,12 +34,25 @@ public class TrackingService extends Service {
         if (!mRunning) {
             mRunning = true;
             Log.i(LogConstants.LOG_TAG, "Received Start Foreground Intent ");
-            Group group = (Group) intent.getSerializableExtra("group");
+            group = (Group) intent.getSerializableExtra("group");
+            Intent resultIntent = new Intent(this, DriverStatusActivity.class);
+            resultIntent.putExtra("GroupId", group.getId());
+
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addParentStack(DriverStatusActivity.class);
+
+            // Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(resultIntent);
+
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent( 0,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
 
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(this)
                             .setSmallIcon(R.drawable.ic_directions_car)
                             .setContentTitle(group.getName())
+                            .setContentIntent(resultPendingIntent)
                             .setContentText("Conductor - OK");
 
             startForeground(ONGOING_NOTIFICATION_ID, mBuilder.build());
@@ -64,7 +76,6 @@ public class TrackingService extends Service {
         Log.i(LogConstants.LOG_TAG, "Service destroyed");
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;

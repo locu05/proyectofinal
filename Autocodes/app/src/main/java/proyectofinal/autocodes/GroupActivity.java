@@ -57,6 +57,7 @@ public class GroupActivity extends AppCompatActivity {
     String serverBaseUrl = "http://107.170.81.44:3002";
     Button activateGroup;
     Button deactivateGroup;
+    Button driverStatusBtn;
     Group group;
 
     @Override
@@ -89,6 +90,18 @@ public class GroupActivity extends AppCompatActivity {
         activateGroup = (Button) findViewById(R.id.activateGroup);
         deactivateGroup = (Button) findViewById(R.id.deactivateGroup);
         groupStatus = (TextView) findViewById(R.id.groupStatus);
+        driverStatusBtn = (Button) findViewById(R.id.viewDriverStatusBtn);
+
+        driverStatusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent k = new Intent(context, DriverStatusActivity.class);
+                k.putExtra("GroupId", intentValues.get(AutocodesIntentConstants.GROUP_ID));
+                startActivity(k);
+            }
+        });
+
 
         deactivateGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -297,9 +310,11 @@ public class GroupActivity extends AppCompatActivity {
                             if(group.getActive()==1){
                                 activateGroup.setVisibility(View.INVISIBLE);
                                 deactivateGroup.setVisibility(View.VISIBLE);
+                                driverStatusBtn.setVisibility(View.VISIBLE);
                             } else {
                                 activateGroup.setVisibility(View.VISIBLE);
                                 deactivateGroup.setVisibility(View.INVISIBLE);
+                                driverStatusBtn.setVisibility(View.INVISIBLE);
                             }
 
                     } catch (JSONException e) {
