@@ -16,4 +16,6 @@ public class LogConstants {
     public static final String LOG_TAG = "Foreground Service";
     public static final String FETCH_ACTIVE_GROUP_SERVICE = "Fetch-Group-On";
     public static final String TRACKING_DRIVER_SERVICE = "Tracking Driver";
+    public static final String TRACKING_SERVICE = "Tracking service";
+
 }

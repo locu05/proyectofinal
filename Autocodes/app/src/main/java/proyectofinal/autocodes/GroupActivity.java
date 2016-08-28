@@ -99,7 +99,7 @@ public class GroupActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Intent k = new Intent(context, DriverStatusActivity.class);
-                k.putExtra("GroupId", intentValues.get(AutocodesIntentConstants.GROUP_ID));
+                k.putExtra("GroupId", Integer.valueOf(intentValues.get(AutocodesIntentConstants.GROUP_ID)));
                 startActivity(k);
             }
         });
