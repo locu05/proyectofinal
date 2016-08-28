@@ -1,6 +1,8 @@
 package proyectofinal.autocodes.service;
 
+import android.app.ActivityManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -16,10 +18,14 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.facebook.AccessToken;
 
 import org.json.JSONObject;
 
+import java.util.List;
+
 import proyectofinal.autocodes.AutocodesApplication;
+import proyectofinal.autocodes.DriverConfirmDeviceActivity;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
 
@@ -109,16 +115,29 @@ public class FetchActiveGroupService extends Service {
                                     public void onResponse(JSONObject response) {
                                         try {
                                             long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeGetActiveGroup;
-                                            Intent intent = new Intent(getApplicationContext(), TrackingService.class);
+                                            Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                                            Log.e(LogConstants.JSON_RESPONSE, "/user " + response.toString());
+                                            Intent intentTrackingService = new Intent(getApplicationContext(), TrackingService.class);
                                             Group group = new Group();
                                             group.setId((Integer) response.get("group_id"));
                                             group.setName((String) response.get("name"));
                                             group.setActive((Integer) response.get("active"));
-                                            intent.putExtra("group", group);
-                                            startService(intent);
-                                            sendResult(group);
-                                            Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                                            Log.e(LogConstants.JSON_RESPONSE, "/user " + response.toString());
+                                            group.setDriverId((String) response.get("driver_id"));
+                                            intentTrackingService.putExtra("group", group);
+                                            if(group.getDriverId().equals(AccessToken.getCurrentAccessToken().getUserId())) {
+                                                if(!isMyServiceRunning(TrackingDriverService.class)) {
+                                                    if(!DriverConfirmDeviceActivity.running) {
+                                                        Intent intentDriverConfirmDevice = new Intent(getApplicationContext(), DriverConfirmDeviceActivity.class);
+                                                        intentDriverConfirmDevice.putExtra("group", group);
+                                                        intentDriverConfirmDevice.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        getApplicationContext().startActivity(intentDriverConfirmDevice);
+                                                    }
+                                                }
+                                            } else {
+                                                startService(intentTrackingService);
+                                                sendResult(group);
+                                            }
+
                                         } catch (Exception e) {
                                             Log.e(LogConstants.FETCH_ACTIVE_GROUP_SERVICE, "Error fetching the active groups: " + e.getMessage());
                                         }
@@ -159,4 +178,15 @@ public class FetchActiveGroupService extends Service {
 //                intent.putExtra("ActiveGroupMessage", message);
 //            broadcaster.sendBroadcast(intent);
         }
+
+        private boolean isMyServiceRunning(Class<?> serviceClass) {
+            ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (serviceClass.getName().equals(service.service.getClassName())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
 }}

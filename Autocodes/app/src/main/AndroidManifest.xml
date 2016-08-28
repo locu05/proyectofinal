@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application
         android:name=".AutocodesApplication"
@@ -42,8 +43,10 @@
 
         <service android:name=".service.TrackingService"></service>
         <service android:name=".service.FetchActiveGroupService"></service>
+        <service android:name=".service.TrackingDriverService"></service>
 
         <activity android:name=".DriverStatusActivity"></activity>
+        <activity android:name=".DriverConfirmDeviceActivity"></activity>
     </application>
 
 </manifest>

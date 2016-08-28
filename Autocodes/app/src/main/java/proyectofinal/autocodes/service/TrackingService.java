@@ -25,55 +25,58 @@ public class TrackingService extends Service {
 
     @Override
     public void onCreate() {
-        Log.i(LogConstants.LOG_TAG, "Service created");
+        Log.i(LogConstants.LOG_TAG, "Tracking Service created");
         super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         if (!mRunning) {
             mRunning = true;
-            Log.i(LogConstants.LOG_TAG, "Received Start Foreground Intent ");
-            group = (Group) intent.getSerializableExtra("group");
-            Intent resultIntent = new Intent(this, DriverStatusActivity.class);
-            resultIntent.putExtra("GroupId", group.getId());
+            if(group==null || group.getId()!=((Group) intent.getSerializableExtra("group")).getId()) {
+                group = (Group) intent.getSerializableExtra("group");
+                Intent resultIntent = new Intent(this, DriverStatusActivity.class);
+                resultIntent.putExtra("GroupId", group.getId());
 
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addParentStack(DriverStatusActivity.class);
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                stackBuilder.addParentStack(DriverStatusActivity.class);
 
-            // Adds the Intent that starts the Activity to the top of the stack
-            stackBuilder.addNextIntent(resultIntent);
+                // Adds the Intent that starts the Activity to the top of the stack
+                stackBuilder.addNextIntent(resultIntent);
 
-            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent( 0,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent resultPendingIntent = stackBuilder.getPendingIntent( 0,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
 
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.ic_directions_car)
-                            .setContentTitle(group.getName())
-                            .setContentIntent(resultPendingIntent)
-                            .setContentText("Conductor - OK");
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this)
+                                .setSmallIcon(R.drawable.ic_directions_car)
+                                .setContentTitle(group.getName())
+                                .setContentIntent(resultPendingIntent)
+                                .setContentText("Conductor - OK");
 
-            startForeground(ONGOING_NOTIFICATION_ID, mBuilder.build());
+                startForeground(ONGOING_NOTIFICATION_ID, mBuilder.build());
 
-            try {
-                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-                r.play();
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                    r.play();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return START_STICKY;
+            }
             }
 
-            return START_STICKY;
-        }
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(LogConstants.LOG_TAG, "Service destroyed");
+        Log.i(LogConstants.LOG_TAG, "Tracking Service destroyed");
     }
 
     @Override
