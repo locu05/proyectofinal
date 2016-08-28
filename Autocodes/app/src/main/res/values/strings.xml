@@ -27,6 +27,7 @@
     <string name="drawer_icon_blog">&#xe91b;</string>
     <string name="drawer_icon_git_hub">&#xe99b;</string>
     <string name="drawer_icon_instagram">&#xe9f5;</string>
+    <string name="go_main">Ver grupos</string>
 
     <!-- Navigation Drawer icon titles -->
     <string name="drawer_title_splash_screens">Splash Screens</string>
