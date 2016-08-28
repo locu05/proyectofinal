@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#cc000000"
     android:orientation="vertical" >
 
     <com.nhaarman.listviewanimations.itemmanipulation.DynamicListView
@@ -45,10 +46,12 @@
         Defaults to hidden so isn't shown until initial load/search is complete
         and has failed to find any items.
         -->
-        <TextView
+        <proyectofinal.autocodes.font.RobotoTextView
             android:id="@+id/busy_EmptyIndicator"
-            android:text="NO ITEMS"
+            android:text="No hay grupos disponibles"
+            android:textColor="@color/white"
             android:textIsSelectable="false"
+            android:textSize="19sp"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,10 +60,6 @@
 
     </RelativeLayout>
     <!-- -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#cc000000" />
     <!--<TextView android:id="@android:id/empty"-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="match_parent"-->
