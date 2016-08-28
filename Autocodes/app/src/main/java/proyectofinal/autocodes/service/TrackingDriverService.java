@@ -1,9 +1,8 @@
 package proyectofinal.autocodes.service;
 
-import android.app.ActivityManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -16,24 +15,17 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.facebook.AccessToken;
+import java.util.Set;
 
-import org.json.JSONObject;
-
-import proyectofinal.autocodes.AutocodesApplication;
-import proyectofinal.autocodes.DriverConfirmDeviceActivity;
-import proyectofinal.autocodes.DriverStatusActivity;
 import proyectofinal.autocodes.R;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
+
+import static android.bluetooth.BluetoothAdapter.getDefaultAdapter;
 
 
 public class TrackingDriverService extends Service {
@@ -45,7 +37,7 @@ public class TrackingDriverService extends Service {
     LocalBroadcastManager broadcaster;
     private ServiceHandler mServiceHandler;
     private Looper mServiceLooper;
-
+    private int REQUEST_ENABLE_BT = 56465131;
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
@@ -129,7 +121,34 @@ public class TrackingDriverService extends Service {
             try {
                 Log.e(LogConstants.TRACKING_DRIVER_SERVICE, "Tracking Device...");
                 while(true) {
-                    Thread.sleep(5000);
+                    BluetoothAdapter mBluetoothAdapter = getDefaultAdapter();
+                    if (mBluetoothAdapter == null) {
+                        // Device does not support Bluetooth
+                        Log.e(LogConstants.LOG_TAG, "Device does not support bluetooth");
+                        Toast.makeText(getApplicationContext(), "Device does not support bluetooth", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                 /*   if (!mBluetoothAdapter.isEnabled()) {
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    }*/
+                    Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+                    Log.e("Paired devices", "" + pairedDevices.size());
+                    // If there are paired devices
+                    if (pairedDevices.size() > 0) {
+                        // Loop through paired devices
+                        // Add the name and address to an array adapter to show in a ListView
+                        for(BluetoothDevice  dev: pairedDevices){
+                            Log.e("BTDEV", dev.getName() + "\n" + dev.getAddress());
+                            if(dev.getName().trim().equals("MacBook Pro de Martin")){
+                                Log.e("BTDEV", "Starting thread");
+                                ConnectThread ct = new ConnectThread(dev);
+                                ct.start();
+                            }
+                        };
+                    }
+
+                    Thread.sleep(150000);
                     Log.i(LogConstants.TRACKING_DRIVER_SERVICE, "Receiving bluetooth data...");
                 }
 
