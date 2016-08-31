@@ -17,5 +17,6 @@ public class LogConstants {
     public static final String FETCH_ACTIVE_GROUP_SERVICE = "Fetch-Group-On";
     public static final String TRACKING_DRIVER_SERVICE = "Tracking Driver";
     public static final String TRACKING_SERVICE = "Tracking service";
-
+    public static final String PULL_AND_ANALIZE_DATA_SERVICE = "Analize Service";
+    public static final String BLUETOOTH_CONNECTION_THREAD = "Bluetooth Connection";
 }

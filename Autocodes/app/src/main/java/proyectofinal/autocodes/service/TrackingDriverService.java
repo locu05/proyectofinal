@@ -21,8 +21,10 @@ import android.widget.Toast;
 
 import java.util.Set;
 
+import proyectofinal.autocodes.AutocodesApplication;
 import proyectofinal.autocodes.R;
 import proyectofinal.autocodes.constant.LogConstants;
+import proyectofinal.autocodes.constant.MessageConstants;
 import proyectofinal.autocodes.model.Group;
 
 import static android.bluetooth.BluetoothAdapter.getDefaultAdapter;
@@ -32,12 +34,13 @@ public class TrackingDriverService extends Service {
     boolean mRunning = false;
     public static int ONGOING_NOTIFICATION_ID = 1564150;
     Group group;
-    // Binder given to clients
     private final IBinder mBinder = new TrackingDriverBinder();
     LocalBroadcastManager broadcaster;
     private ServiceHandler mServiceHandler;
     private Looper mServiceLooper;
     private int REQUEST_ENABLE_BT = 56465131;
+    private Handler mHandler;
+
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
@@ -109,8 +112,8 @@ public class TrackingDriverService extends Service {
         super.onDestroy();
         Log.i(LogConstants.LOG_TAG, "Tracking Driver Service Destroyed");
     }
-    // Object responsible for
-    private final class ServiceHandler extends Handler {
+
+    public final class ServiceHandler extends Handler {
 
         public ServiceHandler(Looper looper) {
             super(looper);
@@ -118,9 +121,13 @@ public class TrackingDriverService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            try {
-                Log.e(LogConstants.TRACKING_DRIVER_SERVICE, "Tracking Device...");
-                while(true) {
+            if (msg.what== MessageConstants.ERROR_CONNECTING_DEVICE) {
+                Toast.makeText(AutocodesApplication.getInstance().getApplicationContext(), "No se puede conectar con el dispositivo", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(AutocodesApplication.getInstance().getApplicationContext(), TrackingDriverService.class);
+                AutocodesApplication.getInstance().getApplicationContext().stopService(intent);
+            } else {
+                try {
+                    Log.e(LogConstants.TRACKING_DRIVER_SERVICE, "Tracking Device...");
                     BluetoothAdapter mBluetoothAdapter = getDefaultAdapter();
                     if (mBluetoothAdapter == null) {
                         // Device does not support Bluetooth
@@ -133,36 +140,38 @@ public class TrackingDriverService extends Service {
                         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                     }*/
                     Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-                    Log.e("Paired devices", "" + pairedDevices.size());
+                    Log.i("Paired devices", "" + pairedDevices.size());
                     // If there are paired devices
                     if (pairedDevices.size() > 0) {
                         // Loop through paired devices
                         // Add the name and address to an array adapter to show in a ListView
+                        boolean foundDevice = false;
                         for(BluetoothDevice  dev: pairedDevices){
-                            Log.e("BTDEV", dev.getName() + "\n" + dev.getAddress());
-                            if(dev.getName().trim().equals("MacBook Pro de Martin")){
-                                Log.e("BTDEV", "Starting thread");
-                                ConnectThread ct = new ConnectThread(dev);
+                            if(dev.getName().trim().equals("HC-06")){
+                                Log.i(LogConstants.TRACKING_DRIVER_SERVICE, "Starting thread with: ");
+                                Log.i(LogConstants.TRACKING_DRIVER_SERVICE, dev.getName() + "\n" + dev.getAddress());
+                                ConnectThread ct = new ConnectThread(dev,mServiceHandler);
                                 ct.start();
+                                Intent intentPullAndAnalizeDataService = new Intent(getApplicationContext(),
+                                        PullAndAnalizeDataService.class);
+                                startService(intentPullAndAnalizeDataService);
+                                foundDevice = true;
                             }
+                        }
+                        if(!foundDevice) {
+                            Toast.makeText(getApplicationContext(), "No se puede encontrar el dispositivo," +
+                                    " por favor asegurese de haber sincronizado el dispositivo.", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(getApplicationContext(), TrackingDriverService.class);
+                            stopService(intent);
                         };
                     }
 
-                    Thread.sleep(150000);
-                    Log.i(LogConstants.TRACKING_DRIVER_SERVICE, "Receiving bluetooth data...");
+                }catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-            }catch (Exception e) {
             }
-        }
 
-        public void sendResult(Group message) {
-//            Intent intent = new Intent("ActiveGroup");
-//            if(message != null)
-//                intent.putExtra("ActiveGroupMessage", message);
-//            broadcaster.sendBroadcast(intent);
         }
-
 
     }
 
