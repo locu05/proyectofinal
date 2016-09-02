@@ -16,6 +16,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.facebook.AccessToken;
+import com.facebook.Profile;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -60,6 +62,7 @@ public class GroupActivity extends AppCompatActivity {
     Button activateGroup;
     Button deactivateGroup;
     Button driverStatusBtn;
+    Button chat;
     Group group;
 
     @Override
@@ -90,6 +93,7 @@ public class GroupActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.groupView);
         listView.setAdapter(participantAdapter);
         activateGroup = (Button) findViewById(R.id.activateGroup);
+        chat = (Button) findViewById(R.id.chatGroup);
         deactivateGroup = (Button) findViewById(R.id.deactivateGroup);
         groupStatus = (TextView) findViewById(R.id.groupStatus);
         driverStatusBtn = (Button) findViewById(R.id.viewDriverStatusBtn);
@@ -139,6 +143,20 @@ public class GroupActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Debe seleccionar un conductor designado" +
                             " para activar el grupo", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ChatGroupActivity.class);
+                Profile userProfile = Profile.getCurrentProfile();
+                String fullName = userProfile.getFirstName() + " "  + userProfile.getMiddleName() + " " + userProfile.getLastName();
+                intent.putExtra(AutocodesIntentConstants.USER_ID, AccessToken.getCurrentAccessToken().getUserId());
+                intent.putExtra(AutocodesIntentConstants.USER_NAME, fullName);
+                intent.putExtra(AutocodesIntentConstants.GROUP_ID, intentValues.get(AutocodesIntentConstants.GROUP_ID));
+                intent.putExtra(AutocodesIntentConstants.GROUP_NAME, intentValues.get(AutocodesIntentConstants.GROUP_NAME));
+                startActivity(intent);
             }
         });
 

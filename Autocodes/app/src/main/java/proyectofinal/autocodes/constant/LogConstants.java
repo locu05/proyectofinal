@@ -19,4 +19,5 @@ public class LogConstants {
     public static final String TRACKING_SERVICE = "Tracking service";
     public static final String PULL_AND_ANALIZE_DATA_SERVICE = "Analize Service";
     public static final String BLUETOOTH_CONNECTION_THREAD = "Bluetooth Connection";
+    public static final String CHAT_ACTIVITY = "Chat Activity";
 }

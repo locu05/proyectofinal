@@ -41,13 +41,14 @@
         <activity android:name=".PreferencesActivity" />
         <activity android:name=".WeightAndHeightActivity" />
 
-        <service android:name=".service.TrackingService"></service>
-        <service android:name=".service.FetchActiveGroupService"></service>
-        <service android:name=".service.TrackingDriverService"></service>
-        <service android:name=".service.PullAndAnalizeDataService"></service>
+        <service android:name=".service.TrackingService" />
+        <service android:name=".service.FetchActiveGroupService" />
+        <service android:name=".service.TrackingDriverService" />
+        <service android:name=".service.PullAndAnalizeDataService" />
 
-        <activity android:name=".DriverStatusActivity"></activity>
-        <activity android:name=".DriverConfirmDeviceActivity"></activity>
+        <activity android:name=".DriverStatusActivity" />
+        <activity android:name=".DriverConfirmDeviceActivity" />
+        <activity android:name=".ChatGroupActivity"></activity>
     </application>
 
 </manifest>

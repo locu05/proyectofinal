@@ -45,4 +45,5 @@ public class DriverConfirmDeviceActivity extends AppCompatActivity {
         super.onPause();
         running = false;
     }
+
 }

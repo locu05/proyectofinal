@@ -131,8 +131,10 @@ public class TrackingDriverService extends Service {
                     BluetoothAdapter mBluetoothAdapter = getDefaultAdapter();
                     if (mBluetoothAdapter == null) {
                         // Device does not support Bluetooth
-                        Log.e(LogConstants.LOG_TAG, "Device does not support bluetooth");
-                        Toast.makeText(getApplicationContext(), "Device does not support bluetooth", Toast.LENGTH_LONG).show();
+                        Log.e(LogConstants.LOG_TAG, "El dispositivo no soporta blueetooth");
+                        Toast.makeText(getApplicationContext(), "El dispositivo no soporta blueetooth", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(getApplicationContext(), TrackingDriverService.class);
+                        stopService(intent);
                         return;
                     }
                  /*   if (!mBluetoothAdapter.isEnabled()) {
