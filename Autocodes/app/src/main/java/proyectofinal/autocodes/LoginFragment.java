@@ -123,7 +123,7 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onError(FacebookException error) {
-                Log.e(LogConstants.LOGIN, "LOGIN ERROR");
+                Log.e(LogConstants.LOGIN, "LOGIN ERROR" + error.getMessage());
                 Toast.makeText(getContext(), "Error logging in", Toast.LENGTH_LONG);
             }
         });
