@@ -45,6 +45,7 @@
         <service android:name=".service.FetchActiveGroupService" />
         <service android:name=".service.TrackingDriverService" />
         <service android:name=".service.PullAndAnalizeDataService" />
+        <service android:name=".service.DummyBacService" />
 
         <activity android:name=".DriverStatusActivity" />
         <activity android:name=".DriverConfirmDeviceActivity" />

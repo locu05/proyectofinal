@@ -208,44 +208,6 @@ public class CreateGroupActivity extends Activity implements OnClickListener {
 
         AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
 
-//        AsyncHttpClient client = new AsyncHttpClient();
-//
-//        JSONObject obj = new JSONObject();
-//        obj.put("name", groupName);
-//        JSONArray users = new JSONArray();
-//        for(Participant participant : participantAddedList) {
-//            users.put(participant.getId());
-//        }
-//        users.put(id);
-//        obj.put("users",users);
-//        obj.put("admin", id);
-//        StringEntity entity = new StringEntity(obj.toString());
-//        Log.e(LogConstants.PREPARING_REQUEST, "Rest call /group: " + obj.toString());
-//
-//        client.post(getApplicationContext(), serverBaseUrl + "/group", entity, "application/json", new AsyncHttpResponseHandler() {
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//                Log.e(LogConstants.SERVER_RESPONSE, "Status Code from /group post " + statusCode);
-//                finish();
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-//                // When Http response code is '404'
-//                if(statusCode == 404){
-//                    Toast.makeText(getApplicationContext(), "Couldn't get specified resource", Toast.LENGTH_LONG).show();
-//                }
-//                // When Http response code is '500'
-//                else if(statusCode == 500){
-//                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-//                }
-//                // When Http response code other than 404, 500
-//                else{
-//                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//
-//        });
     }
 
     private void populateParticipantsAddedList() {

@@ -57,11 +57,11 @@ public class DriverStatusActivity extends AppCompatActivity {
                                 driverBac.setText("No hay datos");
                             } else{
                                 driverBac.setText(String.valueOf(response.getDouble("driver_bac")));
-                                if( response.getDouble("driver_bac") > 0.5d){
+                                if( response.getDouble("driver_bac") < 0.5d){
                                     driverAptoTv.setText( "Apto para manejar");
                                     driverAptoTv.setTextColor(Color.GREEN);
                                 } else {
-                                    driverAptoTv.setText( "NO apto para manejar");
+                                    driverAptoTv.setText( "No apto para manejar");
                                     driverAptoTv.setTextColor(Color.RED);
                                 }
                             }

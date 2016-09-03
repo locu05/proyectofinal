@@ -20,12 +20,21 @@ public class DeviceDataHolder {
     private ArrayBlockingQueue temperatureList;
     private ArrayBlockingQueue alcoholList;
     private ArrayBlockingQueue trash;
+    private Integer groupId;
 
     public DeviceDataHolder() {
         pulseList = new ArrayBlockingQueue<String>(1000);
         temperatureList = new ArrayBlockingQueue<String>(1000);
         alcoholList = new ArrayBlockingQueue<String>(1000);
         trash = new ArrayBlockingQueue<String>(1000);
+    }
+
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
     }
 
     public ArrayBlockingQueue getPulseList() {
