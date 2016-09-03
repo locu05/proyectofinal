@@ -152,8 +152,9 @@ public class TrackingDriverService extends Service {
                             if(dev.getName().trim().equals("HC-06")){
                                 Log.i(LogConstants.TRACKING_DRIVER_SERVICE, "Starting thread with: ");
                                 Log.i(LogConstants.TRACKING_DRIVER_SERVICE, dev.getName() + "\n" + dev.getAddress());
-                                ConnectThread ct = new ConnectThread(dev,mServiceHandler);
+                                ConnectThread ct = new ConnectThread(dev,mServiceHandler,group);
                                 ct.start();
+                                DeviceDataHolder.getInstance().setGroupId(group.getId());
                                 Intent intentPullAndAnalizeDataService = new Intent(getApplicationContext(),
                                         PullAndAnalizeDataService.class);
                                 startService(intentPullAndAnalizeDataService);

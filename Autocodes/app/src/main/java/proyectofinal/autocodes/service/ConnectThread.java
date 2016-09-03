@@ -10,6 +10,13 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -21,6 +28,7 @@ import java.util.UUID;
 import proyectofinal.autocodes.AutocodesApplication;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.constant.MessageConstants;
+import proyectofinal.autocodes.model.Group;
 
 /**
  * Created by lucas on 28/08/16.
@@ -30,8 +38,12 @@ public class ConnectThread extends Thread {
     private final BluetoothSocket mmSocket;
     private final BluetoothDevice mmDevice;
     private Handler handler;
+    private Group group;
+    private long mRequestStartTimeUpdateDevice;
+    String serverBaseUrl = "http://107.170.81.44:3002";
 
-    public ConnectThread(BluetoothDevice device, TrackingDriverService.ServiceHandler mServiceHandler) {
+    public ConnectThread(BluetoothDevice device, TrackingDriverService.ServiceHandler mServiceHandler, Group group) {
+        this.group = group;
         // Use a temporary object that is later assigned to mmSocket,
         // because mmSocket is final
         Log.e(LogConstants.BLUETOOTH_CONNECTION_THREAD, "Creating thread ConnectThread...");
@@ -61,8 +73,10 @@ public class ConnectThread extends Thread {
             // until it succeeds or throws an exception
             mmSocket.connect();
             Log.e(LogConstants.BLUETOOTH_CONNECTION_THREAD, "Device successfully connected!");
+            notifyDeviceConnectedToServer(1);
         } catch (IOException connectException) {
             Log.e(LogConstants.BLUETOOTH_CONNECTION_THREAD, "Error connecting to the device: " + connectException.getMessage());
+            notifyDeviceConnectedToServer(0);
             try {
                 mmSocket.close();
             } catch (IOException closeException) {
@@ -75,6 +89,41 @@ public class ConnectThread extends Thread {
 
         // Do work to manage the connection (in a separate thread)
         manageConnectedSocket(mmSocket);
+    }
+
+    private void notifyDeviceConnectedToServer(int i) {
+        try {
+            mRequestStartTimeUpdateDevice = System.currentTimeMillis();
+            JSONObject obj = new JSONObject();
+            obj.put("groupid", group.getId());
+            obj.put("bracelet_status", i);
+            Log.e(LogConstants.PREPARING_REQUEST, "Rest call /group/braceletStatus " + obj.toString());
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.POST, serverBaseUrl + "/group/braceletStatus", obj, new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUpdateDevice;
+                            Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                            Log.e(LogConstants.SERVER_RESPONSE, "/group/braceletStatus onResponse");
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUpdateDevice;
+                            Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                            if(error!=null){
+                                Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+                            }
+                        }
+                    });
+
+            AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void manageConnectedSocket(final BluetoothSocket mmSocket) {

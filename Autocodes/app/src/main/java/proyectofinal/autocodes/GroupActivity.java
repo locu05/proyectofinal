@@ -42,6 +42,8 @@ import proyectofinal.autocodes.constant.AutocodesIntentConstants;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
 import proyectofinal.autocodes.model.Participant;
+import proyectofinal.autocodes.service.DummyBacService;
+import proyectofinal.autocodes.service.PullAndAnalizeDataService;
 import proyectofinal.autocodes.service.TrackingDriverService;
 import proyectofinal.autocodes.service.TrackingService;
 
@@ -198,6 +200,16 @@ public class GroupActivity extends AppCompatActivity {
                 });
 
         AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
+
+
+        //TODO: DELETE WHEN IMPLEMENTED
+        Intent intentPullAndAnalizeDataService = new Intent(getApplicationContext(),
+                PullAndAnalizeDataService.class);
+        stopService(intentPullAndAnalizeDataService);
+        Intent intent = new Intent(getApplicationContext(), DummyBacService.class);
+        intent.putExtra("group", group);
+        stopService(intent);
+        //TODO: DELETE WHEN IMPLEMENTED
     }
 
     private void activateGroup(String groupId, String driverId,final Button activateGroup) throws JSONException, UnsupportedEncodingException {
@@ -240,6 +252,16 @@ public class GroupActivity extends AppCompatActivity {
                 });
 
         AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
+
+
+        //TODO: DELETE WHEN IMPLEMENTED
+        Intent intentPullAndAnalizeDataService = new Intent(getApplicationContext(),
+                PullAndAnalizeDataService.class);
+        startService(intentPullAndAnalizeDataService);
+        Intent intent = new Intent(getApplicationContext(), DummyBacService.class);
+        intent.putExtra("group", group);
+        startService(intent);
+        //TODO: DELETE WHEN IMPLEMENTED
     }
     private void setUpImageLoader() {
         ImageLoader imageLoader = ImageLoader.getInstance();

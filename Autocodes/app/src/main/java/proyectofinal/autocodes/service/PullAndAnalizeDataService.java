@@ -19,22 +19,29 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.AccessToken;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import cz.msebera.android.httpclient.entity.StringEntity;
 import proyectofinal.autocodes.AutocodesApplication;
 import proyectofinal.autocodes.DriverConfirmDeviceActivity;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
+import proyectofinal.autocodes.model.Participant;
 
 /**
  * Created by locu on 26/8/16.
  */
 public class PullAndAnalizeDataService extends Service {
 
+    String serverBaseUrl = "http://107.170.81.44:3002";
+
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
     LocalBroadcastManager broadcaster;
     private boolean mRunning;
+    private long mRequestStartTimeUpdateBac;
+    private int i = 0;
 
     @Override
     public void onCreate() {
@@ -80,9 +87,9 @@ public class PullAndAnalizeDataService extends Service {
         @Override
         public void handleMessage(Message msg) {
             try {
-                int i = 0;
+                i = 0;
                 while(true) {
-                    pollTrash(i);
+                    pollTrash();
                     pollPulse();
                     pollTemperature();
                 }
@@ -102,15 +109,58 @@ public class PullAndAnalizeDataService extends Service {
     private void pollPulse() {
     }
 
-    private void pollTrash(int i) {
-        i++;
+    private void pollTrash() {
+        String bac = "0.0";
         String pulledValue = (String) DeviceDataHolder.getInstance().getTrash().poll();
         if(pulledValue!=null){
-            Log.e(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Trash Polled: " + pulledValue);
+            i++;
+            Log.e(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Trash Polled: " + pulledValue + " index: " + i);
+            if(i == 10) {
+                bac = "0.6";
+                callService(bac);
+            } else if (i == 30) {
+                bac = "1.5";
+                callService(bac);
+                i = 0;
+            }
+
         }
-        if(i == 25) {
-            i = 0;
-            //Pegarle al server y notificar que hay bardo
+
+        }
+
+    private void callService(String bac) {
+        Log.i("DEV", "ENTRO ACA");
+        try {
+            mRequestStartTimeUpdateBac = System.currentTimeMillis();
+            JSONObject obj = new JSONObject();
+            obj.put("groupid", DeviceDataHolder.getInstance().getGroupId());
+            obj.put("bac", Float.valueOf(bac));
+            Log.e(LogConstants.PREPARING_REQUEST, "Rest call /group/driverBac: " + obj.toString());
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.POST, serverBaseUrl + "/group/driverBac", obj, new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUpdateBac;
+                            Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                            Log.e(LogConstants.SERVER_RESPONSE, "/group/driverBac onResponse");
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUpdateBac;
+                            Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                            if(error!=null){
+                                Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+                            }
+                        }
+                    });
+
+            AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
+
