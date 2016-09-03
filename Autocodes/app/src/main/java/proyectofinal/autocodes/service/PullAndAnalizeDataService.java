@@ -80,8 +80,9 @@ public class PullAndAnalizeDataService extends Service {
         @Override
         public void handleMessage(Message msg) {
             try {
+                int i = 0;
                 while(true) {
-                    pollTrash();
+                    pollTrash(i);
                     pollPulse();
                     pollTemperature();
                 }
@@ -101,10 +102,15 @@ public class PullAndAnalizeDataService extends Service {
     private void pollPulse() {
     }
 
-    private void pollTrash() {
+    private void pollTrash(int i) {
+        i++;
         String pulledValue = (String) DeviceDataHolder.getInstance().getTrash().poll();
         if(pulledValue!=null){
             Log.e(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Trash Polled: " + pulledValue);
+        }
+        if(i == 25) {
+            i = 0;
+            //Pegarle al server y notificar que hay bardo
         }
     }
 }
