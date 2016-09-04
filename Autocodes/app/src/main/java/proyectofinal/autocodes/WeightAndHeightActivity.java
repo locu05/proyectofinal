@@ -1,6 +1,7 @@
 package proyectofinal.autocodes;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -123,6 +124,12 @@ public class WeightAndHeightActivity extends AppCompatActivity {
                         long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeCreateUser;
                         Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
                         Log.e(LogConstants.SERVER_RESPONSE, "/user post onResponse");
+                        SharedPreferences settings = getSharedPreferences("PREFS_FILE", 0);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putBoolean("userOK", true);
+                        editor.commit();
+                        Intent intent = new Intent(getApplicationContext(), ListGroupActivity.class);
+                        startActivity(intent);
                         finish();
                     }
                 }, new Response.ErrorListener() {
@@ -133,7 +140,7 @@ public class WeightAndHeightActivity extends AppCompatActivity {
                         Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
                         Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
                         confirm.setEnabled(true);
-
+                        //TODO revisar si esta salida anda.
                     }
                 });
 

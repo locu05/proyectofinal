@@ -66,5 +66,17 @@
         android:layout_below="@id/bacTv" />
 
 
+    <proyectofinal.autocodes.font.RobotoTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="APTO PARA MANEJAR"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:id="@+id/secretCodeTv"
+        android:visibility="gone"
+        android:layout_below="@id/aptoLabel" />
+
+
 
 </RelativeLayout>
