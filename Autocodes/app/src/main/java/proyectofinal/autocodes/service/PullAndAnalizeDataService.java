@@ -4,12 +4,14 @@ import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -23,8 +25,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.entity.StringEntity;
+import proyectofinal.autocodes.ActiveNotificacionActivity;
 import proyectofinal.autocodes.AutocodesApplication;
 import proyectofinal.autocodes.DriverConfirmDeviceActivity;
+import proyectofinal.autocodes.SettingsActivity;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
 import proyectofinal.autocodes.model.Participant;
@@ -41,7 +45,9 @@ public class PullAndAnalizeDataService extends Service {
     LocalBroadcastManager broadcaster;
     private boolean mRunning;
     private long mRequestStartTimeUpdateBac;
-    private int i = 0;
+    private int countPulse;
+    private int countTemperature;
+
 
     @Override
     public void onCreate() {
@@ -62,7 +68,9 @@ public class PullAndAnalizeDataService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!mRunning) {
             mRunning = true;
-            Log.e(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Started pull and analize service");
+            countPulse = 0;
+            countTemperature = 0;
+            Log.i(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Started pull and analize service");
             Message message = mServiceHandler.obtainMessage();
             message.arg1 = startId;
             mServiceHandler.sendMessage(message);
@@ -87,11 +95,12 @@ public class PullAndAnalizeDataService extends Service {
         @Override
         public void handleMessage(Message msg) {
             try {
-                i = 0;
                 while(true) {
                     pollTrash();
                     pollPulse();
                     pollTemperature();
+                    handleEvents();
+                    Thread.sleep(200);
                 }
 
             } catch (Exception e) {
@@ -102,57 +111,80 @@ public class PullAndAnalizeDataService extends Service {
 
 }
 
-    private void pollTemperature() {
+    private void handleEvents() {
+        if(countTemperature > 19 && countPulse > 19) {
+            countTemperature = 0;
+            countPulse = 0;
+            Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Handling pulse and temperature events");
+        }
+    }
+
+    private void pollTemperature() throws InterruptedException {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean mockBluetooth = sharedPref.getBoolean(SettingsActivity.MOCK_BLUETOOTH, false);
+        if(mockBluetooth) {
+            if(sharedPref.getBoolean(SettingsActivity.SIMULATE_TEMPERATURE,false)) {
+                countTemperature++;
+                Thread.sleep(500);
+                if(countTemperature == 20) {
+                    sharedPref.edit().putBoolean(SettingsActivity.SIMULATE_TEMPERATURE, false);
+                }
+            }
+        }
 
     }
 
-    private void pollPulse() {
+    private void pollPulse() throws InterruptedException {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean mockBluetooth = sharedPref.getBoolean(SettingsActivity.MOCK_BLUETOOTH, false);
+        if(mockBluetooth) {
+            if(sharedPref.getBoolean(SettingsActivity.SIMULATE_PULSE,false)) {
+                countPulse++;
+                Thread.sleep(500);
+                if(countPulse == 20) {
+                    sharedPref.edit().putBoolean(SettingsActivity.SIMULATE_PULSE, false);
+                }
+            }
+        }
     }
 
     private void pollTrash() {
-        String bac = "0.0";
-        String pulledValue = (String) DeviceDataHolder.getInstance().getTrash().poll();
-        if(pulledValue!=null){
-            i++;
-            Log.e(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Trash Polled: " + pulledValue + " index: " + i);
-            if(i == 10) {
-                bac = "0.6";
-                callService(bac);
-            } else if (i == 30) {
-                bac = "1.5";
-                callService(bac);
-                i = 0;
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean mockBluetooth = sharedPref.getBoolean(SettingsActivity.MOCK_BLUETOOTH, false);
+        if(mockBluetooth) {
+            String pulledValue = (String) DeviceDataHolder.getInstance().getTrash().poll();
+            if(pulledValue!=null){
+                Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Trash Polled: " + pulledValue);
+                    callService(sharedPref.getString(SettingsActivity.BAC_VALUE, "0.0"));
+                }
+
             }
-
-        }
-
-        }
+    }
 
     private void callService(String bac) {
-        Log.i("DEV", "ENTRO ACA");
         try {
             mRequestStartTimeUpdateBac = System.currentTimeMillis();
             JSONObject obj = new JSONObject();
             obj.put("groupid", DeviceDataHolder.getInstance().getGroupId());
             obj.put("bac", Float.valueOf(bac));
-            Log.e(LogConstants.PREPARING_REQUEST, "Rest call /group/driverBac: " + obj.toString());
+            Log.d(LogConstants.PREPARING_REQUEST, "Rest call /group/driverBac: " + obj.toString());
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
                     (Request.Method.POST, serverBaseUrl + "/group/driverBac", obj, new Response.Listener<JSONObject>() {
 
                         @Override
                         public void onResponse(JSONObject response) {
                             long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUpdateBac;
-                            Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                            Log.e(LogConstants.SERVER_RESPONSE, "/group/driverBac onResponse");
+                            Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                            Log.d(LogConstants.SERVER_RESPONSE, "/group/driverBac onResponse");
                         }
                     }, new Response.ErrorListener() {
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUpdateBac;
-                            Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                            Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
                             if(error!=null){
-                                Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+                                Log.d(LogConstants.SERVER_RESPONSE, error.getMessage());
                             }
                         }
                     });
