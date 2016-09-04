@@ -113,7 +113,7 @@ public class ConnectThread extends Thread {
                         public void onErrorResponse(VolleyError error) {
                             long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUpdateDevice;
                             Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                            if(error!=null){
+                            if(error.getMessage()!=null){
                                 Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
                             }
                         }

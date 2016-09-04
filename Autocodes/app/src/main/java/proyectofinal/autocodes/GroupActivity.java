@@ -2,7 +2,9 @@ package proyectofinal.autocodes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -255,12 +257,17 @@ public class GroupActivity extends AppCompatActivity {
 
 
         //TODO: DELETE WHEN IMPLEMENTED
-        Intent intentPullAndAnalizeDataService = new Intent(getApplicationContext(),
-                PullAndAnalizeDataService.class);
-        startService(intentPullAndAnalizeDataService);
-        Intent intent = new Intent(getApplicationContext(), DummyBacService.class);
-        intent.putExtra("group", group);
-        startService(intent);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean mockBluetooth = sharedPref.getBoolean(SettingsActivity.MOCK_BLUETOOTH, false);
+        if(mockBluetooth) {
+            Log.i(LogConstants.BEHAVIOUR_LOG, "MOCKED BLUETOOTH DEVICE!");
+            Intent intentPullAndAnalizeDataService = new Intent(getApplicationContext(),
+                    PullAndAnalizeDataService.class);
+            startService(intentPullAndAnalizeDataService);
+            Intent intent = new Intent(getApplicationContext(), DummyBacService.class);
+            intent.putExtra("group", group);
+            startService(intent);
+        }
         //TODO: DELETE WHEN IMPLEMENTED
     }
     private void setUpImageLoader() {
