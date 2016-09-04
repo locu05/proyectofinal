@@ -50,7 +50,8 @@
         <activity android:name=".DriverStatusActivity" />
         <activity android:name=".DriverConfirmDeviceActivity" />
         <activity android:name=".ChatGroupActivity" />
-        <activity android:name=".ActiveNotificacionActivity"></activity>
+        <activity android:name=".ActiveNotificationActivity"
+            android:noHistory="true"/>
     </application>
 
 </manifest>

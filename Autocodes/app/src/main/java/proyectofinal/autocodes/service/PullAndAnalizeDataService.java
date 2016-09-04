@@ -19,19 +19,15 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.facebook.AccessToken;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import cz.msebera.android.httpclient.entity.StringEntity;
-import proyectofinal.autocodes.ActiveNotificacionActivity;
+import proyectofinal.autocodes.ActiveNotificationActivity;
 import proyectofinal.autocodes.AutocodesApplication;
 import proyectofinal.autocodes.DriverConfirmDeviceActivity;
 import proyectofinal.autocodes.SettingsActivity;
+import proyectofinal.autocodes.constant.AutocodesIntentConstants;
 import proyectofinal.autocodes.constant.LogConstants;
-import proyectofinal.autocodes.model.Group;
-import proyectofinal.autocodes.model.Participant;
 
 /**
  * Created by locu on 26/8/16.
@@ -47,6 +43,7 @@ public class PullAndAnalizeDataService extends Service {
     private long mRequestStartTimeUpdateBac;
     private int countPulse;
     private int countTemperature;
+    private int groupId;
 
 
     @Override
@@ -74,7 +71,7 @@ public class PullAndAnalizeDataService extends Service {
             Message message = mServiceHandler.obtainMessage();
             message.arg1 = startId;
             mServiceHandler.sendMessage(message);
-
+            groupId = intent.getIntExtra(AutocodesIntentConstants.GROUP_ID, 0);
             return START_NOT_STICKY;
         }
         return super.onStartCommand(intent, flags, startId);
@@ -116,6 +113,8 @@ public class PullAndAnalizeDataService extends Service {
             countTemperature = 0;
             countPulse = 0;
             Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Handling pulse and temperature events");
+
+
         }
     }
 
@@ -156,6 +155,18 @@ public class PullAndAnalizeDataService extends Service {
             if(pulledValue!=null){
                 Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Trash Polled: " + pulledValue);
                     callService(sharedPref.getString(SettingsActivity.BAC_VALUE, "0.0"));
+                if(Double.valueOf(sharedPref.getString(SettingsActivity.BAC_VALUE, "0.0")) > 0.5d){
+                    if(!ActiveNotificationActivity.running) {
+                        if(isMyServiceRunning(TrackingDriverService.class)) {
+                            Intent intentActiveNotification = new Intent(getApplicationContext(), ActiveNotificationActivity.class);
+                            intentActiveNotification.putExtra(AutocodesIntentConstants.GROUP_ID, groupId);
+                            intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                            getApplicationContext().startActivity(intentActiveNotification);
+                        }
+
+                    }
+                }
                 }
 
             }
@@ -193,6 +204,16 @@ public class PullAndAnalizeDataService extends Service {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

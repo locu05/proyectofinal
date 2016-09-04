@@ -26,6 +26,7 @@ import java.util.Set;
 import proyectofinal.autocodes.AutocodesApplication;
 import proyectofinal.autocodes.R;
 import proyectofinal.autocodes.SettingsActivity;
+import proyectofinal.autocodes.constant.AutocodesIntentConstants;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.constant.MessageConstants;
 import proyectofinal.autocodes.model.Group;
@@ -163,6 +164,7 @@ public class TrackingDriverService extends Service {
                                     DeviceDataHolder.getInstance().setGroupId(group.getId());
                                     Intent intentPullAndAnalizeDataService = new Intent(getApplicationContext(),
                                             PullAndAnalizeDataService.class);
+                                    intentPullAndAnalizeDataService.putExtra(AutocodesIntentConstants.GROUP_ID, group.getId());
                                     startService(intentPullAndAnalizeDataService);
                                     foundDevice = true;
                                 }
