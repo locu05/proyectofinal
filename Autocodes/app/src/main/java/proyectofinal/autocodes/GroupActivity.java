@@ -50,9 +50,6 @@ import proyectofinal.autocodes.service.TrackingService;
 
 public class GroupActivity extends AppCompatActivity {
 
-    private long mRequestStartTimeDeactivateGroup;
-    private long mRequestStartTimeActivateGroup;
-    private long mRequestStartTimeGroupInformation;
     TextView errorMsg;
     Context context;
     List<Participant> participantList;
@@ -78,7 +75,7 @@ public class GroupActivity extends AppCompatActivity {
             intentValues.put(AutocodesIntentConstants.GROUP_NAME, extras.getString(AutocodesIntentConstants.GROUP_NAME));
         }
         getGroupInformation(intentValues.get(AutocodesIntentConstants.GROUP_ID));
-        Log.e(LogConstants.INTENT_VALUES_DEBUG, "Setting group name: " + intentValues.get(AutocodesIntentConstants.GROUP_NAME));
+        Log.d(LogConstants.INTENT_VALUES_DEBUG, "Setting group name: " + intentValues.get(AutocodesIntentConstants.GROUP_NAME));
         textView.setText(intentValues.get(AutocodesIntentConstants.GROUP_NAME));
     }
 
@@ -165,12 +162,10 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void deactivateGroup(String groupId, final Button deactivateGroup) throws JSONException, UnsupportedEncodingException {
-        mRequestStartTimeDeactivateGroup = System.currentTimeMillis();
-        Log.e(LogConstants.BEHAVIOUR_LOG, "Deactivating group: " + groupId);
+        final long mRequestStartTimeDeactivateGroup = System.currentTimeMillis();
         JSONObject jsonRequest = new JSONObject();
         jsonRequest.put("group_id", groupId);
-        AsyncHttpClient client = new AsyncHttpClient();
-        Log.e(LogConstants.PREPARING_REQUEST, "Post /group/deactivate with values " + jsonRequest.toString());
+        Log.d(LogConstants.PREPARING_REQUEST, "Post /group/deactivate with values " + jsonRequest.toString());
         deactivateGroup.setEnabled(false);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.POST, serverBaseUrl + "/group/deactivate", jsonRequest, new Response.Listener<JSONObject>() {
@@ -178,8 +173,8 @@ public class GroupActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeDeactivateGroup;
-                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                        Log.e(LogConstants.SERVER_RESPONSE, "/group/deactivate post onResponse");
+                        Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                        Log.i(LogConstants.SERVER_RESPONSE, "/group/deactivate response: " + response.toString());
                         Intent intent = new Intent(context, TrackingService.class);
                         Intent intentDriver = new Intent(context, TrackingDriverService.class);
                         deactivateGroup.setEnabled(true);
@@ -192,8 +187,8 @@ public class GroupActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeDeactivateGroup;
-                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                        Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+                        Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                        Log.e(LogConstants.SERVER_RESPONSE, "group/deactivate error:" + error.getMessage());
                         deactivateGroup.setEnabled(true);
 
                     }
@@ -213,7 +208,7 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void activateGroup(String groupId, String driverId,final Button activateGroup) throws JSONException, UnsupportedEncodingException {
-        mRequestStartTimeActivateGroup = System.currentTimeMillis();
+        final long mRequestStartTimeActivateGroup = System.currentTimeMillis();
         Log.e(LogConstants.BEHAVIOUR_LOG, "Activating group: " + groupId + " with driver id: " + driverId);
         JSONObject jsonRequest = new JSONObject();
         jsonRequest.put("group_id", groupId);
@@ -271,7 +266,7 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     public void getGroupInformation(String groupId){
-        mRequestStartTimeGroupInformation = System.currentTimeMillis();
+        final long mRequestStartTimeGroupInformation = System.currentTimeMillis();
         AsyncHttpClient client = new AsyncHttpClient();
         Log.e(LogConstants.PREPARING_REQUEST, "/group with groupId: " + groupId);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
