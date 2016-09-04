@@ -192,7 +192,6 @@ public class GroupActivity extends AppCompatActivity {
                         Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
                         Log.e(LogConstants.SERVER_RESPONSE, "group/deactivate error:" + error.getMessage());
                         deactivateGroup.setEnabled(true);
-
                     }
                 });
 
@@ -211,12 +210,11 @@ public class GroupActivity extends AppCompatActivity {
 
     private void activateGroup(String groupId, String driverId,final Button activateGroup) throws JSONException, UnsupportedEncodingException {
         final long mRequestStartTimeActivateGroup = System.currentTimeMillis();
-        Log.e(LogConstants.BEHAVIOUR_LOG, "Activating group: " + groupId + " with driver id: " + driverId);
         JSONObject jsonRequest = new JSONObject();
         jsonRequest.put("group_id", groupId);
         jsonRequest.put("driver", driverId);
         AsyncHttpClient client = new AsyncHttpClient();
-        Log.e(LogConstants.PREPARING_REQUEST, "Post /group/activate with values " + jsonRequest.toString());
+        Log.i(LogConstants.PREPARING_REQUEST, "Post /group/activate with values " + jsonRequest.toString());
         activateGroup.setEnabled(false);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.POST, serverBaseUrl + "/group/activate", jsonRequest, new Response.Listener<JSONObject>() {
@@ -224,13 +222,13 @@ public class GroupActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeActivateGroup;
-                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                        Log.e(LogConstants.SERVER_RESPONSE, "/group/activate post " + response.toString());
+                        Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                        Log.i(LogConstants.SERVER_RESPONSE, "/group/activate post " + response.toString());
                         Iterator<String> keys =  response.keys();
                         while (keys.hasNext()){
                            if(keys.next().equals("error")){
                                Toast.makeText(getApplicationContext(), "Error activando el grupo, " +
-                                       "los usuarios actuales se encuentran activos" +
+                                       "Alguno de los usuarios se encuentra activo " +
                                        "en otro grupo ",Toast.LENGTH_LONG).show();
                            }
                         }
@@ -241,8 +239,8 @@ public class GroupActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeActivateGroup;
-                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                        Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+                        Log.d(LogConstants.TIME_SERVER_RESPONSE, "/group/activate time"  + String.valueOf(totalRequestTime));
+                        Log.e(LogConstants.SERVER_RESPONSE, "/group/activate Error" + error.getMessage());
                         activateGroup.setEnabled(true);
 
                     }
@@ -275,34 +273,38 @@ public class GroupActivity extends AppCompatActivity {
     public void getGroupInformation(String groupId){
         final long mRequestStartTimeGroupInformation = System.currentTimeMillis();
         AsyncHttpClient client = new AsyncHttpClient();
-        Log.e(LogConstants.PREPARING_REQUEST, "/group with groupId: " + groupId);
+        Log.i(LogConstants.PREPARING_REQUEST, "/group with groupId: " + groupId);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, serverBaseUrl + "/group/" + groupId, null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
                         long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeGroupInformation;
-                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                        Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
                         try {
                             JSONObject obj = response;
-                            Log.e(LogConstants.SERVER_RESPONSE, "/group get onResponse");
-                            Log.e(LogConstants.JSON_RESPONSE, obj.toString());
+                            Log.i(LogConstants.SERVER_RESPONSE, "/group response: "  + obj.toString());
                             JSONArray users = obj.getJSONArray("users");
+
+                            group.setActive((obj.getString("active").equals("1"))?1:0);
+                            group.setName(obj.getString("name"));
+                            group.setDriverId(obj.getString("driver"));
+                            group.setId(Integer.valueOf(obj.getString("group_id")));
+
                             for(int i = 0 ; i< users.length() ; i++) {
                                JSONObject user = (JSONObject) users.get(i);
                                Participant p = new Participant(user.getString("user_fb_id"), user.getString("name"),"http://graph.facebook.com/"+user.getString("user_fb_id")+"/picture?type=large",  R.string.fontello_heart_empty);
                                 if(user.getString("user_fb_id").equals(obj.getString("driver"))){
                                     p.setDriver(true);
                                 }
-                               participantList.add(p);
+                                p.setGroupActive(group.getActive());
+                                participantList.add(p);
                             }
-                            group.setActive((obj.getString("active").equals("1"))?1:0);
-                            group.setName(obj.getString("name"));
-                            group.setDriverId(obj.getString("driver"));
-                            group.setId(Integer.valueOf(obj.getString("group_id")));
                             groupStatus.setText((group.getActive()==1)?"Activo":"Inactivo");
 
+
                             ((BaseAdapter)listView.getAdapter()).notifyDataSetChanged();
+
 
                             if(group.getActive()==1){
                                 activateGroup.setVisibility(View.INVISIBLE);
@@ -326,7 +328,7 @@ public class GroupActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeGroupInformation;
-                        Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                        Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
                         Log.e(LogConstants.SERVER_RESPONSE, "Status Code:" + String.valueOf(error.networkResponse.statusCode));
 
                     }

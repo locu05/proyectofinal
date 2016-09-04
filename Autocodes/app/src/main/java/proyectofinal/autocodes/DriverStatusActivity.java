@@ -20,6 +20,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -77,7 +78,9 @@ public class DriverStatusActivity extends AppCompatActivity {
                     } else {
                         driverAptoTv.setText( "No apto para manejar");
                         driverAptoTv.setTextColor(Color.RED);
-                        secretCodeTv.setText(String.valueOf(("" + groupStatus.getId()).hashCode()));
+                        if(!AccessToken.getCurrentAccessToken().getUserId().equals(groupStatus.getDriverId())){
+                            secretCodeTv.setText(String.valueOf(("" + groupStatus.getId()).hashCode()));
+                        }
                         secretCodeTv.setVisibility(View.VISIBLE);
                     }
                 }

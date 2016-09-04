@@ -118,7 +118,7 @@ public class TrackingService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            while(true) {
+            while(mRunning) {
                 Log.i(LogConstants.TRACKING_SERVICE, "Getting driver status...");
                 try {
                     Thread.sleep(1000);
@@ -129,7 +129,7 @@ public class TrackingService extends Service {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     try {
-                                        Log.e(LogConstants.TRACKING_SERVICE, "/group " + response.toString());
+                                        Log.d(LogConstants.TRACKING_SERVICE, "/group " + response.toString());
                                         //group.setActive((Integer) response.get("active"));
                                         Intent intent = new Intent("proyectofinal.autocodes.service.ACTIVE_GROUP_STATUS");
                                         Group activeGroup = new Group();
@@ -162,7 +162,7 @@ public class TrackingService extends Service {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
                                     if(error.networkResponse!=null){
-                                        Log.i(LogConstants.TRACKING_SERVICE, "Couldnt get active group status, err: " + String.valueOf(error.networkResponse.statusCode));
+                                        Log.e(LogConstants.TRACKING_SERVICE, "Couldnt get active group status, err: " + String.valueOf(error.networkResponse.statusCode));
                                         Intent intent = new Intent(getApplicationContext(), TrackingService.class);
                                         stopService(intent);
                                     } else {
@@ -172,7 +172,7 @@ public class TrackingService extends Service {
                             });
                     AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
                 } catch (InterruptedException e) {
-                    Log.e("ServiceError", "InterruptedException");
+                    Log.e(LogConstants.TRACKING_SERVICE, "InterruptedException");
                 }
             }
         }
@@ -181,6 +181,7 @@ public class TrackingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mRunning = false;
         Log.i(LogConstants.LOG_TAG, "Tracking Service destroyed");
     }
 
