@@ -60,6 +60,9 @@ public class FetchActiveGroupService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if(intent == null){
+            return START_NOT_STICKY;
+        }
         if (!mRunning) {
             mRunning = true;
             Log.e(LogConstants.FETCH_ACTIVE_GROUP_SERVICE, "Started fetch active group service");

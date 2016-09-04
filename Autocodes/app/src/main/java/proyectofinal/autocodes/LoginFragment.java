@@ -110,7 +110,6 @@ public class LoginFragment extends Fragment {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.e(LogConstants.LOGIN, "LOGIN OK");
-                Toast.makeText(getContext(), "LogIn successful", Toast.LENGTH_LONG);
                 getActivity().finish();
             }
 
@@ -123,7 +122,7 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onError(FacebookException error) {
-                Log.e(LogConstants.LOGIN, "LOGIN ERROR");
+                Log.e(LogConstants.LOGIN, "LOGIN ERROR" + error.getMessage());
                 Toast.makeText(getContext(), "Error logging in", Toast.LENGTH_LONG);
             }
         });
