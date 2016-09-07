@@ -22,7 +22,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.util.Date;
+
 import proyectofinal.autocodes.ActiveNotificationActivity;
+import proyectofinal.autocodes.ActiveNotificationTimer;
 import proyectofinal.autocodes.AutocodesApplication;
 import proyectofinal.autocodes.DriverConfirmDeviceActivity;
 import proyectofinal.autocodes.SettingsActivity;
@@ -158,11 +161,18 @@ public class PullAndAnalizeDataService extends Service {
                 if(Double.valueOf(sharedPref.getString(SettingsActivity.BAC_VALUE, "0.0")) > 0.5d){
                     if(!ActiveNotificationActivity.running) {
                         if(isMyServiceRunning(TrackingDriverService.class)) {
-                            Intent intentActiveNotification = new Intent(getApplicationContext(), ActiveNotificationActivity.class);
-                            intentActiveNotification.putExtra(AutocodesIntentConstants.GROUP_ID, groupId);
-                            intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                            getApplicationContext().startActivity(intentActiveNotification);
+                            if(ActiveNotificationTimer.getInstance().getElapsedTime() > ActiveNotificationTimer.TIME_TO_ALLOW_NOTIFICACION) {
+                                ActiveNotificationTimer.getInstance().setStartTime();
+                                ActiveNotificationTimer.getInstance().setElapsedTime();
+                                Intent intentActiveNotification = new Intent(getApplicationContext(), ActiveNotificationActivity.class);
+                                intentActiveNotification.putExtra(AutocodesIntentConstants.GROUP_ID, groupId);
+                                intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                                getApplicationContext().startActivity(intentActiveNotification);
+                            } else {
+                                ActiveNotificationTimer.getInstance().setElapsedTime();
+                            }
+
                         }
 
                     }
