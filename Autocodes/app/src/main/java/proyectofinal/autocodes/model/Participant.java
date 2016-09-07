@@ -14,6 +14,7 @@ public class Participant {
     boolean showable;
     boolean isDriver;
     CheckBox checkBox;
+    Integer groupActive;
 
     public Participant(String name, String id) {
         this.name = name;
@@ -26,6 +27,13 @@ public class Participant {
         this.imageUrl = imageUrl;
         this.iconRes = iconRes;
         showable = true;
+    }
+    public Integer getGroupActive() {
+        return groupActive;
+    }
+
+    public void setGroupActive(Integer groupActive) {
+        this.groupActive = groupActive;
     }
 
     public String getId() {

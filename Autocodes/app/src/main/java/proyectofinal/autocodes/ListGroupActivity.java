@@ -258,7 +258,7 @@ public class ListGroupActivity extends AppCompatActivity {
 
 
 
-    public void getGroups(String userId){
+    public void getGroups(final String userId){
         final long mRequestStartTimeGroup = System.currentTimeMillis();
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
             (Request.Method.GET, serverBaseUrl + "/groups/" + userId, null, new Response.Listener<JSONObject>() {
@@ -296,8 +296,12 @@ public class ListGroupActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeGroup;
-                    Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                    Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+                    Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                    if(error.getMessage() != null){
+                        Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+                    } else {
+                        Log.e(LogConstants.SERVER_RESPONSE, "/groups/" + userId + " Status code: " + error.networkResponse.statusCode);
+                    }
 
                 }
             });

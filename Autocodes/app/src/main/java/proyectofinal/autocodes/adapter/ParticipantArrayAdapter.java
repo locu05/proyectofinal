@@ -37,7 +37,20 @@ public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
         this.participants = participants;
         checkBoxes = new ArrayList<CheckBox>();
     }
+    public void deactivateCheckboxes(){
+        Log.d("TEST", "Deactivating checkboxes");
+        for(CheckBox check: checkBoxes) {
+            Log.d("TEST", "Deactivating checkbox");
+            check.setEnabled(false);
+        }
+    }
 
+    public void activateCheckboxes(){
+        Log.d("TEST", "activating checkboxes");
+        for(CheckBox check: checkBoxes) {
+            check.setEnabled(true);
+        }
+    }
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         // Get the data item for this position
@@ -60,10 +73,13 @@ public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
             participant.getCheckBox().setChecked(true);
         }
         checkBox.setTag(position); //For passing the list item index
+        if(participant.getGroupActive() == 1){
+            checkBox.setEnabled(false);
+        }
+
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CheckBox currentCheckBox = (CheckBox) view;
                 if(!checkBox.isChecked()){
                     checkBox.setChecked(false);
                     for(Participant p : participants) {
