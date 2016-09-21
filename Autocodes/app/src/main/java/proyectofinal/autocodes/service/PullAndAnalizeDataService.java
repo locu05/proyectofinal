@@ -47,6 +47,7 @@ public class PullAndAnalizeDataService extends Service {
     private int countPulse;
     private int countTemperature;
     private int groupId;
+    private DataAnalizer dataAnalizer;
 
 
     @Override
