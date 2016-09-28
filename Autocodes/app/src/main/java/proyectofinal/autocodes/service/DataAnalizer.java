@@ -3,7 +3,9 @@ package proyectofinal.autocodes.service;
 import com.google.common.collect.EvictingQueue;
 
 import java.util.LinkedList;
+import java.util.NavigableMap;
 import java.util.Queue;
+import java.util.TreeMap;
 
 /**
  * Created by locu on 14/9/16.
@@ -11,6 +13,7 @@ import java.util.Queue;
 public class DataAnalizer {
 
     public static final String TEMPERATURE_VALUE = "38.0";
+    public static final double NO_ALCOHOL = 0;
     public static final double NO_ALCOHOL_VALUE = 140;
     public static final double ALCOHOL_VALUE = 500;
     public static final double HIGH_ALCOHOL_VALUE = 600;
@@ -22,8 +25,17 @@ public class DataAnalizer {
     public static final int PULSE_QUEUE_SIZE = 3;
     public static final int QUANTUM_QUEUE_SIZE = 3;
     public static final double deltax = 1;
+    private static NavigableMap<Double, Double> bacTable;
 
     private int averagePulseQuantum;
+
+    static {
+        bacTable = new TreeMap<Double, Double>();
+        bacTable.put(NO_ALCOHOL, Double.valueOf(0));
+        bacTable.put(NO_ALCOHOL_VALUE, Double.valueOf(0.4));
+        bacTable.put(ALCOHOL_VALUE, Double.valueOf(1.0));
+        bacTable.put(HIGH_ALCOHOL_VALUE,Double.valueOf(1.5));
+    }
 
     public static <T> T getFromQueue(Queue<T> queue, int index){
         if(index>=queue.size()){
@@ -72,19 +84,7 @@ public class DataAnalizer {
             }
             averageValue = averageValue/ALCOHOL_QUEUE_SIZE;
             alcoholQueue.clear();
-//            System.out.print("Valor average calculado: " + averageValue);
-            if(averageValue < NO_ALCOHOL_VALUE) {
-                bac = 0;
-            }
-            if(averageValue > NO_ALCOHOL_VALUE && averageValue < ALCOHOL_VALUE) {
-                bac = 0.4;
-            }
-            if(averageValue > ALCOHOL_VALUE && averageValue < HIGH_ALCOHOL_VALUE) {
-                bac = 1.0;
-            }
-            if(averageValue > HIGH_ALCOHOL_VALUE) {
-                bac = 1.5;
-            }
+            bac = bacTable.floorEntry(Double.valueOf(averageValue)).getValue();
         }
 
     }
