@@ -9,13 +9,49 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="#aa000000">
 
+   <proyectofinal.autocodes.font.RobotoTextView
+       android:textAlignment="center"
+       android:layout_width="match_parent"
+       android:text="Colocate la pulsera para continuar"
+       android:layout_height="wrap_content"
+       android:typeface="sans"
+       android:id="@+id/pulseraLabel1"
+       android:textColor="@color/white"
+       android:textAppearance="?android:attr/textAppearanceLarge"
+       android:layout_alignParentTop="true"
+       android:layout_marginBottom="30dp"
+       android:layout_alignParentLeft="true"
+       android:layout_alignParentStart="true" />
+   <proyectofinal.autocodes.font.RobotoTextView
+       android:textAlignment="center"
+       android:text="Una vez colocada, presiona confirmar para sincronizarla via bluetooth con tu celular."
+       android:layout_width="wrap_content"
+       android:textStyle="italic"
+
+       android:layout_height="wrap_content"
+       android:typeface="serif"
+       android:id="@+id/pulseraLabel2"
+       android:textColor="@color/white"
+       android:layout_below="@id/pulseraLabel1"
+       android:layout_marginBottom="30dp"
+       android:layout_alignParentLeft="true"
+       android:layout_alignParentStart="true" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/wristband"
+        android:id="@+id/wristb"
+        android:layout_below="@id/pulseraLabel2"
+        android:layout_marginBottom="30dp"
+
+        />
    <Button
        android:id="@+id/confirmDevice"
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
-       android:gravity="center"
        android:layout_centerHorizontal="true"
-       android:layout_centerVertical="true"
-       android:text="Confirmar"/>
+       android:layout_below="@id/wristb"
+       android:text="SINCRONIZAR PULSERA"/>
 
 </RelativeLayout>

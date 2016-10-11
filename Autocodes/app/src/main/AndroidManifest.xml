@@ -50,8 +50,10 @@
         <activity android:name=".DriverStatusActivity" />
         <activity android:name=".DriverConfirmDeviceActivity" />
         <activity android:name=".ChatGroupActivity" />
-        <activity android:name=".ActiveNotificationActivity"
-            android:noHistory="true"/>
+        <activity
+            android:name=".ActiveNotificationActivity"
+            android:noHistory="true" />
+        <activity android:exported="true" android:name=".ActiveTestActivity"></activity>
     </application>
 
 </manifest>

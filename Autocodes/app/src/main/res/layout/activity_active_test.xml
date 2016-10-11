@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_active_test"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#aa000000"
+    tools:context="proyectofinal.autocodes.ActiveTestActivity">
+
+
+
+    <proyectofinal.autocodes.font.RobotoTextView
+        android:textAlignment="center"
+        android:text="Detectamos una anomalia en tu pulso o temperatura corporal, esto puede significar que tomaste mas de lo debido para poder manejar."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/warningLabel"
+        android:textColor="@color/white"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <proyectofinal.autocodes.font.RobotoTextView
+        android:textAlignment="center"
+        android:text="Sople sobre la pulsera durante 5 segundos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/startActiveTestBtn"
+        android:textColor="@color/white"
+        android:layout_marginBottom="15dp"
+        android:layout_below="@id/warningLabel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="COMENZAR PRUEBA"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/startButton"
+        android:layout_below="@id/startActiveTestBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="46dp" />
+
+
+
+
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/startButton"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/progressBar" />
+
+    <proyectofinal.autocodes.font.RobotoTextView
+        android:textAlignment="center"
+        android:text="Tu indice de alcohol en sangre es:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/resultLabel"
+        android:textColor="@color/white"
+        android:layout_below="@+id/startButton"
+        android:layout_alignParentLeft="true"
+        android:visibility="invisible"
+        android:layout_alignParentStart="true" />
+
+    <proyectofinal.autocodes.font.RobotoTextView
+        android:textAlignment="center"
+        android:visibility="invisible"
+        android:layout_below="@+id/resultLabel"
+        android:text="0.3 g/L"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/activeTestResult"
+        android:textColor="@color/white"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <proyectofinal.autocodes.font.RobotoTextView
+        android:textAlignment="center"
+        android:visibility="invisible"
+        android:layout_below="@+id/activeTestResult"
+        android:text="APTO PARA MANEJAR"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/activeTestResultLabel"
+        android:textColor="@color/cpb_green"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+</RelativeLayout>
