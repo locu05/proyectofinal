@@ -6,8 +6,11 @@
     <item android:id="@+id/logout_button"
         android:icon="@android:drawable/btn_minus"
         android:title="@string/logout"/>
+    <item android:id="@+id/active_test_btn"
+        android:icon="@android:drawable/btn_minus"
+        android:title="Prueba activa"/>
     <item android:id="@+id/new_group"
         android:icon="@android:drawable/ic_input_add"
-        android:title="@string/logout"
+        android:title="Grupo Nuevo"
         app:showAsAction="always"/>
 </menu>
