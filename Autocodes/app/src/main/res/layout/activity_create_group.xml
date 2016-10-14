@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@drawable/greypattern">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,7 +16,7 @@
             android:layout_height="match_parent"
             android:contentDescription="Descripcion del contenido"
             android:scaleType="centerCrop"
-            android:src="@drawable/search_background_social" />
+            android:src="@drawable/headercreategroup" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -164,7 +165,8 @@
         android:layout_gravity="center"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        style="@style/TextViewAppearance.Body1" />
+        style="@style/TextViewAppearance.Body1"
+        android:textColor="@color/white"/>
 
             <!-- -->
             <HorizontalScrollView
