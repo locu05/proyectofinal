@@ -7,12 +7,16 @@ import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Process;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -20,12 +24,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import proyectofinal.autocodes.AutocodesApplication;
 import proyectofinal.autocodes.DriverStatusActivity;
 import proyectofinal.autocodes.R;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
+import proyectofinal.autocodes.util.ImageUtil;
 
 
 public class TrackingService extends Service {
@@ -33,11 +40,22 @@ public class TrackingService extends Service {
     public static int ONGOING_NOTIFICATION_ID = 1564150;
     Group group;
     String serverBaseUrl = "http://107.170.81.44:3002";
+    LocalBroadcastManager broadcaster;
+    private ServiceHandler mServiceHandler;
+    private Looper mServiceLooper;
+    private final IBinder mBinder = new TrackingBinder();
 
     @Override
     public void onCreate() {
         Log.i(LogConstants.LOG_TAG, "Tracking Service created");
         super.onCreate();
+        broadcaster = LocalBroadcastManager.getInstance(this);
+        HandlerThread thread = new HandlerThread("TrackingDriverService",
+                Process.THREAD_PRIORITY_BACKGROUND);
+        // start the new handler thread
+        thread.start();
+        mServiceLooper = thread.getLooper();
+        mServiceHandler = new ServiceHandler(mServiceLooper);
     }
 
     @Override
@@ -70,14 +88,9 @@ public class TrackingService extends Service {
 
                 startForeground(ONGOING_NOTIFICATION_ID, mBuilder.build());
 
-
-                try {
-                    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-                    r.play();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Message message = mServiceHandler.obtainMessage();
+                message.arg1 = startId;
+                mServiceHandler.sendMessage(message);
 
                 return START_STICKY;
             }
@@ -86,7 +99,16 @@ public class TrackingService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    public class TrackingBinder extends Binder {
+        TrackingService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return TrackingService.this;
+        }
+    }
     // Object responsible for
     private final class ServiceHandler extends Handler {
 
@@ -96,10 +118,10 @@ public class TrackingService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            Log.i(LogConstants.TRACKING_SERVICE, "Getting driver status...");
-            while(true) {
+            while(mRunning) {
+                Log.i(LogConstants.TRACKING_SERVICE, "Getting driver status...");
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(1000);
 
                     JsonObjectRequest jsObjRequest = new JsonObjectRequest
                             (Request.Method.GET, serverBaseUrl + "/group/" + group.getId(), null, new Response.Listener<JSONObject>() {
@@ -107,11 +129,30 @@ public class TrackingService extends Service {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     try {
-                                        Log.e(LogConstants.JSON_RESPONSE, "/user " + response.toString());
+                                        Log.d(LogConstants.TRACKING_SERVICE, "/group " + response.toString());
                                         //group.setActive((Integer) response.get("active"));
+                                        Intent intent = new Intent("proyectofinal.autocodes.service.ACTIVE_GROUP_STATUS");
+                                        Group activeGroup = new Group();
+                                        activeGroup.setActive((response.getString("active").equals("1"))?1:0);
+                                        activeGroup.setName(response.getString("name"));
+                                        activeGroup.setDriverId(response.getString("driver"));
+                                        activeGroup.setId(Integer.valueOf(response.getString("group_id")));
+                                        //TODO chequear que este get anda, ya que envia un uno, no un true
+                                        activeGroup.setBraceletConnected(response.getInt("bracelet_connected"));
+                                        activeGroup.setDriverBac(response.getDouble("driver_bac"));
 
+                                        JSONArray users = response.getJSONArray("users");
+                                        for(int i = 0 ; i< users.length() ; i++) {
+                                            JSONObject user = (JSONObject) users.get(i);
+                                            if(user.getString("user_fb_id").equals(response.getString("driver"))){
+                                                activeGroup.setDriverName(user.getString("name"));
+                                                activeGroup.setDriverAvatar("http://graph.facebook.com/"+user.getString("user_fb_id")+"/picture?type=large");
+                                            }
+                                        }
+                                        intent.putExtra("GROUP_STATUS", activeGroup);
+                                        broadcaster.sendBroadcast(intent);
                                     } catch (Exception e) {
-                                        Log.e(LogConstants.FETCH_ACTIVE_GROUP_SERVICE, "Error fetching the active groups: " + e.getMessage());
+                                        Log.e(LogConstants.TRACKING_SERVICE, "Error fetching active group status: " + e.getMessage());
                                     }
 
 
@@ -121,19 +162,17 @@ public class TrackingService extends Service {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
                                     if(error.networkResponse!=null){
-                                        Log.i(LogConstants.SERVER_RESPONSE, "Status Code:" + String.valueOf(error.networkResponse.statusCode));
-                                        Log.i(LogConstants.FETCH_ACTIVE_GROUP_SERVICE, "There are no active groups...");
+                                        Log.e(LogConstants.TRACKING_SERVICE, "Couldnt get active group status, err: " + String.valueOf(error.networkResponse.statusCode));
                                         Intent intent = new Intent(getApplicationContext(), TrackingService.class);
                                         stopService(intent);
                                     } else {
-                                        Log.e(LogConstants.SERVER_RESPONSE, "Status Code:" + String.valueOf(error.getMessage()));
+                                        Log.e(LogConstants.TRACKING_SERVICE, "Couldnt get active group status, err: " + String.valueOf(error.getMessage()));
                                     }
                                 }
                             });
-
-
+                    AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
                 } catch (InterruptedException e) {
-                    Log.e("ServiceError", "InterruptedException");
+                    Log.e(LogConstants.TRACKING_SERVICE, "InterruptedException");
                 }
             }
         }
@@ -142,12 +181,13 @@ public class TrackingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mRunning = false;
         Log.i(LogConstants.LOG_TAG, "Tracking Service destroyed");
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
 }

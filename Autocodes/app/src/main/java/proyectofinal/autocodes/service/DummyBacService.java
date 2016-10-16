@@ -83,7 +83,7 @@ public class DummyBacService extends Service {
                 DeviceDataHolder.getInstance().setGroupId(group.getId());
                 while(true){
                     Thread.sleep(1000);
-                    DeviceDataHolder.getInstance().getTrash().add("Trash");
+                    DeviceDataHolder.getInstance().getTrash().add("DummyTrash");
                 }
             } catch (Exception e){
                 e.printStackTrace();

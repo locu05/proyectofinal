@@ -11,6 +11,44 @@ public class Group implements Serializable {
     String name;
     int active;
     String driverId;
+    Integer braceletConnected;
+    Double driverBac;
+    String driverName;
+    String driverAvatar;
+
+    public String getDriverAvatar() {
+        return driverAvatar;
+    }
+
+    public void setDriverAvatar(String driverAvatar) {
+        this.driverAvatar = driverAvatar;
+    }
+
+    public String getDriverName() {
+        return driverName;
+    }
+
+    public void setDriverName(String driverName) {
+        this.driverName = driverName;
+    }
+
+    public Double getDriverBac() {
+        return driverBac;
+    }
+
+    public void setDriverBac(Double driverBac) {
+        this.driverBac = driverBac;
+    }
+
+
+    public Integer getBraceletConnected() {
+        return braceletConnected;
+    }
+
+    public void setBraceletConnected(Integer braceletConnected) {
+        this.braceletConnected = braceletConnected;
+    }
+
 
     private static final long serialVersionUID = 7526472295623423447L;
 

@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
-        android:key="pref_sync"
-        android:title="@string/pref_sync"
-        android:defaultValue="true" />
+        android:key="mock_bluetooth"
+        android:title="Mockear bluetooth"
+        android:defaultValue="false" />
+    <EditTextPreference
+        android:key="bac_value"
+        android:title="Bac a generar"
+        android:defaultValue="0.0"
+        android:numeric="decimal">
+    </EditTextPreference>
+    <CheckBoxPreference
+        android:key="simulate_temperature"
+        android:title="Simular Temperatura"
+        android:defaultValue="false" />
+    <CheckBoxPreference
+        android:key="simulate_pulse"
+        android:title="Simular Pulso"
+        android:defaultValue="false" />
 </PreferenceScreen>

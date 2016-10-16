@@ -9,7 +9,7 @@
     <application
         android:name=".AutocodesApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/autocodes_transparente"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -53,6 +53,10 @@
         <activity android:name=".ChatLoginActivity"></activity>
         <service android:name=".ServiceMessage"
             android:exported="false"/>
+        <activity
+            android:name=".ActiveNotificationActivity"
+            android:noHistory="true" />
+        <activity android:exported="true" android:name=".ActiveTestActivity"></activity>
     </application>
 
 </manifest>

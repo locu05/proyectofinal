@@ -4,6 +4,7 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -23,6 +25,8 @@ import java.util.Set;
 
 import proyectofinal.autocodes.AutocodesApplication;
 import proyectofinal.autocodes.R;
+import proyectofinal.autocodes.SettingsActivity;
+import proyectofinal.autocodes.constant.AutocodesIntentConstants;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.constant.MessageConstants;
 import proyectofinal.autocodes.model.Group;
@@ -121,57 +125,63 @@ public class TrackingDriverService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what== MessageConstants.ERROR_CONNECTING_DEVICE) {
-                Toast.makeText(AutocodesApplication.getInstance().getApplicationContext(), "No se puede conectar con el dispositivo", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(AutocodesApplication.getInstance().getApplicationContext(), TrackingDriverService.class);
-                AutocodesApplication.getInstance().getApplicationContext().stopService(intent);
-            } else {
-                try {
-                    Log.e(LogConstants.TRACKING_DRIVER_SERVICE, "Tracking Device...");
-                    BluetoothAdapter mBluetoothAdapter = getDefaultAdapter();
-                    if (mBluetoothAdapter == null) {
-                        // Device does not support Bluetooth
-                        Log.e(LogConstants.LOG_TAG, "El dispositivo no soporta blueetooth");
-                        Toast.makeText(getApplicationContext(), "El dispositivo no soporta blueetooth", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(getApplicationContext(), TrackingDriverService.class);
-                        stopService(intent);
-                        return;
-                    }
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            Boolean mockBluetooth = sharedPref.getBoolean(SettingsActivity.MOCK_BLUETOOTH, false);
+            if(!mockBluetooth) {
+                if (msg.what== MessageConstants.ERROR_CONNECTING_DEVICE) {
+                    Toast.makeText(AutocodesApplication.getInstance().getApplicationContext(), "No se puede conectar con el dispositivo", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(AutocodesApplication.getInstance().getApplicationContext(), TrackingDriverService.class);
+                    AutocodesApplication.getInstance().getApplicationContext().stopService(intent);
+                } else {
+                    try {
+                        Log.e(LogConstants.TRACKING_DRIVER_SERVICE, "Tracking Device...");
+                        BluetoothAdapter mBluetoothAdapter = getDefaultAdapter();
+                        if (mBluetoothAdapter == null) {
+                            // Device does not support Bluetooth
+                            Log.e(LogConstants.LOG_TAG, "El dispositivo no soporta blueetooth");
+                            Toast.makeText(getApplicationContext(), "El dispositivo no soporta blueetooth", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(getApplicationContext(), TrackingDriverService.class);
+                            stopService(intent);
+                            return;
+                        }
                  /*   if (!mBluetoothAdapter.isEnabled()) {
                         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                     }*/
-                    Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-                    Log.i("Paired devices", "" + pairedDevices.size());
-                    // If there are paired devices
-                    if (pairedDevices.size() > 0) {
-                        // Loop through paired devices
-                        // Add the name and address to an array adapter to show in a ListView
-                        boolean foundDevice = false;
-                        for(BluetoothDevice  dev: pairedDevices){
-                            if(dev.getName().trim().equals("HC-06")){
-                                Log.i(LogConstants.TRACKING_DRIVER_SERVICE, "Starting thread with: ");
-                                Log.i(LogConstants.TRACKING_DRIVER_SERVICE, dev.getName() + "\n" + dev.getAddress());
-                                ConnectThread ct = new ConnectThread(dev,mServiceHandler,group);
-                                ct.start();
-                                DeviceDataHolder.getInstance().setGroupId(group.getId());
-                                Intent intentPullAndAnalizeDataService = new Intent(getApplicationContext(),
-                                        PullAndAnalizeDataService.class);
-                                startService(intentPullAndAnalizeDataService);
-                                foundDevice = true;
+                        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+                        Log.i("Paired devices", "" + pairedDevices.size());
+                        // If there are paired devices
+                        if (pairedDevices.size() > 0) {
+                            // Loop through paired devices
+                            // Add the name and address to an array adapter to show in a ListView
+                            boolean foundDevice = false;
+                            for(BluetoothDevice  dev: pairedDevices){
+                                if(dev.getName().trim().equals("HC-06")){
+                                    Log.i(LogConstants.TRACKING_DRIVER_SERVICE, "Starting thread with: ");
+                                    Log.i(LogConstants.TRACKING_DRIVER_SERVICE, dev.getName() + "\n" + dev.getAddress());
+                                    ConnectThread ct = new ConnectThread(dev,mServiceHandler,group);
+                                    ct.start();
+                                    DeviceDataHolder.getInstance().setGroupId(group.getId());
+                                    Intent intentPullAndAnalizeDataService = new Intent(getApplicationContext(),
+                                            PullAndAnalizeDataService.class);
+                                    intentPullAndAnalizeDataService.putExtra(AutocodesIntentConstants.GROUP_ID, group.getId());
+                                    startService(intentPullAndAnalizeDataService);
+                                    foundDevice = true;
+                                }
                             }
+                            if(!foundDevice) {
+                                Toast.makeText(getApplicationContext(), "No se puede encontrar el dispositivo," +
+                                        " por favor asegurese de haber sincronizado el dispositivo.", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(getApplicationContext(), TrackingDriverService.class);
+                                stopService(intent);
+                            };
                         }
-                        if(!foundDevice) {
-                            Toast.makeText(getApplicationContext(), "No se puede encontrar el dispositivo," +
-                                    " por favor asegurese de haber sincronizado el dispositivo.", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(getApplicationContext(), TrackingDriverService.class);
-                            stopService(intent);
-                        };
-                    }
 
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                    }
+            }
+
             }
 
         }

@@ -109,21 +109,20 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.e(LogConstants.LOGIN, "LOGIN OK");
-                Toast.makeText(getContext(), "LogIn successful", Toast.LENGTH_LONG);
+                Log.i(LogConstants.LOGIN, "LOGIN OK");
                 getActivity().finish();
             }
 
             @Override
             public void onCancel() {
-                Log.e(LogConstants.LOGIN, "LOGIN CANCELED");
+                Log.i(LogConstants.LOGIN, "LOGIN CANCELED");
                 Toast.makeText(getContext(), "Error logging in", Toast.LENGTH_LONG);
 
             }
 
             @Override
             public void onError(FacebookException error) {
-                Log.e(LogConstants.LOGIN, "LOGIN ERROR");
+                Log.i(LogConstants.LOGIN, "LOGIN ERROR" + error.getMessage());
                 Toast.makeText(getContext(), "Error logging in", Toast.LENGTH_LONG);
             }
         });

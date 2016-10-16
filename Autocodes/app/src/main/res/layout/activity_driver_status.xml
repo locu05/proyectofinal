@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="#aa000000"
+    android:background="@drawable/greypattern"
     tools:context="proyectofinal.autocodes.DriverStatusActivity">
 
 
@@ -64,6 +64,18 @@
         android:textColor="@color/white"
         android:id="@+id/aptoLabel"
         android:layout_below="@id/bacTv" />
+
+
+    <proyectofinal.autocodes.font.RobotoTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="APTO PARA MANEJAR"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:id="@+id/secretCodeTv"
+        android:visibility="gone"
+        android:layout_below="@id/aptoLabel" />
 
 
 

@@ -202,21 +202,21 @@
     <string name="prompt_username">What\'s your nickname?</string>
     <string name="action_sign_in">Join</string>
     <string name="action_sign_in_short">Join</string>
-    <string name="what_s_your_group">What\'s your group?</string>
+    <string name="what_s_your_group">Cual es tu grupo?</string>
     <string name="prompt_message">Mensaje</string>
-    <string name="action_send">Send</string>
+    <string name="action_send">Enviar</string>
     <string name="user_action_typing">esta escribiendo</string>
     <string name="message_welcome">Bienvenido al Chat de Autocodes –</string>
     <plurals name="message_participants">
         <item quantity="one">there\'s %d participant</item>
         <item quantity="other">there are %d participants</item>
     </plurals>
-    <string name="connect">Connected</string>
-    <string name="disconnect">Disconnected, Please check your internet connection</string>
-    <string name="error_connect">Failed to connect</string>
-    <string name="message_user_joined">%s joined</string>
-    <string name="message_user_left">%s left</string>
-    <string name="action_leave">Leave</string>
+    <string name="connect">Conectado</string>
+    <string name="disconnect">Desconectado, Por favor revise la conexion a interna</string>
+    <string name="error_connect">Error al conectar</string>
+    <string name="message_user_joined">%s se ha unido</string>
+    <string name="message_user_left">%s ha dejado la sala</string>
+    <string name="action_leave">Salir</string>
 
 
 </resources>

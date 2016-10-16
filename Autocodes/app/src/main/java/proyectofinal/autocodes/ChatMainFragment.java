@@ -52,8 +52,8 @@ public class ChatMainFragment extends Fragment {
 
     private static RecyclerView mMessagesView;
     private EditText mInputMessageView;
-    private  static List<Message> mMessages = new ArrayList<>();
-    private static List<Message> listaMensajes = new ArrayList<>();
+    private static List<Message> mMessages;
+    private static List<Message> listaMensajes;
     static LocalBroadcastManager broadcaster;
     private static RecyclerView.Adapter mAdapter;
     //private boolean mTyping = false;
@@ -62,11 +62,10 @@ public class ChatMainFragment extends Fragment {
     private String mUserGroup;
     private Socket mSocket;
     private static final String TAG = "Bocajuniors";
-private Intent intentServicio = null;
+    private Intent intentServicio = null;
     private Boolean isConnected = true;
     private static String mLastState;
-static Context contextoActual;
-
+    private static Context contextoActual;
 
 
     public ChatMainFragment() {
@@ -107,6 +106,8 @@ static Context contextoActual;
 
         AutocodesApplication app = (AutocodesApplication) getActivity().getApplication();
         mSocket = app.getSocket();
+        listaMensajes = new ArrayList<>();
+        mMessages = new ArrayList<>();
 
 
        /* mSocket.on(Socket.EVENT_CONNECT,onConnect);
@@ -280,6 +281,9 @@ static Context contextoActual;
         listaMensajes = gson.fromJson(jsonMsg, type);
         /*Agrego Mensaje*/
         //listaMensajes.add(unMensaje);
+        if(listaMensajes == null) {
+            listaMensajes = new ArrayList<Message>();
+        }
         agregarMensajeLista(listaMensajes,unMensaje);
         Log.d("Boca Juniors", "la cantidad de mensajes es "+ listaMensajes.size());
         mAdapter = new ChatMessageAdapter(contextoActual, listaMensajes);
@@ -511,10 +515,7 @@ static Context contextoActual;
         if (listaDeMensajes.size() >= 50 ){
             listaDeMensajes.remove(0);
             listaDeMensajes.add(unMensaje);
-
         }
-
-
     }
 
 

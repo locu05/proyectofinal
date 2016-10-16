@@ -71,17 +71,6 @@ public class AutocodesApplication extends Application {
         super.onTerminate();
     }
 
-    public AccessToken getAccessToken() {
-        return at;
-    }
-
-    public void setAccessToken(AccessToken authToken) {
-        this.at = authToken;
-    }
-
-    /**
-     * @return ApplicationController singleton instance
-     */
     public static synchronized AutocodesApplication getInstance() {
         return sInstance;
     }

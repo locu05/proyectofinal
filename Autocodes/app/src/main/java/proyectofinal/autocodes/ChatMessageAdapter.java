@@ -52,7 +52,12 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
     @Override
     public int getItemCount() {
-        return mMessages.size();
+        if(mMessages != null) {
+            return mMessages.size();
+        } else {
+            return 0;
+        }
+
     }
 
     @Override

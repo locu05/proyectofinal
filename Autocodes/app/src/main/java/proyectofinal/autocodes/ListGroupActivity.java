@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -43,12 +44,11 @@ import proyectofinal.autocodes.view.ProgressWheel;
 
 public class ListGroupActivity extends AppCompatActivity {
 
-    private long mRequestStartTimeUser;
-    private long mRequestStartTimeGroup;
     Context listGroupActivityContext;
     List<Group> groupList;
     boolean value = true;
     String serverBaseUrl = "http://107.170.81.44:3002";
+    public static final String PREFS_FILE = "AutocodesPrefs";
     DynamicListView listView;
     AccessToken at2;
     BroadcastReceiver receiver;
@@ -58,6 +58,7 @@ public class ListGroupActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(LogConstants.LOGIN, "Starting main activity");
         LocalBroadcastManager.getInstance(this).registerReceiver((receiver),
                 new IntentFilter("ActiveGroup")
         );
@@ -72,6 +73,7 @@ public class ListGroupActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(LogConstants.LOGIN, "Resuming main activity");
         groupList.clear();
         ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
         at2 = AccessToken.getCurrentAccessToken();
@@ -79,20 +81,24 @@ public class ListGroupActivity extends AppCompatActivity {
         progress.spin();
         emptyList.setVisibility(View.GONE);
         if (at2 == null){
-            Log.e(LogConstants.LOGIN, "User NOT LOGGED, REDIRECTING");
+            Log.i(LogConstants.LOGIN, "User not logged, redirecting to login");
             //Mandar al login si no esta logueado
             Intent goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(goToNextActivity);
         } else {
-            Log.e(LogConstants.LOGIN, "UserId on " + at2.getUserId());
-            getUserInfo(at2.getUserId());
-            getGroups(at2.getUserId());
+            Log.d(LogConstants.LOGIN, "User logged: " + at2.getUserId());
+            SharedPreferences settings = getSharedPreferences("PREFS_FILE", 0);
+            if(!settings.getBoolean("userOK", false)){
+                Log.i(LogConstants.LOGIN, "Checking if user exists " + at2.getUserId());
+                getUserInfo(at2.getUserId());
+            } else{
+                Log.i(LogConstants.LOGIN, "Getting user groups: " + at2.getUserId());
+                getGroups(at2.getUserId());
+            }
             Intent intent = new Intent(listGroupActivityContext, FetchActiveGroupService.class);
             intent.putExtra("userId", at2.getUserId());
             startService(intent);
         }
-
-
     }
 
     @Override
@@ -106,12 +112,21 @@ public class ListGroupActivity extends AppCompatActivity {
             }
             case R.id.logout_button: {
                 LoginManager.getInstance().logOut();
+                SharedPreferences settings = getSharedPreferences("PREFS_FILE", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("userOK", false);
+                editor.commit();
                 Intent goToNextActivity = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(goToNextActivity);
                 return true;
             }
             case R.id.new_group: {
                 Intent goToNextActivity = new Intent(getApplicationContext(), CreateGroupActivity.class);
+                startActivity(goToNextActivity);
+                return true;
+            }
+            case R.id.active_test_btn: {
+                Intent goToNextActivity = new Intent(getApplicationContext(), ActiveTestActivity.class);
                 startActivity(goToNextActivity);
                 return true;
             }
@@ -166,7 +181,7 @@ public class ListGroupActivity extends AppCompatActivity {
 
     private void deleteGroup(final Group group) {
 
-        mRequestStartTimeUser = System.currentTimeMillis();
+        final long mRequestStartTimeUser = System.currentTimeMillis();
 
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
                     (Request.Method.DELETE, serverBaseUrl + "/group/" + group.getId(), null, new Response.Listener<JSONObject>() {
@@ -174,23 +189,20 @@ public class ListGroupActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUser;
-                            Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                            Log.e(LogConstants.SERVER_RESPONSE, "/group delete onResponse");
+                            Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                            Log.i(LogConstants.SERVER_RESPONSE, "/group delete onResponse");
                         }
                     }, new Response.ErrorListener() {
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUser;
-                            Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                            Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
                             Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
-
                         }
                     });
 
             AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
-
-
     }
 
     @Override
@@ -201,30 +213,47 @@ public class ListGroupActivity extends AppCompatActivity {
 
     }
 
-    public void getUserInfo(String userId){
-        mRequestStartTimeUser = System.currentTimeMillis();
+    public void getUserInfo(final String userId){
+        final long mRequestStartTimeUser = System.currentTimeMillis();
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
             (Request.Method.GET, serverBaseUrl + "/user/" + userId, null, new Response.Listener<JSONObject>() {
 
                 @Override
                 public void onResponse(JSONObject response) {
                     long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUser;
-                    Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                    Log.e(LogConstants.JSON_RESPONSE, "/user " + response.toString());
+                    Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                    Log.i(LogConstants.JSON_RESPONSE, "/user/userid " + response.toString());
+
+                    SharedPreferences settings = getSharedPreferences("PREFS_FILE", 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putBoolean("userOK", true);
+                    editor.commit();
+                    getGroups(userId);
                 }
             }, new Response.ErrorListener() {
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
+
+                    SharedPreferences settings = getSharedPreferences("PREFS_FILE", 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putBoolean("userOK", false);
+                    editor.commit();
+
                     long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUser;
-                    Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                    Log.d(LogConstants.TIME_SERVER_RESPONSE, "/user/" + userId + " " + String.valueOf(totalRequestTime));
                     if(error.networkResponse!=null){
-                        Log.e(LogConstants.SERVER_RESPONSE, "Status Code:" + String.valueOf(error.networkResponse.statusCode));
+                        //Si el usuario no existe, ir a la pantalla de peso y altura para crearlo
+                        if (error.networkResponse.statusCode == 404){
+                            Log.d(LogConstants.SERVER_RESPONSE, "/user/" + userId + " Does not exist, sending to WeightAndHeightActivity");
+                            Intent intent = new Intent(getApplicationContext(), WeightAndHeightActivity.class);
+                            startActivity(intent);
+                        } else{
+                            Log.e(LogConstants.SERVER_RESPONSE, "/user/" + userId + " Status Code:" + String.valueOf(error.networkResponse.statusCode));
+                        }
                     } else {
-                        Log.e(LogConstants.SERVER_RESPONSE, "Status Code:" + String.valueOf(error.getMessage()));
+                        Log.e(LogConstants.SERVER_RESPONSE, "/user/" + userId + " Error:" + String.valueOf(error.getMessage()));
                     }
-
-
                 }
             });
 
@@ -234,16 +263,16 @@ public class ListGroupActivity extends AppCompatActivity {
 
 
 
-    public void getGroups(String userId){
-        mRequestStartTimeGroup = System.currentTimeMillis();
+    public void getGroups(final String userId){
+        final long mRequestStartTimeGroup = System.currentTimeMillis();
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
             (Request.Method.GET, serverBaseUrl + "/groups/" + userId, null, new Response.Listener<JSONObject>() {
 
                 @Override
                 public void onResponse(JSONObject response) {
                     long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeGroup;
-                    Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                    Log.e(LogConstants.JSON_RESPONSE, "/groups " + response.toString());
+                    Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                    Log.i(LogConstants.JSON_RESPONSE, "/groups " + response.toString());
                     try {
                     for(int i = 0 ; i< response.getJSONArray("groups").length() ; i++) {
                             Group group = new Group();
@@ -254,9 +283,7 @@ public class ListGroupActivity extends AppCompatActivity {
                             groupList.add(group);
                         }}
                     catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-
+                        Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
                     }
 
                     ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
@@ -274,8 +301,12 @@ public class ListGroupActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeGroup;
-                    Log.e(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                    Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+                    Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
+                    if(error.getMessage() != null){
+                        Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
+                    } else {
+                        Log.e(LogConstants.SERVER_RESPONSE, "/groups/" + userId + " Status code: " + error.networkResponse.statusCode);
+                    }
 
                 }
             });
