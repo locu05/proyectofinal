@@ -38,8 +38,11 @@ public class ChatLoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_login);
+Log.d(TAG, "estoy en actividad chatloginactivity");
+       /* ChatApplication app = (ChatApplication) getApplication();
+        mSocket = app.getSocket();*/
 
-        ChatApplication app = (ChatApplication) getApplication();
+        AutocodesApplication app = (AutocodesApplication) getApplication();
         mSocket = app.getSocket();
         //mSocket.emit(MY_EVENT, "caca");
 

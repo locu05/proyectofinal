@@ -11,6 +11,11 @@ import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+
 /**
  * Created by lucas on 06/08/16.
  */
@@ -35,12 +40,24 @@ public class AutocodesApplication extends Application {
 
     AccessToken at;
 
+    private Socket mSocket;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
         sInstance = this;
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+
+        {
+            try {
+                mSocket = IO.socket(ChatConstants.CHAT_SERVER_URL);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        mSocket.connect();
 
     }
 
@@ -135,5 +152,8 @@ public class AutocodesApplication extends Application {
         activityVisible = false;
     }
 
+    public Socket getSocket() {
+        return mSocket;
+    }
 
 }

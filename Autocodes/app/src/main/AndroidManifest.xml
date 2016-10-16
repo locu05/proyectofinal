@@ -50,6 +50,9 @@
         <activity android:name=".DriverStatusActivity" />
         <activity android:name=".DriverConfirmDeviceActivity" />
         <activity android:name=".ChatGroupActivity"></activity>
+        <activity android:name=".ChatLoginActivity"></activity>
+        <service android:name=".ServiceMessage"
+            android:exported="false"/>
     </application>
 
 </manifest>

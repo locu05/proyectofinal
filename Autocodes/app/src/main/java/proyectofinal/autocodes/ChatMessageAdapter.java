@@ -2,6 +2,7 @@ package proyectofinal.autocodes;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
     private List<Message> mMessages;
     private int[] mUsernameColors;
 
-    public ChatMessageAdapter(Context context, List<Message> messages) {
+    public  ChatMessageAdapter(Context context, List<Message> messages) {
         mMessages = messages;
+
         mUsernameColors = context.getResources().getIntArray(R.array.username_colors);
+
     }
 
     @Override

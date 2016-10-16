@@ -1,10 +1,16 @@
 package proyectofinal.autocodes;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -22,14 +28,19 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import proyectofinal.autocodes.constant.AutocodesIntentConstants;
 
 
 /**
@@ -37,31 +48,54 @@ import io.socket.emitter.Emitter;
  */
 public class ChatMainFragment extends Fragment {
 
-    private static final int REQUEST_LOGIN = 0;
 
-    //private static final int TYPING_TIMER_LENGTH = 600;
 
-    private RecyclerView mMessagesView;
+    private static RecyclerView mMessagesView;
     private EditText mInputMessageView;
-    private List<Message> mMessages = new ArrayList<Message>();
-    private RecyclerView.Adapter mAdapter;
+    private  static List<Message> mMessages = new ArrayList<>();
+    private static List<Message> listaMensajes = new ArrayList<>();
+    static LocalBroadcastManager broadcaster;
+    private static RecyclerView.Adapter mAdapter;
     //private boolean mTyping = false;
-    private Handler mTypingHandler = new Handler();
+   // private Handler mTypingHandler = new Handler();
     private String mUsername;
     private String mUserGroup;
     private Socket mSocket;
     private static final String TAG = "Bocajuniors";
-
+private Intent intentServicio = null;
     private Boolean isConnected = true;
+    private static String mLastState;
+static Context contextoActual;
+
+
 
     public ChatMainFragment() {
         super();
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mAdapter = new ChatMessageAdapter(activity, mMessages);
+    public void onAttach(Context context) {
+     Log.d(TAG, "pase por onattach");
+        //super.onAttach(activity);
+        super.onAttach(context);
+
+
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getActivity().getApplicationContext());
+        Type type = new TypeToken<List<Message>>(){}.getType();
+        Gson gson = new Gson();
+        String jsonMsg = appSharedPrefs.getString("ObjetoListaMensajes", "");
+        listaMensajes = gson.fromJson(jsonMsg, type);
+
+        Log.d("Boca Juniors", "pase por onattach");
+        mAdapter = new ChatMessageAdapter(context, listaMensajes);
+
+
+       /* Activity a;
+        if (context instanceof Activity) {
+            a = (Activity) context;
+            mAdapter = new ChatMessageAdapter(context, mMessages);
+        } */
     }
 
     @Override
@@ -70,43 +104,64 @@ public class ChatMainFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        ChatApplication app = (ChatApplication) getActivity().getApplication();
+
+        AutocodesApplication app = (AutocodesApplication) getActivity().getApplication();
         mSocket = app.getSocket();
-        mSocket.on(Socket.EVENT_CONNECT,onConnect);
+
+
+       /* mSocket.on(Socket.EVENT_CONNECT,onConnect);
         mSocket.on(Socket.EVENT_DISCONNECT,onDisconnect);
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-        mSocket.on("new message", onNewMessage);
-        mSocket.on("user joined", onUserJoined);
-        mSocket.on("user left", onUserLeft);
+        mSocket.on("chat message", onNewMessage);*/
+       // mSocket.on("user joined", onUserJoined);
+        //mSocket.on("user left", onUserLeft);
         //mSocket.on("typing", onTyping);
        // mSocket.on("stop typing", onStopTyping);
-        mSocket.connect();
+        //mSocket.connect();
 
-        startSignIn();
+
+        mUserGroup = ((ChatGroupActivity)getActivity()).intentValues.get(AutocodesIntentConstants.GROUP_ID);
+        mUsername =  ((ChatGroupActivity)getActivity()).intentValues.get(AutocodesIntentConstants.USER_NAME);
+
+        Log.d("Boca Juniors", "ChatMainFragment: el usuario es: " + mUsername + "y el grupo es: " + mUserGroup);
+
+
+
+
+
+        filter = new IntentFilter("my-event");
+        broadcaster = LocalBroadcastManager.getInstance(this.getActivity());
+        broadcaster.unregisterReceiver(mMessageReceiver);
+        intentServicio = new Intent(getActivity().getApplicationContext(), ServiceMessage.class);
+        getActivity().stopService(intentServicio);
+
+        contextoActual = getActivity();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_chat_main, container, false);
+
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        mSocket.disconnect();
+       /*comente msocket.disconnect y msocket.off chat message     */
+        //mSocket.disconnect();
 
+       mSocket.off("chat message", onNewMessage);
         mSocket.off(Socket.EVENT_CONNECT, onConnect);
         mSocket.off(Socket.EVENT_DISCONNECT, onDisconnect);
         mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-        mSocket.off("new message", onNewMessage);
-        mSocket.off("user joined", onUserJoined);
-        mSocket.off("user left", onUserLeft);
-       // mSocket.off("typing", onTyping);
-       // mSocket.off("stop typing", onStopTyping);
+
+
     }
 
     @Override
@@ -159,7 +214,11 @@ public class ChatMainFragment extends Fragment {
                 attemptSend();
             }
         });
+
+
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -172,7 +231,8 @@ public class ChatMainFragment extends Fragment {
         mUsername = data.getStringExtra("username");
        mUserGroup = data.getStringExtra("userGroup");
 
-        addLog(getResources().getString(R.string.message_welcome));
+       addLog(getResources().getString(R.string.message_welcome));
+
         //addParticipantsLog(numUsers);
     }
 
@@ -187,19 +247,7 @@ public class ChatMainFragment extends Fragment {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_leave) {
-            leave();
-            return true;
-        }*/
-//Todo: Este if debajo lo agregue a mano, ver como hacer para volver
-
-        if (id == R.id.action_leave) {
-            onPause();
-            return true;
-        }
+       // int id = item.getItemId();
 
         return super.onOptionsItemSelected(item);
     }
@@ -211,16 +259,114 @@ public class ChatMainFragment extends Fragment {
         scrollToBottom();
     }
 
-    private void addParticipantsLog(int numUsers) {
+
+   /* private void addParticipantsLog(int numUsers) {
         addLog(getResources().getQuantityString(R.plurals.message_participants, numUsers, numUsers));
+    }*/
+
+    public void addMessage(String username, String message) {
+
+        Message unMensaje = new Message.Builder(Message.TYPE_MESSAGE)
+                .username(username).message(message).build();
+        mMessages.add(unMensaje);
+        /*Obtengo SharedPreference*/
+        //Context context = getActivity().getApplicationContext();
+
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(contextoActual);
+        Type type = new TypeToken<List<Message>>(){}.getType();
+        Gson gson = new Gson();
+        String jsonMsg = appSharedPrefs.getString("ObjetoListaMensajes", "");
+        listaMensajes = gson.fromJson(jsonMsg, type);
+        /*Agrego Mensaje*/
+        //listaMensajes.add(unMensaje);
+        agregarMensajeLista(listaMensajes,unMensaje);
+        Log.d("Boca Juniors", "la cantidad de mensajes es "+ listaMensajes.size());
+        mAdapter = new ChatMessageAdapter(contextoActual, listaMensajes);
+
+        mAdapter.notifyItemInserted(listaMensajes.size() - 1);
+        mAdapter.notifyDataSetChanged();
+        mMessagesView.invalidate();
+        /*Guardo en sharedPreference*/
+        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+        //Gson gson = new Gson();
+        String json = gson.toJson(listaMensajes);
+        //prefsEditor.remove("ObjetoListaMensajes");
+        prefsEditor.putString("ObjetoListaMensajes", json);
+
+        prefsEditor.commit();
+
+        mMessagesView.setAdapter(mAdapter);
+
+
+
+        //String jsonMsg = appSharedPrefs.getString("ObjetoListaMensajes", "");
+        scrollToBottom();
+
+
+
     }
 
-    private void addMessage(String username, String message) {
-        mMessages.add(new Message.Builder(Message.TYPE_MESSAGE)
-                .username(username).message(message).build());
-        mAdapter.notifyItemInserted(mMessages.size() - 1);
+    static private IntentFilter filter;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Unregister since the activity is  visible
+        mSocket.on("chat message", onNewMessage);
+        mSocket.on(Socket.EVENT_CONNECT, onConnect);
+        mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect);
+        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
+        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+        intentServicio = new Intent(getActivity().getApplicationContext(), ServiceMessage.class);
+        getActivity().stopService(intentServicio);
+        broadcaster.unregisterReceiver(mMessageReceiver);
         scrollToBottom();
+
+
     }
+
+
+
+    public void onPause() {
+        super.onPause();
+        broadcaster.registerReceiver(mMessageReceiver,
+                filter);
+        Intent intentServicio = new Intent(getActivity().getApplicationContext(), ServiceMessage.class);
+        intentServicio.putExtra("usuario",mUsername);
+        intentServicio.putExtra("grupo", mUserGroup);
+        getActivity().startService(intentServicio);
+
+        mSocket.off("chat message", onNewMessage);
+        mSocket.off(Socket.EVENT_CONNECT, onConnect);
+        mSocket.off(Socket.EVENT_DISCONNECT, onDisconnect);
+        mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
+        mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+
+
+
+    }
+
+    // handler for received Intents for the "my-event" event
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Extract data included in the Intent
+        String state =intent.getStringExtra("estadoActual");
+
+
+            String message = intent.getStringExtra("message");
+            String username = intent.getStringExtra("username");
+            if (!state.equals(mLastState) ) {
+                addMessage(username, message);
+                mLastState = state;
+                Log.d("receiver", "Got message: " + message);
+            }
+
+        }
+    };
+
+
 
     /*private void addTyping(String username) {
         mMessages.add(new Message.Builder(Message.TYPE_ACTION)
@@ -252,25 +398,25 @@ public class ChatMainFragment extends Fragment {
         }
 
         mInputMessageView.setText("");
-        addMessage(mUsername, message);
 
         // perform the sending message attempt.
-        Log.i(TAG," intenta enviar msg al grupo: " + mUserGroup);
-        mSocket.emit("new message", message, mUserGroup, mUsername);
+        mSocket.emit("chat message", message, mUserGroup, mUsername);
     }
 
-    private void startSignIn() {
+
+
+    /*private void startSignIn() {
         mUsername = null;
         Intent intent = new Intent(getActivity(), ChatLoginActivity.class);
         startActivityForResult(intent, REQUEST_LOGIN);
     }
-
-    private void leave() {
+*/
+    /*private void leave() {
         mUsername = null;
         mSocket.disconnect();
         mSocket.connect();
         startSignIn();
-    }
+    }*/
 
     private void scrollToBottom() {
         mMessagesView.scrollToPosition(mAdapter.getItemCount() - 1);
@@ -333,110 +479,45 @@ public class ChatMainFragment extends Fragment {
                     try {
                         username = data.getString("username");
                         message = data.getString("message");
+
+
                     } catch (JSONException e) {
                         return;
                     }
 
-                    //removeTyping(username);
+
+                    Log.d("Boca Juniors", "ListenerChatMain: recibi mensaje");
                     addMessage(username, message);
+
                 }
             });
         }
     };
 
-    private Emitter.Listener onUserJoined = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String username;
-                    int numUsers;
-                    try {
-                        username = data.getString("username");
-                        numUsers = data.getInt("numUsers");
-                    } catch (JSONException e) {
-                        return;
-                    }
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
-                    addLog(getResources().getString(R.string.message_user_joined, username));
-                    addParticipantsLog(numUsers);
-                }
-            });
+    }
+
+   public void onActivityCreated(Bundle savedInstanceState) {
+       super.onActivityCreated(savedInstanceState);
+      if (savedInstanceState != null){
+          Log.d("Boca Juniors", "entre en restore y sinstate no es null");
+
+      }
+    }
+
+    private void agregarMensajeLista ( List<Message> listaDeMensajes, Message unMensaje){
+        if (listaDeMensajes.size() >= 50 ){
+            listaDeMensajes.remove(0);
+            listaDeMensajes.add(unMensaje);
+
         }
-    };
 
-    private Emitter.Listener onUserLeft = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String username;
-                    int numUsers;
-                    try {
-                        username = data.getString("username");
-                        numUsers = data.getInt("numUsers");
-                    } catch (JSONException e) {
-                        return;
-                    }
 
-                    addLog(getResources().getString(R.string.message_user_left, username));
-                    addParticipantsLog(numUsers);
-                    //removeTyping(username);
-                }
-            });
-        }
-    };
+    }
 
-    /*private Emitter.Listener onTyping = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String username;
-                    try {
-                        username = data.getString("username");
-                    } catch (JSONException e) {
-                        return;
-                    }
-                    addTyping(username);
-                }
-            });
-        }
-    };*/
 
-    /*private Emitter.Listener onStopTyping = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String username;
-                    try {
-                        username = data.getString("username");
-                    } catch (JSONException e) {
-                        return;
-                    }
-                    removeTyping(username);
-                }
-            });
-        }
-    };*/
 
-    /*private Runnable onTypingTimeout = new Runnable() {
-        @Override
-        public void run() {
-            if (!mTyping) return;
-
-            mTyping = false;
-            mSocket.emit("stop typing");
-        }
-    };*/
 }
 
