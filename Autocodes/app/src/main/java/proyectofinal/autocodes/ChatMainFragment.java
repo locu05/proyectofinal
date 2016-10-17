@@ -514,8 +514,9 @@ public class ChatMainFragment extends Fragment {
     private void agregarMensajeLista ( List<Message> listaDeMensajes, Message unMensaje){
         if (listaDeMensajes.size() >= 50 ){
             listaDeMensajes.remove(0);
-            listaDeMensajes.add(unMensaje);
         }
+        listaDeMensajes.add(unMensaje);
+
     }
 
 
