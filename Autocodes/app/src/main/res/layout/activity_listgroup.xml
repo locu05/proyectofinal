@@ -1,9 +1,11 @@
 
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/greypattern"
     android:orientation="vertical" >
+
 
     <com.nhaarman.listviewanimations.itemmanipulation.DynamicListView
         android:id="@+id/groupListView"
@@ -20,7 +22,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#aa000000" />
         <!--
         The progress bar widget
         Set invisible if no items are available on completion of async. load.
