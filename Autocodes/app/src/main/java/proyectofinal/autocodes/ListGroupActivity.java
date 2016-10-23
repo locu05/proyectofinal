@@ -305,7 +305,7 @@ public class ListGroupActivity extends AppCompatActivity {
                     if(error.getMessage() != null){
                         Log.e(LogConstants.SERVER_RESPONSE, error.getMessage());
                     } else {
-                        Log.e(LogConstants.SERVER_RESPONSE, "/groups/" + userId + " Status code: " + error.networkResponse.statusCode);
+                        Log.e(LogConstants.SERVER_RESPONSE, "/groups/" + userId + " Status code: " + error.networkResponse);
                     }
 
                 }

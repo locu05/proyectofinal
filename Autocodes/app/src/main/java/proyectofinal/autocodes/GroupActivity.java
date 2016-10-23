@@ -205,6 +205,9 @@ public class GroupActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), DummyBacService.class);
         intent.putExtra("group", group);
         stopService(intent);
+        Intent intentTrackingDriverService = new Intent(getApplicationContext(),
+                TrackingDriverService.class);
+        stopService(intentTrackingDriverService);
         //TODO: DELETE WHEN IMPLEMENTED
     }
 

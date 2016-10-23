@@ -41,6 +41,7 @@ import java.util.List;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import proyectofinal.autocodes.constant.AutocodesIntentConstants;
+import proyectofinal.autocodes.constant.LogConstants;
 
 
 /**
@@ -86,7 +87,7 @@ public class ChatMainFragment extends Fragment {
         String jsonMsg = appSharedPrefs.getString("ObjetoListaMensajes", "");
         listaMensajes = gson.fromJson(jsonMsg, type);
 
-        Log.d("Boca Juniors", "pase por onattach");
+//        Log.d("Boca Juniors", "pase por onattach");
         mAdapter = new ChatMessageAdapter(context, listaMensajes);
 
 
@@ -125,7 +126,7 @@ public class ChatMainFragment extends Fragment {
         mUserGroup = ((ChatGroupActivity)getActivity()).intentValues.get(AutocodesIntentConstants.GROUP_ID);
         mUsername =  ((ChatGroupActivity)getActivity()).intentValues.get(AutocodesIntentConstants.USER_NAME);
 
-        Log.d("Boca Juniors", "ChatMainFragment: el usuario es: " + mUsername + "y el grupo es: " + mUserGroup);
+        Log.d(LogConstants.CHAT_ACTIVITY, "ChatMainFragment: el usuario es: " + mUsername + "y el grupo es: " + mUserGroup);
 
 
 
@@ -285,7 +286,7 @@ public class ChatMainFragment extends Fragment {
             listaMensajes = new ArrayList<Message>();
         }
         agregarMensajeLista(listaMensajes,unMensaje);
-        Log.d("Boca Juniors", "la cantidad de mensajes es "+ listaMensajes.size());
+//        Log.d("Boca Juniors", "la cantidad de mensajes es "+ listaMensajes.size());
         mAdapter = new ChatMessageAdapter(contextoActual, listaMensajes);
 
         mAdapter.notifyItemInserted(listaMensajes.size() - 1);
@@ -490,7 +491,7 @@ public class ChatMainFragment extends Fragment {
                     }
 
 
-                    Log.d("Boca Juniors", "ListenerChatMain: recibi mensaje");
+//                    Log.d("Boca Juniors", "ListenerChatMain: recibi mensaje");
                     addMessage(username, message);
 
                 }
@@ -506,7 +507,7 @@ public class ChatMainFragment extends Fragment {
    public void onActivityCreated(Bundle savedInstanceState) {
        super.onActivityCreated(savedInstanceState);
       if (savedInstanceState != null){
-          Log.d("Boca Juniors", "entre en restore y sinstate no es null");
+//          Log.d("Boca Juniors", "entre en restore y sinstate no es null");
 
       }
     }

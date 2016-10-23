@@ -94,7 +94,7 @@ public class ServiceMessage extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         mUsername = intent.getStringExtra("usuario");
         mUserGroup =  intent.getStringExtra("grupo");
-        Log.d("Boca Juniors", " Service: usuario emisor es: "+ mUserGroup + mUsername);
+//        Log.d("Boca Juniors", " Service: usuario emisor es: "+ mUserGroup + mUsername);
 
         final NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -134,7 +134,7 @@ public class ServiceMessage extends Service {
 
                             mNotificationManager.notify(1, mBuilder.build());
 
-                        Log.d("Boca Juniors", "Service: recibi mensaje de: "+ username + ": "+ message);
+//                        Log.d("Boca Juniors", "Service: recibi mensaje de: "+ username + ": "+ message);
                     }
                     }
 
@@ -175,7 +175,7 @@ public class ServiceMessage extends Service {
     // Send an Intent with an action named "my-event".
     private void sendMessage(String usuario,String mensaje) {
         // add data
-        Log.d("Boca Juniors", "ServiceMessage: entro");
+//        Log.d("Boca Juniors", "ServiceMessage: entro");
         Intent intent = new Intent("my-event");
 
         intent.putExtra("message", mensaje);

@@ -72,6 +72,7 @@ public class ConnectThread extends Thread {
             // Connect the device through the socket. This will block
             // until it succeeds or throws an exception
             mmSocket.connect();
+
             Log.e(LogConstants.BLUETOOTH_CONNECTION_THREAD, "Device successfully connected!");
             notifyDeviceConnectedToServer(1);
         } catch (IOException connectException) {

@@ -41,7 +41,7 @@ public class ChatGroupActivity extends AppCompatActivity {
         AutocodesApplication app = (AutocodesApplication) getApplication();
         mSocket = app.getSocket();
 
-        Log.d("Boca Juniors", "ChatGroupActivity - por iniciar ChatMainActivity");
+        Log.d(LogConstants.CHAT_ACTIVITY, "Starting... ChatMainActivity");
         mSocket.emit("register room", intentValues.get(AutocodesIntentConstants.USER_NAME), intentValues.get(AutocodesIntentConstants.GROUP_ID));
 
        /* Intent intent;

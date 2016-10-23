@@ -154,8 +154,8 @@ public class PullAndAnalizeDataService extends Service {
     private void pollTrash() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean mockBluetooth = sharedPref.getBoolean(SettingsActivity.MOCK_BLUETOOTH, false);
+        String pulledValue = (String) DeviceDataHolder.getInstance().getTrash().poll();
         if(mockBluetooth) {
-            String pulledValue = (String) DeviceDataHolder.getInstance().getTrash().poll();
             if(pulledValue!=null){
                 Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Trash Polled: " + pulledValue);
                     callService(sharedPref.getString(SettingsActivity.BAC_VALUE, "0.0"));
@@ -180,7 +180,11 @@ public class PullAndAnalizeDataService extends Service {
                 }
                 }
 
-            }
+            } else {
+                if(pulledValue!=null){
+                    Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Trash Polled: " + pulledValue);
+                }
+        }
     }
 
     private void callService(String bac) {
