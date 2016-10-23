@@ -75,7 +75,7 @@ public class PullAndAnalizeDataService extends Service {
             Message message = mServiceHandler.obtainMessage();
             message.arg1 = startId;
             mServiceHandler.sendMessage(message);
-            groupId = intent.getIntExtra(AutocodesIntentConstants.GROUP_ID, 0);
+            groupId = Integer.valueOf(intent.getStringExtra(AutocodesIntentConstants.GROUP_ID));
             return START_NOT_STICKY;
         }
         return super.onStartCommand(intent, flags, startId);
@@ -166,7 +166,7 @@ public class PullAndAnalizeDataService extends Service {
                                 ActiveNotificationTimer.getInstance().setStartTime();
                                 ActiveNotificationTimer.getInstance().setElapsedTime();
                                 Intent intentActiveNotification = new Intent(getApplicationContext(), ActiveNotificationActivity.class);
-                                intentActiveNotification.putExtra(AutocodesIntentConstants.GROUP_ID, groupId);
+                                intentActiveNotification.putExtra(AutocodesIntentConstants.GROUP_ID, String.valueOf(groupId));
                                 intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 getApplicationContext().startActivity(intentActiveNotification);
@@ -210,7 +210,7 @@ public class PullAndAnalizeDataService extends Service {
                             long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUpdateBac;
                             Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
                             if(error!=null){
-                                Log.d(LogConstants.SERVER_RESPONSE, error.getMessage());
+                                Log.d(LogConstants.SERVER_RESPONSE, error.getMessage()!=null?error.getMessage():"");
                             }
                         }
                     });
