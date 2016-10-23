@@ -315,16 +315,21 @@ public class GroupActivity extends AppCompatActivity {
 
                             ((BaseAdapter)listView.getAdapter()).notifyDataSetChanged();
 
+                            AccessToken at = AccessToken.getCurrentAccessToken();
+                            if(group.getActive() ==1 && !group.getDriverId().equals(at.getUserId())){
+                                driverStatusBtn.setVisibility(View.VISIBLE);
+                            } else {
+                                driverStatusBtn.setVisibility(View.GONE);
+                            }
+
 
                             if(group.getActive()==1){
-                                activateGroup.setVisibility(View.INVISIBLE);
+                                activateGroup.setVisibility(View.GONE);
                                 deactivateGroup.setVisibility(View.VISIBLE);
-                                driverStatusBtn.setVisibility(View.VISIBLE);
                                 chat.setVisibility(View.VISIBLE);
                             } else {
                                 activateGroup.setVisibility(View.VISIBLE);
-                                deactivateGroup.setVisibility(View.INVISIBLE);
-                                driverStatusBtn.setVisibility(View.INVISIBLE);
+                                deactivateGroup.setVisibility(View.GONE);
                             }
 
                     } catch (JSONException e) {
