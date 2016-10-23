@@ -18,6 +18,7 @@
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
             android:text="Al parecer es la primera vez que ingresa, por favor inserte su peso y altura"
+            android:textColor="@color/white"
             app:typeface="robotoRegular"
             android:paddingBottom="18dp"
             android:gravity="center"
@@ -53,6 +54,7 @@
                     android:layout_centerHorizontal="true"
                     android:text="Peso"
                     app:typeface="robotoRegular"
+                    android:textColor="@color/white"
                     style="@style/TextViewAppearance.Headline3"/>
 
 
@@ -63,7 +65,8 @@
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/textViewPeso"
                     android:layout_marginTop="26dp"
-                    android:max="180"/>
+                    android:max="180"
+                    android:textColor="@color/white"/>
 
                 <LinearLayout
                     android:id="@+id/layoutTextView1"
@@ -78,6 +81,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:padding="2dp"
+                            android:textColor="@color/white"
                             app:typeface="robotoRegular"
                             style="@style/TextViewAppearance.Headline3"/>
 
@@ -87,6 +91,7 @@
                             android:padding="2dp"
                             android:layout_marginTop="10dp"
                             android:text="Kgs"
+                            android:textColor="@color/white"
                             android:textSize="15dp"
                             app:typeface="robotoRegular"
                             style="@style/TextViewAppearance.Headline2"/>
@@ -103,6 +108,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/layoutTextView1"
                     android:text="Altura"
+                    android:textColor="@color/white"
                     app:typeface="robotoRegular"
                     style="@style/TextViewAppearance.Headline2"/>
 
@@ -113,7 +119,8 @@
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/textViewAltura"
                     android:layout_marginTop="10dp"
-                    android:max="230"/>
+                    android:max="230"
+                    android:textColor="@color/white"/>
 
                 <LinearLayout
                     android:id="@+id/layoutTextView2"
@@ -129,6 +136,7 @@
                     android:layout_marginTop="14dp"
                     android:padding="2dp"
                     app:typeface="robotoRegular"
+                    android:textColor="@color/white"
                     style="@style/TextViewAppearance.Headline3"/>
 
                 <proyectofinal.autocodes.font.RobotoTextView
@@ -137,6 +145,7 @@
                     android:layout_marginTop="14dp"
                     android:padding="2dp"
                     android:text=" Mts"
+                    android:textColor="@color/white"
                     android:textSize="15dp"
                     app:typeface="robotoRegular"
                     style="@style/TextViewAppearance.Headline2"/>
@@ -156,7 +165,9 @@
                             android:id="@+id/submitWeightAndHeight"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Confirmar"/>
+                            android:text="Confirmar"
+                            android:textColor="#FFF"
+                            android:background="@drawable/buttonshape"/>
 
                 </LinearLayout>
 

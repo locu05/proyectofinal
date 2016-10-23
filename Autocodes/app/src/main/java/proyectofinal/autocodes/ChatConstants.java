@@ -1,5 +1,5 @@
 package proyectofinal.autocodes;
 
 public class ChatConstants {
-    public static final String CHAT_SERVER_URL = "http://107.170.81.44:3001";
+    public static final String CHAT_SERVER_URL = "http://192.168.0.20:3001";
 }

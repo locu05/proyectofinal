@@ -264,6 +264,7 @@ public class GroupActivity extends AppCompatActivity {
             Log.i(LogConstants.BEHAVIOUR_LOG, "MOCKED BLUETOOTH DEVICE!");
             Intent intentPullAndAnalizeDataService = new Intent(getApplicationContext(),
                     PullAndAnalizeDataService.class);
+            intentPullAndAnalizeDataService.putExtra(AutocodesIntentConstants.GROUP_ID, groupId);
             startService(intentPullAndAnalizeDataService);
             Intent intent = new Intent(getApplicationContext(), DummyBacService.class);
             intent.putExtra("group", group);
