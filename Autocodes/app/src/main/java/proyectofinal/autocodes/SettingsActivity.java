@@ -9,4 +9,5 @@ public class SettingsActivity {
     public static final String SIMULATE_TEMPERATURE = "simulate_temperature";
     public static final String SIMULATE_PULSE = "simulate_pulse";
     public static final String BAC_VALUE = "bac_value";
+    public static final String ARRITMIA_COUNT = "arritmia_count";
 }

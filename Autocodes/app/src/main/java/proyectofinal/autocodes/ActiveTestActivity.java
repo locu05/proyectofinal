@@ -13,8 +13,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import proyectofinal.autocodes.constant.LogConstants;
+import proyectofinal.autocodes.service.DeviceDataHolder;
 
 public class ActiveTestActivity extends AppCompatActivity {
+
+    public static boolean running;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +42,10 @@ public class ActiveTestActivity extends AppCompatActivity {
                     protected Void doInBackground(Void... params) {
                         int progressStatus = 0;
                         Looper.prepare();
-                        Toast.makeText(getBaseContext(), "STARTING", Toast.LENGTH_LONG);
                         try {
+                            DeviceDataHolder.getInstance().setActiveAlcoholTest(true);
                             Thread.sleep(5000);
+                            DeviceDataHolder.getInstance().setActiveAlcoholTest(false);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -71,5 +75,17 @@ public class ActiveTestActivity extends AppCompatActivity {
                 }.execute();
             }
         });
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        running = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        running = false;
     }
 }

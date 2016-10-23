@@ -10,6 +10,12 @@
         android:defaultValue="0.0"
         android:numeric="decimal">
     </EditTextPreference>
+    <EditTextPreference
+        android:key="arritmia_count"
+        android:title="Conteo de arritmias"
+        android:defaultValue="20"
+        android:numeric="integer">
+    </EditTextPreference>
     <CheckBoxPreference
         android:key="simulate_temperature"
         android:title="Simular Temperatura"
