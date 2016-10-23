@@ -79,6 +79,7 @@
             android:textColor="#FFF"
             android:background="@drawable/buttonshape"
             android:text="Chat"
+            android:visibility="invisible"
             android:layout_toRightOf="@id/groupStatus"
             android:id="@+id/chatGroup">
         </Button>

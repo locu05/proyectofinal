@@ -320,11 +320,11 @@ public class GroupActivity extends AppCompatActivity {
                                 activateGroup.setVisibility(View.INVISIBLE);
                                 deactivateGroup.setVisibility(View.VISIBLE);
                                 driverStatusBtn.setVisibility(View.VISIBLE);
+                                chat.setVisibility(View.VISIBLE);
                             } else {
                                 activateGroup.setVisibility(View.VISIBLE);
                                 deactivateGroup.setVisibility(View.INVISIBLE);
                                 driverStatusBtn.setVisibility(View.INVISIBLE);
-                                chat.setVisibility(View.INVISIBLE);
                             }
 
                     } catch (JSONException e) {
