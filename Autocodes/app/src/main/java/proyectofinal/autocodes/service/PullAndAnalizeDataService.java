@@ -26,6 +26,7 @@ import java.util.Date;
 
 import proyectofinal.autocodes.ActiveNotificationActivity;
 import proyectofinal.autocodes.ActiveNotificationTimer;
+import proyectofinal.autocodes.ActiveTestActivity;
 import proyectofinal.autocodes.AutocodesApplication;
 import proyectofinal.autocodes.DriverConfirmDeviceActivity;
 import proyectofinal.autocodes.SettingsActivity;
@@ -63,6 +64,7 @@ public class PullAndAnalizeDataService extends Service {
         // start the service using the background handler
         mServiceHandler = new ServiceHandler(mServiceLooper);
         mRunning = false;
+        dataAnalizer = new DataAnalizer();
     }
 
     @Override
@@ -100,6 +102,7 @@ public class PullAndAnalizeDataService extends Service {
                     pollTrash();
                     pollPulse();
                     pollTemperature();
+                    pollAlcohol();
                     handleEvents();
                     Thread.sleep(200);
                 }
@@ -112,13 +115,70 @@ public class PullAndAnalizeDataService extends Service {
 
 }
 
+    private void pollAlcohol() {
+        String pulledValue = (String) DeviceDataHolder.getInstance().getAlcoholList().poll();
+        if(pulledValue!=null){
+            if(DeviceDataHolder.getInstance().isActiveAlcoholTest()) {
+                Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Alcohol Polled: " + pulledValue);
+                dataAnalizer.addAlcohol(Integer.valueOf(pulledValue));
+            }
+        }
+    }
+
     private void handleEvents() {
+        //MOCK
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean mockBluetooth = sharedPref.getBoolean(SettingsActivity.MOCK_BLUETOOTH, false);
+        if(mockBluetooth) {
         if(countTemperature > 19 && countPulse > 19) {
             countTemperature = 0;
             countPulse = 0;
             Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Handling pulse and temperature events");
+            if(!ActiveTestActivity.running) {
+                Intent activeTestActivity = new Intent(getApplicationContext(), ActiveTestActivity.class);
+                activeTestActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activeTestActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                getApplicationContext().startActivity(activeTestActivity);
+            }
+        }
+        //////////////
+        else {
+            if(dataAnalizer.getPulseEventCount() > sharedPref.getInt(SettingsActivity.ARRITMIA_COUNT, 20)) {
+                Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Handling pulse and temperature events with" +
+                        "arritmia count = " + sharedPref.getInt(SettingsActivity.ARRITMIA_COUNT, 20));
+                if(!ActiveTestActivity.running) {
+                    Intent activeTestActivity = new Intent(getApplicationContext(), ActiveTestActivity.class);
+                    activeTestActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    activeTestActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    getApplicationContext().startActivity(activeTestActivity);
+                }
+            }
+        }
 
-
+//            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+//            Boolean mockBluetooth = sharedPref.getBoolean(SettingsActivity.MOCK_BLUETOOTH, false);
+//            if(mockBluetooth) {
+//                callService(sharedPref.getString(SettingsActivity.BAC_VALUE, "0.0"));
+//                if(Double.valueOf(sharedPref.getString(SettingsActivity.BAC_VALUE, "0.0")) > 0.5d){
+//                    if(!ActiveNotificationActivity.running) {
+//                        if(isMyServiceRunning(TrackingDriverService.class)) {
+//                            if(ActiveNotificationTimer.getInstance().getElapsedTime() > ActiveNotificationTimer.TIME_TO_ALLOW_NOTIFICACION) {
+//                                ActiveNotificationTimer.getInstance().setStartTime();
+//                                ActiveNotificationTimer.getInstance().setElapsedTime();
+//                                Intent intentActiveNotification = new Intent(getApplicationContext(), ActiveNotificationActivity.class);
+//                                intentActiveNotification.putExtra(AutocodesIntentConstants.GROUP_ID, String.valueOf(groupId));
+//                                intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+//                                getApplicationContext().startActivity(intentActiveNotification);
+//                            } else {
+//                                ActiveNotificationTimer.getInstance().setElapsedTime();
+//                            }
+//
+//                        }
+//
+//                    }
+//                }
+//            }
         }
     }
 
@@ -133,11 +193,18 @@ public class PullAndAnalizeDataService extends Service {
                     sharedPref.edit().putBoolean(SettingsActivity.SIMULATE_TEMPERATURE, false);
                 }
             }
+        } else {
+            String pulledValue = (String) DeviceDataHolder.getInstance().getTemperatureList().poll();
+            if(pulledValue!=null){
+                Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Temperature Polled: " + pulledValue);
+                dataAnalizer.addTemperature(Float.valueOf(pulledValue));
+            }
         }
 
     }
 
     private void pollPulse() throws InterruptedException {
+        ///// MOCK
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean mockBluetooth = sharedPref.getBoolean(SettingsActivity.MOCK_BLUETOOTH, false);
         if(mockBluetooth) {
@@ -149,41 +216,20 @@ public class PullAndAnalizeDataService extends Service {
                 }
             }
         }
+        ///////
+        else {
+            String pulledPulseValue = (String) DeviceDataHolder.getInstance().getPulseList().take();
+            Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Pulse Polled: " + pulledPulseValue);
+            String pulledQuantumValue = (String) DeviceDataHolder.getInstance().getQuantumList().take();
+            Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Pulse Polled: " + pulledQuantumValue);
+            dataAnalizer.addPulse(Integer.valueOf(pulledPulseValue), Integer.valueOf(pulledQuantumValue));
+        }
     }
 
     private void pollTrash() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean mockBluetooth = sharedPref.getBoolean(SettingsActivity.MOCK_BLUETOOTH, false);
         String pulledValue = (String) DeviceDataHolder.getInstance().getTrash().poll();
-        if(mockBluetooth) {
-            if(pulledValue!=null){
-                Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Trash Polled: " + pulledValue);
-                    callService(sharedPref.getString(SettingsActivity.BAC_VALUE, "0.0"));
-                if(Double.valueOf(sharedPref.getString(SettingsActivity.BAC_VALUE, "0.0")) > 0.5d){
-                    if(!ActiveNotificationActivity.running) {
-                        if(isMyServiceRunning(TrackingDriverService.class)) {
-                            if(ActiveNotificationTimer.getInstance().getElapsedTime() > ActiveNotificationTimer.TIME_TO_ALLOW_NOTIFICACION) {
-                                ActiveNotificationTimer.getInstance().setStartTime();
-                                ActiveNotificationTimer.getInstance().setElapsedTime();
-                                Intent intentActiveNotification = new Intent(getApplicationContext(), ActiveNotificationActivity.class);
-                                intentActiveNotification.putExtra(AutocodesIntentConstants.GROUP_ID, String.valueOf(groupId));
-                                intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                                getApplicationContext().startActivity(intentActiveNotification);
-                            } else {
-                                ActiveNotificationTimer.getInstance().setElapsedTime();
-                            }
-
-                        }
-
-                    }
-                }
-                }
-
-            } else {
-                if(pulledValue!=null){
-                    Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Trash Polled: " + pulledValue);
-                }
+        if(pulledValue!=null){
+            Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Trash Polled: " + pulledValue);
         }
     }
 

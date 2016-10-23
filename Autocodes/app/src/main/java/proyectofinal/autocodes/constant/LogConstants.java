@@ -22,4 +22,5 @@ public class LogConstants {
     public static final String CHAT_ACTIVITY = "Chat Activity";
     public static final String TRACKING_DRIVER_STATUS_SERVICE = "Tracking Status";
     public static final String DUMMY_BAC_SERVICE = "Dummy Bac";
+    public static final String BLUETOOTH_RAW = "Raw Data";
 }
