@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +92,7 @@ public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
                     }
                 } else {
                     checkBox.setChecked(true);
+                    Toast.makeText(getContext(), "Conductor designado seleccionado correctamente",Toast.LENGTH_SHORT).show();
                     for(Participant p : participants) {
                         if(p.getId().equals(participant.getId())) {
                             p.setDriver(true);

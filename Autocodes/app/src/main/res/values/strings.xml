@@ -195,8 +195,8 @@
 
 
     <!--- MENU ITEMS -->
-    <string name="pref_title">Settings</string>
-    <string name="logout">Log out</string>
+    <string name="pref_title">Opciones</string>
+    <string name="logout">Cerrar Sesion</string>
 
 
     <string name="prompt_username">What\'s your nickname?</string>
