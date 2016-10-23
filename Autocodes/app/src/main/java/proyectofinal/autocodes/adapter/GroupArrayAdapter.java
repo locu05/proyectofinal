@@ -46,12 +46,15 @@ public class GroupArrayAdapter extends ArrayAdapter<Group>
         TextView groupStatus = (TextView) convertView.findViewById(R.id.groupstatuslistgroups);
         groupStatus.setText(group.getActive()==0?"Inactivo":"Activo");
 
+
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), GroupActivity.class);
                 intent.putExtra(AutocodesIntentConstants.GROUP_ID, String.valueOf(group.getId()));
                 intent.putExtra(AutocodesIntentConstants.GROUP_NAME, String.valueOf(group.getName()));
+                String adminId = String.valueOf(group.getAdminId());
+                intent.putExtra(AutocodesIntentConstants.ADMIN_ID, adminId);
                 getContext().startActivity(intent);
             }
         });

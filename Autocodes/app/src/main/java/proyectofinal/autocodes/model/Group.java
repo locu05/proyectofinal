@@ -11,6 +11,7 @@ public class Group implements Serializable {
     String name;
     int active;
     String driverId;
+    String adminId;
     Integer braceletConnected;
     Double driverBac;
     String driverName;
@@ -80,7 +81,15 @@ public class Group implements Serializable {
         return driverId;
     }
 
+    public String getAdminId() {
+        return adminId;
+    }
+
     public void setDriverId(String driverId) {
         this.driverId = driverId;
+    }
+
+    public void setAdminId(String adminId) {
+        this.adminId = adminId;
     }
 }

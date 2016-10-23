@@ -31,11 +31,13 @@ import proyectofinal.autocodes.util.ImageUtil;
 public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
     List<Participant> participants;
     List<CheckBox> checkBoxes;
+    boolean isAdmin;
 
-    public ParticipantArrayAdapter(Context context, List<Participant> participants) {
+    public ParticipantArrayAdapter(Context context, List<Participant> participants, boolean isAdmin) {
         super(context, 0, participants);
         this.participants = participants;
         checkBoxes = new ArrayList<CheckBox>();
+        this.isAdmin = isAdmin;
     }
     public void deactivateCheckboxes(){
         Log.d("TEST", "Deactivating checkboxes");
@@ -73,7 +75,7 @@ public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
             participant.getCheckBox().setChecked(true);
         }
         checkBox.setTag(position); //For passing the list item index
-        if(participant.getGroupActive() == 1){
+        if(participant.getGroupActive() == 1 || !isAdmin){
             checkBox.setEnabled(false);
         }
 

@@ -52,7 +52,6 @@ import proyectofinal.autocodes.service.TrackingService;
 
 public class GroupActivity extends AppCompatActivity {
 
-    TextView errorMsg;
     Context context;
     List<Participant> participantList;
     TextView groupStatus;
@@ -65,6 +64,7 @@ public class GroupActivity extends AppCompatActivity {
     Button driverStatusBtn;
     Button chat;
     Group group;
+    AccessToken at2 = null;
 
     @Override
     protected void onResume() {
@@ -72,12 +72,14 @@ public class GroupActivity extends AppCompatActivity {
         participantList.clear();
         ((BaseAdapter)listView.getAdapter()).notifyDataSetChanged();
         Bundle extras = getIntent().getExtras();
+        at2 = AccessToken.getCurrentAccessToken();
         if (extras != null) {
             intentValues.put(AutocodesIntentConstants.GROUP_ID, extras.getString(AutocodesIntentConstants.GROUP_ID));
             intentValues.put(AutocodesIntentConstants.GROUP_NAME, extras.getString(AutocodesIntentConstants.GROUP_NAME));
+            intentValues.put(AutocodesIntentConstants.ADMIN_ID, extras.getString(AutocodesIntentConstants.ADMIN_ID));
         }
         getGroupInformation(intentValues.get(AutocodesIntentConstants.GROUP_ID));
-        Log.d(LogConstants.INTENT_VALUES_DEBUG, "Setting group name: " + intentValues.get(AutocodesIntentConstants.GROUP_NAME));
+        Log.d(LogConstants.INTENT_VALUES_DEBUG, "Setting group naextras.getString(AutocodesIntentConstants.ADMIN_ID)me: " + intentValues.get(AutocodesIntentConstants.GROUP_NAME));
         textView.setText(intentValues.get(AutocodesIntentConstants.GROUP_NAME));
     }
 
@@ -89,7 +91,10 @@ public class GroupActivity extends AppCompatActivity {
         participantList = new ArrayList<Participant>();
         group = new Group();
         setContentView(R.layout.activity_group);
-        ParticipantArrayAdapter participantAdapter = new ParticipantArrayAdapter(context, participantList);
+        at2 = AccessToken.getCurrentAccessToken();
+        String userId = at2.getUserId();
+        String adminId = getIntent().getExtras().getString(AutocodesIntentConstants.ADMIN_ID);
+        ParticipantArrayAdapter participantAdapter = new ParticipantArrayAdapter(context, participantList, userId.equals(adminId) );
         textView = (TextView) findViewById(R.id.groupName);
         listView = (ListView) findViewById(R.id.groupView);
         listView.setAdapter(participantAdapter);
@@ -292,6 +297,7 @@ public class GroupActivity extends AppCompatActivity {
                             group.setActive((obj.getString("active").equals("1"))?1:0);
                             group.setName(obj.getString("name"));
                             group.setDriverId(obj.getString("driver"));
+                            group.setAdminId(obj.getString("admin"));
                             group.setId(Integer.valueOf(obj.getString("group_id")));
 
                             for(int i = 0 ; i< users.length() ; i++) {
@@ -317,6 +323,7 @@ public class GroupActivity extends AppCompatActivity {
                                 activateGroup.setVisibility(View.VISIBLE);
                                 deactivateGroup.setVisibility(View.INVISIBLE);
                                 driverStatusBtn.setVisibility(View.INVISIBLE);
+                                chat.setVisibility(View.INVISIBLE);
                             }
 
                     } catch (JSONException e) {

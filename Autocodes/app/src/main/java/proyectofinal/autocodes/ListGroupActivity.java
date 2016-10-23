@@ -279,6 +279,8 @@ public class ListGroupActivity extends AppCompatActivity {
                             JSONObject jsonGroup = (JSONObject) response.getJSONArray("groups").get(i);
                             group.setId((Integer) jsonGroup.get("group_id"));
                             group.setName((String) jsonGroup.get("name"));
+                            group.setAdminId(((Integer) jsonGroup.get("is_admin") == 1 )? userId : null);
+                            // group.setDriverId((String) jsonGroup.get("driver"));
                             group.setActive((Integer) jsonGroup.get("active"));
                             groupList.add(group);
                         }}
