@@ -36,7 +36,9 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -54,7 +56,7 @@ public class ChatMainFragment extends Fragment {
     private static RecyclerView mMessagesView;
     private EditText mInputMessageView;
     private static List<Message> mMessages;
-    private static List<Message> listaMensajes;
+    private static Map<String, List<Message>> listaMensajes;
     static LocalBroadcastManager broadcaster;
     private static RecyclerView.Adapter mAdapter;
     //private boolean mTyping = false;
@@ -62,11 +64,11 @@ public class ChatMainFragment extends Fragment {
     private String mUsername;
     private String mUserGroup;
     private Socket mSocket;
-    private static final String TAG = "Bocajuniors";
     private Intent intentServicio = null;
     private Boolean isConnected = true;
     private static String mLastState;
     private static Context contextoActual;
+    private String groupId;
 
 
     public ChatMainFragment() {
@@ -75,20 +77,23 @@ public class ChatMainFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
-     Log.d(TAG, "pase por onattach");
+//     Log.d(TAG, "pase por onattach");
         //super.onAttach(activity);
         super.onAttach(context);
-
+        groupId = getActivity().getIntent().getExtras().getString(AutocodesIntentConstants.GROUP_ID);
 
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this.getActivity().getApplicationContext());
-        Type type = new TypeToken<List<Message>>(){}.getType();
+        Type type = new TypeToken<Map<String,List<Message>>>(){}.getType();
         Gson gson = new Gson();
         String jsonMsg = appSharedPrefs.getString("ObjetoListaMensajes", "");
         listaMensajes = gson.fromJson(jsonMsg, type);
 
 //        Log.d("Boca Juniors", "pase por onattach");
-        mAdapter = new ChatMessageAdapter(context, listaMensajes);
+        if(listaMensajes == null) {
+            listaMensajes = new HashMap<String, List<Message>>();
+        }
+        mAdapter = new ChatMessageAdapter(context, listaMensajes.get(groupId));
 
 
        /* Activity a;
@@ -107,7 +112,7 @@ public class ChatMainFragment extends Fragment {
 
         AutocodesApplication app = (AutocodesApplication) getActivity().getApplication();
         mSocket = app.getSocket();
-        listaMensajes = new ArrayList<>();
+        listaMensajes = new HashMap();
         mMessages = new ArrayList<>();
 
 
@@ -276,20 +281,23 @@ public class ChatMainFragment extends Fragment {
 
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(contextoActual);
-        Type type = new TypeToken<List<Message>>(){}.getType();
+        Type type = new TypeToken<Map<String,List<Message>>>(){}.getType();
         Gson gson = new Gson();
         String jsonMsg = appSharedPrefs.getString("ObjetoListaMensajes", "");
         listaMensajes = gson.fromJson(jsonMsg, type);
         /*Agrego Mensaje*/
         //listaMensajes.add(unMensaje);
         if(listaMensajes == null) {
-            listaMensajes = new ArrayList<Message>();
+            listaMensajes = new HashMap<String, List<Message>>();
         }
-        agregarMensajeLista(listaMensajes,unMensaje);
+        if(listaMensajes.get(groupId) == null) {
+            listaMensajes.put(groupId, new ArrayList<Message>());
+        }
+        agregarMensajeLista(listaMensajes.get(groupId),unMensaje);
 //        Log.d("Boca Juniors", "la cantidad de mensajes es "+ listaMensajes.size());
-        mAdapter = new ChatMessageAdapter(contextoActual, listaMensajes);
+        mAdapter = new ChatMessageAdapter(contextoActual, listaMensajes.get(groupId));
 
-        mAdapter.notifyItemInserted(listaMensajes.size() - 1);
+        mAdapter.notifyItemInserted(listaMensajes.get(groupId).size() - 1);
         mAdapter.notifyDataSetChanged();
         mMessagesView.invalidate();
         /*Guardo en sharedPreference*/
