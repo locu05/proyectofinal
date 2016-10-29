@@ -48,8 +48,11 @@ public class PullAndAnalizeDataService extends Service {
     private int countPulse;
     private int countTemperature;
     private int groupId;
-    private DataAnalizer dataAnalizer;
+    private static DataAnalizer dataAnalizer;
 
+    public static DataAnalizer getDataAnalizer() {
+        return dataAnalizer;
+    }
 
     @Override
     public void onCreate() {
@@ -143,14 +146,16 @@ public class PullAndAnalizeDataService extends Service {
         }}
         //////////////
         else {
-            if(dataAnalizer.getPulseEventCount() > Integer.valueOf(sharedPref.getString(SettingsActivity.ARRITMIA_COUNT, "20")) && dataAnalizer.isTemperatureEvent()) {
+            if(dataAnalizer.getPulseEventCount() > Integer.valueOf(sharedPref.getString(SettingsActivity.ARRITMIA_COUNT, "40")) && dataAnalizer.isTemperatureEvent()) {
                 Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Handling pulse and temperature events with" +
-                        "arritmia count = " + sharedPref.getString(SettingsActivity.ARRITMIA_COUNT, "20"));
+                        " arritmia count = " + sharedPref.getString(SettingsActivity.ARRITMIA_COUNT, "20"));
                 if(!ActiveTestActivity.running) {
                     Intent activeTestActivity = new Intent(getApplicationContext(), ActiveTestActivity.class);
                     activeTestActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     activeTestActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     getApplicationContext().startActivity(activeTestActivity);
+                    dataAnalizer.setPulseEventCount(0);
+                    dataAnalizer.setTemperatureEvent(false);
                 }
             }
         }

@@ -18,10 +18,13 @@ public class DataAnalizer {
 
     public static final String TEMPERATURE_VALUE = "38.0";
     public static final double NO_ALCOHOL = 0;
-    public static final double NO_ALCOHOL_VALUE = 140;
-    public static final double ALCOHOL_VALUE = 500;
-    public static final double HIGH_ALCOHOL_VALUE = 600;
-    public static final int ALCOHOL_QUEUE_SIZE = 30;
+    public static final double ALCOHOL_0_1 = 120;
+    public static final double ALCOHOL_0_2 = 160;
+    public static final double ALCOHOL_0_5 = 200;
+    public static final double ALCOHOL_1_2 = 400;
+    public static final double ALCOHOL_1_4 = 470;
+    public static final double ALCOHOL_1_6 = 570;
+    public static final int ALCOHOL_QUEUE_SIZE = 15;
 
     public static final int PULSE_EVENT_COUNT_MAX = 10;
     public static final String PULSE_VALUE = "8";
@@ -36,9 +39,12 @@ public class DataAnalizer {
     static {
         bacTable = new TreeMap<Double, Double>();
         bacTable.put(NO_ALCOHOL, Double.valueOf(0));
-        bacTable.put(NO_ALCOHOL_VALUE, Double.valueOf(0.4));
-        bacTable.put(ALCOHOL_VALUE, Double.valueOf(1.0));
-        bacTable.put(HIGH_ALCOHOL_VALUE,Double.valueOf(1.5));
+        bacTable.put(ALCOHOL_0_1, Double.valueOf(0.1));
+        bacTable.put(ALCOHOL_0_2, Double.valueOf(0.2));
+        bacTable.put(ALCOHOL_0_5, Double.valueOf(0.5));
+        bacTable.put(ALCOHOL_1_2, Double.valueOf(1.2));
+        bacTable.put(ALCOHOL_1_4, Double.valueOf(1.4));
+        bacTable.put(ALCOHOL_1_6, Double.valueOf(1.6));
     }
 
     public static <T> T getFromQueue(Queue<T> queue, int index){
@@ -151,5 +157,13 @@ public class DataAnalizer {
 
     public double getBac() {
         return bac;
+    }
+
+    public void setPulseEventCount(int pulseEventCount) {
+        this.pulseEventCount = pulseEventCount;
+    }
+
+    public void setTemperatureEvent(boolean temperatureEvent) {
+        this.temperatureEvent = temperatureEvent;
     }
 }

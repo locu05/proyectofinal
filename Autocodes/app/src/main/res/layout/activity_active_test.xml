@@ -26,7 +26,7 @@
         android:layout_alignParentStart="true" />
     <proyectofinal.autocodes.font.RobotoTextView
         android:textAlignment="center"
-        android:text="Sople sobre la pulsera durante 5 segundos"
+        android:text="Sople sobre la pulsera durante 8 segundos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -78,7 +78,7 @@
         android:textAlignment="center"
         android:visibility="invisible"
         android:layout_below="@+id/resultLabel"
-        android:text="0.3 g/L"
+        android:text="No hay datos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -91,7 +91,7 @@
         android:textAlignment="center"
         android:visibility="invisible"
         android:layout_below="@+id/activeTestResult"
-        android:text="APTO PARA MANEJAR"
+        android:text="-"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"

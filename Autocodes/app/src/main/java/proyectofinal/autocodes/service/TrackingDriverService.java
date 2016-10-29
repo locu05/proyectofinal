@@ -81,34 +81,39 @@ public class TrackingDriverService extends Service {
 
         if (!mRunning) {
             mRunning = true;
-            if(group==null || group.getId()!=((Group) intent.getSerializableExtra("group")).getId()) {
-                group = (Group) intent.getSerializableExtra("group");
-                if(true) {
-                    NotificationCompat.Builder mBuilder =
-                            new NotificationCompat.Builder(this)
-                                    .setSmallIcon(R.drawable.ic_directions_car)
-                                    .setContentTitle(group.getName())
-                                    .setContentText("Pulsera - OK");
+            if(intent != null) {
+                if(group==null || group.getId()!=((Group) intent.getSerializableExtra("group")).getId()) {
+                    group = (Group) intent.getSerializableExtra("group");
+                    if(true) {
+                        NotificationCompat.Builder mBuilder =
+                                new NotificationCompat.Builder(this)
+                                        .setSmallIcon(R.drawable.ic_directions_car)
+                                        .setContentTitle(group.getName())
+                                        .setContentText("Pulsera - OK");
 
-                    startForeground(ONGOING_NOTIFICATION_ID, mBuilder.build());
+                        startForeground(ONGOING_NOTIFICATION_ID, mBuilder.build());
 
-                    try {
-                        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-                        r.play();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        try {
+                            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                            r.play();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Message message = mServiceHandler.obtainMessage();
+                        message.arg1 = startId;
+                        mServiceHandler.sendMessage(message);
+
+                        return START_STICKY;
                     }
-                    Message message = mServiceHandler.obtainMessage();
-                    message.arg1 = startId;
-                    mServiceHandler.sendMessage(message);
 
-                    return START_STICKY;
                 }
 
-            }
+
             }
 
+        return super.onStartCommand(intent, flags, startId);
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 

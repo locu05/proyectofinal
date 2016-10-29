@@ -10,10 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import proyectofinal.autocodes.constant.LogConstants;
+import proyectofinal.autocodes.font.RobotoTextView;
 import proyectofinal.autocodes.service.DeviceDataHolder;
+import proyectofinal.autocodes.service.PullAndAnalizeDataService;
 
 public class ActiveTestActivity extends AppCompatActivity {
 
@@ -41,10 +44,12 @@ public class ActiveTestActivity extends AppCompatActivity {
                     @Override
                     protected Void doInBackground(Void... params) {
                         int progressStatus = 0;
-                        Looper.prepare();
+                        if(Looper.myLooper() == null) {
+                            Looper.prepare();
+                        }
                         try {
                             DeviceDataHolder.getInstance().setActiveAlcoholTest(true);
-                            Thread.sleep(5000);
+                            Thread.sleep(8000);
                             DeviceDataHolder.getInstance().setActiveAlcoholTest(false);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -54,16 +59,25 @@ public class ActiveTestActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 progressBar.setVisibility(View.INVISIBLE);
-                                final View activeTestResult = findViewById(R.id.activeTestResult);
-                                final View resultLabel = findViewById(R.id.resultLabel);
-                                final View activeTestresultLabel = findViewById(R.id.activeTestResultLabel);
+                                final TextView activeTestResult = (TextView) findViewById(R.id.activeTestResult);
+                                final TextView resultLabel = (TextView) findViewById(R.id.resultLabel);
+                                final TextView activeTestresultLabel = (TextView) findViewById(R.id.activeTestResultLabel);
 
+                                double bac = PullAndAnalizeDataService.getDataAnalizer().getBac();
+                                activeTestResult.setText(String.valueOf(bac));
+                                if(bac < 0.5) {
+                                    activeTestresultLabel.setText("Apto para manejar");
+                                } else {
+                                    activeTestresultLabel.setText("No apto para manejar");
+                                }
                                 activeTestResult.setVisibility(View.VISIBLE);
                                 activeTestresultLabel.setVisibility(View.VISIBLE);
                                 resultLabel.setVisibility(View.VISIBLE);
+                                startButton.setEnabled(true);
 
                             }
                         });
+
                         return null;
                     }
 
