@@ -174,8 +174,7 @@ public class TrackingDriverService extends Service {
                                 }
                             }
                             if(!foundDevice) {
-                                Toast.makeText(getApplicationContext(), "No se puede encontrar el dispositivo," +
-                                        " por favor asegurese de haber sincronizado el dispositivo.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "El dispositivo no se encuentra bien disponible o los sensores no se encuentran bien colocados, por favor intente nuevamente", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(getApplicationContext(), TrackingDriverService.class);
                                 stopService(intent);
                             };
