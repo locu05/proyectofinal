@@ -140,13 +140,15 @@ public class ConnectThread extends Thread {
                         while ((str = r.readLine()) != null) {
                             Log.v(LogConstants.BLUETOOTH_RAW, str);
                             if(str.startsWith("T")) {
-                                DeviceDataHolder.getInstance().getTemperatureList().add(str);
+                                DeviceDataHolder.getInstance().getTemperatureList().add(str.substring(2));
                             } else if (str.startsWith("P")) {
-                                DeviceDataHolder.getInstance().getPulseList().add(str);
+                                DeviceDataHolder.getInstance().getPulseList().add(str.substring(2));
                             } else if (str.startsWith("Q")) {
-                                DeviceDataHolder.getInstance().getQuantumList().add(str);
+                                DeviceDataHolder.getInstance().getQuantumList().add(str.substring(2));
                             } else if (str.startsWith("A")) {
-                                DeviceDataHolder.getInstance().getAlcoholList().add(str);
+                                if(DeviceDataHolder.getInstance().isActiveAlcoholTest()) {
+                                    DeviceDataHolder.getInstance().getAlcoholList().add(str.substring(2));
+                                }
                             }else {
                                 if(DeviceDataHolder.getInstance().getTrash().size()==999) {
                                     DeviceDataHolder.getInstance().getTrash().clear();

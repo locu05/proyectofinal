@@ -77,7 +77,7 @@ public class PullAndAnalizeDataService extends Service {
             Message message = mServiceHandler.obtainMessage();
             message.arg1 = startId;
             mServiceHandler.sendMessage(message);
-            groupId = Integer.valueOf(intent.getStringExtra(AutocodesIntentConstants.GROUP_ID));
+            groupId = intent.getIntExtra(AutocodesIntentConstants.GROUP_ID, 0);
             return START_NOT_STICKY;
         }
         return super.onStartCommand(intent, flags, startId);
@@ -134,18 +134,18 @@ public class PullAndAnalizeDataService extends Service {
             countTemperature = 0;
             countPulse = 0;
             Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Handling pulse and temperature events");
-            if(!ActiveTestActivity.running) {
+            if (!ActiveTestActivity.running) {
                 Intent activeTestActivity = new Intent(getApplicationContext(), ActiveTestActivity.class);
                 activeTestActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 activeTestActivity.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 getApplicationContext().startActivity(activeTestActivity);
             }
-        }
+        }}
         //////////////
         else {
-            if(dataAnalizer.getPulseEventCount() > sharedPref.getInt(SettingsActivity.ARRITMIA_COUNT, 20)) {
+            if(dataAnalizer.getPulseEventCount() > Integer.valueOf(sharedPref.getString(SettingsActivity.ARRITMIA_COUNT, "20")) && dataAnalizer.isTemperatureEvent()) {
                 Log.d(LogConstants.PULL_AND_ANALIZE_DATA_SERVICE, "Handling pulse and temperature events with" +
-                        "arritmia count = " + sharedPref.getInt(SettingsActivity.ARRITMIA_COUNT, 20));
+                        "arritmia count = " + sharedPref.getString(SettingsActivity.ARRITMIA_COUNT, "20"));
                 if(!ActiveTestActivity.running) {
                     Intent activeTestActivity = new Intent(getApplicationContext(), ActiveTestActivity.class);
                     activeTestActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -179,7 +179,6 @@ public class PullAndAnalizeDataService extends Service {
 //                    }
 //                }
 //            }
-        }
     }
 
     private void pollTemperature() throws InterruptedException {

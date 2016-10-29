@@ -71,13 +71,11 @@
             android:background="@drawable/buttonshape"
             android:layout_toLeftOf="@id/deactivateGroup"
             android:id="@+id/viewDriverStatusBtn"
-            android:marginRight="15dp"
             android:visibility="gone"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFF"
-            android:marginRight="15dp"
             android:background="@drawable/buttonshape"
             android:text="Chat"
             android:visibility="invisible"

@@ -1,11 +1,15 @@
 package proyectofinal.autocodes.service;
 
+import android.util.Log;
+
 import com.google.common.collect.EvictingQueue;
 
 import java.util.LinkedList;
 import java.util.NavigableMap;
 import java.util.Queue;
 import java.util.TreeMap;
+
+import proyectofinal.autocodes.constant.LogConstants;
 
 /**
  * Created by locu on 14/9/16.
@@ -64,6 +68,7 @@ public class DataAnalizer {
 
     public void addTemperature(Float temp) {
         if(temp > Float.valueOf(TEMPERATURE_VALUE)) {
+            Log.d(LogConstants.ALGORITHM, "Temparature detected!");
             temperatureEvent = true;
         }
     }
@@ -85,6 +90,7 @@ public class DataAnalizer {
             averageValue = averageValue/ALCOHOL_QUEUE_SIZE;
             alcoholQueue.clear();
             bac = bacTable.floorEntry(Double.valueOf(averageValue)).getValue();
+            Log.d(LogConstants.ALGORITHM, "Alcohol bac calculated: " + bac);
         }
 
     }
@@ -101,15 +107,14 @@ public class DataAnalizer {
         }
         if(pulseQueue.size()<PULSE_QUEUE_SIZE+1) {
             pulseQueue.add(pulse);
-//            for(Integer intt : pulseQueue) {
-//                System.out.println("La cola esta asi DESPUES DE AGREGAR: " + intt);
-//            }
             if(pulseQueue.size()==PULSE_QUEUE_SIZE) {
                 Double firstDerivative = firstDerivative();
                 Double secondDerivative = secondDerivative();
                 if(Math.abs(secondDerivative)>=Double.valueOf(PULSE_VALUE)){
                     if(averagePulseQuantum < Integer.valueOf(QUANTUM_VALUE)) {
+                        Log.d(LogConstants.ALGORITHM, "Arritmia Detected!");
                         pulseEventCount++;
+                        Log.d(LogConstants.ALGORITHM, "Actual value of arritmias: " + pulseEventCount);
                     }
                 }
             }

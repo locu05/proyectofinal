@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 repositories {
     mavenCentral()
@@ -44,5 +48,4 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3'
     compile 'org.apache.commons:commons-collections4:4.0'
     compile group: 'com.google.guava', name: 'guava', version: '15.0'
-
 }
