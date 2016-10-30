@@ -66,7 +66,7 @@ public class TrackingService extends Service {
             if(group==null || group.getId()!=((Group) intent.getSerializableExtra("group")).getId()) {
                 group = (Group) intent.getSerializableExtra("group");
                 Intent resultIntent = new Intent(this, DriverStatusActivity.class);
-                resultIntent.putExtra("GroupId", group.getId());
+                //resultIntent.putExtra("GroupId", group.getId());
 
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addParentStack(DriverStatusActivity.class);
@@ -139,8 +139,9 @@ public class TrackingService extends Service {
                                         activeGroup.setId(Integer.valueOf(response.getString("group_id")));
                                         //TODO chequear que este get anda, ya que envia un uno, no un true
                                         activeGroup.setBraceletConnected(response.getInt("bracelet_connected"));
-                                        activeGroup.setDriverBac(response.getDouble("driver_bac"));
-
+                                        if(response.has("driver_bac")) {
+                                            activeGroup.setDriverBac(response.getDouble("driver_bac"));
+                                        }
                                         JSONArray users = response.getJSONArray("users");
                                         for(int i = 0 ; i< users.length() ; i++) {
                                             JSONObject user = (JSONObject) users.get(i);

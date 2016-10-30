@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.model.Group;
 import proyectofinal.autocodes.model.Participant;
+import proyectofinal.autocodes.service.TrackingService;
 import proyectofinal.autocodes.util.ImageUtil;
 
 public class DriverStatusActivity extends AppCompatActivity {
@@ -51,9 +52,104 @@ public class DriverStatusActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+     /*   Log.d("ACTIVEGROUP", GroupActivity.getActiveGroup() + "");
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, serverBaseUrl + "/group/" + GroupActivity.getActiveGroup(), null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Log.d("ACTIVEGROUP", "/group " + response.toString());
+                            Group activeGroup = new Group();
+                            activeGroup.setActive((response.getString("active").equals("1"))?1:0);
+                            activeGroup.setName(response.getString("name"));
+                            activeGroup.setDriverId(response.getString("driver"));
+                            activeGroup.setId(Integer.valueOf(response.getString("group_id")));
+                            //TODO chequear que este get anda, ya que envia un uno, no un true
+                            activeGroup.setBraceletConnected(response.getInt("bracelet_connected"));
+
+                            if(response.has("driver_bac")){
+                                activeGroup.setDriverBac(response.getDouble("driver_bac"));
+                            }
+
+                            JSONArray users = response.getJSONArray("users");
+                            for(int i = 0 ; i< users.length() ; i++) {
+                                JSONObject user = (JSONObject) users.get(i);
+                                if(user.getString("user_fb_id").equals(response.getString("driver"))){
+                                    activeGroup.setDriverName(user.getString("name"));
+                                    activeGroup.setDriverAvatar("http://graph.facebook.com/"+user.getString("user_fb_id")+"/picture?type=large");
+                                }
+                            }
+
+                            Log.d("ACTIVEGROUP", "actualizandogui");
+
+                            final TextView driverNameTv = (TextView) findViewById(R.id.driverName);
+                            final ImageView driverAvatar = (ImageView) findViewById(R.id.driver_avatar);
+                            final TextView driverBac = (TextView) findViewById(R.id.bacTv);
+                            final TextView driverAptoTv = (TextView) findViewById(R.id.aptoLabel);
+                            final TextView secretCodeTv = (TextView) findViewById(R.id.secretCodeTv);
+
+
+                            if(activeGroup.getDriverBac() == null){
+                                driverBac.setText("No hay datos");
+                            } else{
+                                driverBac.setText(String.valueOf(activeGroup.getDriverBac()));
+                                if(activeGroup.getDriverBac() < 0.7d){
+                                    driverAptoTv.setText( "Apto para manejar");
+                                    driverAptoTv.setTextColor(Color.GREEN);
+                                } else {
+                                    driverAptoTv.setText( "No apto para manejar");
+                                    driverAptoTv.setTextColor(Color.RED);
+                                    if(!AccessToken.getCurrentAccessToken().getUserId().equals(activeGroup.getDriverId())){
+                                        secretCodeTv.setText(String.valueOf(("" + activeGroup.getId()).hashCode()));
+                                    }
+                                    secretCodeTv.setVisibility(View.VISIBLE);
+                                }
+                            }
+                            driverNameTv.setText(activeGroup.getDriverName());
+                            Log.d("ACTIVEGROUP", "seteando imagen@");
+                            ImageUtil.displayImage(driverAvatar, activeGroup.getDriverAvatar() , null);
+
+
+                            Intent intent = getIntent();
+                            final int groupId = intent.getIntExtra("GroupId",-1);
+                            if(groupId == -1){
+                                //TODO Hacer algo con el error
+                            }
+
+                         } catch (Exception e) {
+                            Log.e(LogConstants.TRACKING_SERVICE, "Error fetching active group status: " + e.getMessage());
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if(error.networkResponse!=null){
+                            Log.e(LogConstants.TRACKING_SERVICE, "Couldnt get active group status, err: " + String.valueOf(error.networkResponse.statusCode));
+                            Intent intent = new Intent(getApplicationContext(), TrackingService.class);
+                            stopService(intent);
+                        } else {
+                            Log.e(LogConstants.TRACKING_SERVICE, "Couldnt get active group status, err: " + String.valueOf(error.getMessage()));
+                        }
+                    }
+                });
+        AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
+
+*/
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_status);
+        setUpImageLoader();
+
+
+
         final TextView driverNameTv = (TextView) findViewById(R.id.driverName);
         final ImageView driverAvatar = (ImageView) findViewById(R.id.driver_avatar);
         final TextView driverBac = (TextView) findViewById(R.id.bacTv);
@@ -89,13 +185,13 @@ public class DriverStatusActivity extends AppCompatActivity {
 
             }
         };
-
+/*
         Intent intent = getIntent();
         final int groupId = intent.getIntExtra("GroupId",-1);
         if(groupId == -1){
             //TODO Hacer algo con el error
         }
-        /*
+
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, serverBaseUrl + "/group/" + groupId, null, new Response.Listener<JSONObject>() {
 
