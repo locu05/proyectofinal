@@ -237,40 +237,6 @@ public class PullAndAnalizeDataService extends Service {
         }
     }
 
-    private void callService(String bac) {
-        try {
-            mRequestStartTimeUpdateBac = System.currentTimeMillis();
-            JSONObject obj = new JSONObject();
-            obj.put("groupid", DeviceDataHolder.getInstance().getGroupId());
-            obj.put("bac", Float.valueOf(bac));
-            Log.d(LogConstants.PREPARING_REQUEST, "Rest call /group/driverBac: " + obj.toString());
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                    (Request.Method.POST, serverBaseUrl + "/group/driverBac", obj, new Response.Listener<JSONObject>() {
-
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUpdateBac;
-                            Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                            Log.d(LogConstants.SERVER_RESPONSE, "/group/driverBac onResponse");
-                        }
-                    }, new Response.ErrorListener() {
-
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            long totalRequestTime = System.currentTimeMillis() - mRequestStartTimeUpdateBac;
-                            Log.d(LogConstants.TIME_SERVER_RESPONSE, String.valueOf(totalRequestTime));
-                            if(error!=null){
-                                Log.d(LogConstants.SERVER_RESPONSE, error.getMessage()!=null?error.getMessage():"");
-                            }
-                        }
-                    });
-
-            AutocodesApplication.getInstance().getRequestQueue().add(jsObjRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
