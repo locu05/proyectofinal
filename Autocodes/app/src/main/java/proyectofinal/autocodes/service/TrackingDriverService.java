@@ -170,7 +170,6 @@ public class TrackingDriverService extends Service {
                                     Log.i(LogConstants.TRACKING_DRIVER_SERVICE, dev.getName() + "\n" + dev.getAddress());
                                     ct = new ConnectThread(dev,mServiceHandler,group);
                                     ct.start();
-                                    DeviceDataHolder.getInstance().setGroupId(group.getId());
                                     Intent intentPullAndAnalizeDataService = new Intent(getApplicationContext(),
                                             PullAndAnalizeDataService.class);
                                     intentPullAndAnalizeDataService.putExtra(AutocodesIntentConstants.GROUP_ID, group.getId());

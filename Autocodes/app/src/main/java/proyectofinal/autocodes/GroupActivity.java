@@ -66,6 +66,12 @@ public class GroupActivity extends AppCompatActivity {
     Group group;
     AccessToken at2 = null;
 
+    static Integer activeGroup;
+
+    public static Integer getActiveGroup(){
+        return activeGroup;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -109,7 +115,7 @@ public class GroupActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Intent k = new Intent(context, DriverStatusActivity.class);
-                k.putExtra("GroupId", Integer.valueOf(intentValues.get(AutocodesIntentConstants.GROUP_ID)));
+                //k.putExtra("GroupId", Integer.valueOf(intentValues.get(AutocodesIntentConstants.GROUP_ID)));
                 startActivity(k);
             }
         });
@@ -309,6 +315,9 @@ public class GroupActivity extends AppCompatActivity {
                                 }
                                 p.setGroupActive(group.getActive());
                                 participantList.add(p);
+                            }
+                            if((group.getActive()==1)){
+                                activeGroup = group.getId();
                             }
                             groupStatus.setText((group.getActive()==1)?"Activo":"Inactivo");
 
