@@ -1,6 +1,7 @@
 package proyectofinal.autocodes.service;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -115,7 +116,7 @@ public class TrackingService extends Service {
         public ServiceHandler(Looper looper) {
             super(looper);
         }
-
+        public double previousAlcoholMeasure = 0d;
         @Override
         public void handleMessage(Message msg) {
             while(mRunning) {
@@ -141,6 +142,19 @@ public class TrackingService extends Service {
                                         activeGroup.setBraceletConnected(response.getInt("bracelet_connected"));
                                         if(response.has("driver_bac")) {
                                             activeGroup.setDriverBac(response.getDouble("driver_bac"));
+                                            //TODO: Re cabeza papaaaa
+                                            if(response.getDouble("driver_bac") > 0.5d && previousAlcoholMeasure < 0.5d){
+                                                NotificationCompat.Builder mBuilder =
+                                                        new NotificationCompat.Builder(getApplicationContext())
+                                                                .setSmallIcon(R.drawable.car_icon)
+                                                                .setContentTitle("Autocodes - Alerta")
+                                                                .setContentText("El conductor no se encuentra apto");
+
+                                                int mNotificationId = 001;
+                                                NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                                mNotifyMgr.notify(mNotificationId, mBuilder.build());
+                                            }
+                                            previousAlcoholMeasure = response.getDouble("driver_bac");
                                         }
                                         JSONArray users = response.getJSONArray("users");
                                         for(int i = 0 ; i< users.length() ; i++) {
