@@ -58,13 +58,18 @@ public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
     public View getView(final int position, View convertView, final ViewGroup parent) {
         // Get the data item for this position
         final Participant participant = getItem(position);
+
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.participant_row, parent, false);
         }
 
+        TextView driverState = (TextView) convertView.findViewById(R.id.driverState);
+        participant.setDriverState(driverState);
+
         TextView participantName = (TextView) convertView.findViewById(R.id.participantName);
         participantName.setText(participant.getName());
+
 
         ImageView imageView = (ImageView) convertView.findViewById((R.id.user_avatar));
         Log.e(LogConstants.FACEBOOK_RESPONSE, participant.getImageUrl().toString() );
@@ -74,6 +79,7 @@ public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
         participant.setCheckBox(checkBox);
         if(participant.isDriver()) {
             participant.getCheckBox().setChecked(true);
+            participant.getDriverState().setText("Conductor designado");
         }
         checkBox.setTag(position); //For passing the list item index
         if(participant.getGroupActive() == 1 || !isAdmin){
@@ -88,6 +94,9 @@ public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
                     for(Participant p : participants) {
                         if(p.getId().equals(participant.getId())) {
                             p.setDriver(false);
+                            if(p.getDriverState()!=null){
+                                p.getDriverState().setText("Participante");
+                            }
                         }
                     }
                 } else {
@@ -96,9 +105,17 @@ public class ParticipantArrayAdapter extends ArrayAdapter<Participant> {
                     for(Participant p : participants) {
                         if(p.getId().equals(participant.getId())) {
                             p.setDriver(true);
+                            if(p.getDriverState()!=null){
+                                p.getDriverState().setText("Conductor designado");
+                            }
+
                         } else {
                             p.setDriver(false);
                             p.getCheckBox().setChecked(false);
+                            if(p.getDriverState()!=null){
+                                p.getDriverState().setText("Participante");
+                            }
+
                         }
                     }
                 }
