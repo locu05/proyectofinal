@@ -1,5 +1,8 @@
 package proyectofinal.autocodes;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Looper;
@@ -25,11 +28,13 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 
 import cz.msebera.android.httpclient.entity.StringEntity;
+import proyectofinal.autocodes.constant.AutocodesIntentConstants;
 import proyectofinal.autocodes.constant.LogConstants;
 import proyectofinal.autocodes.font.RobotoTextView;
 import proyectofinal.autocodes.model.Participant;
 import proyectofinal.autocodes.service.DeviceDataHolder;
 import proyectofinal.autocodes.service.PullAndAnalizeDataService;
+import proyectofinal.autocodes.service.TrackingDriverService;
 
 import static proyectofinal.autocodes.R.id.submitGroup;
 
@@ -88,6 +93,23 @@ public class ActiveTestActivity extends AppCompatActivity {
                                     activeTestresultLabel.setText("Apto para manejar");
                                 } else {
                                     activeTestresultLabel.setText("No apto para manejar");
+                                    if(!ActiveNotificationActivity.running) {
+                                        if(isMyServiceRunning(TrackingDriverService.class)) {
+//                                            if(ActiveNotificationTimer.getInstance().getElapsedTime() > ActiveNotificationTimer.TIME_TO_ALLOW_NOTIFICACION) {
+                                                ActiveNotificationTimer.getInstance().setStartTime();
+                                                ActiveNotificationTimer.getInstance().setElapsedTime();
+                                                Intent intentActiveNotification = new Intent(getApplicationContext(), ActiveNotificationActivity.class);
+                                                intentActiveNotification.putExtra(AutocodesIntentConstants.GROUP_ID, String.valueOf(DeviceDataHolder.getInstance().getGroupId()));
+                                                intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                intentActiveNotification.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                                                getApplicationContext().startActivity(intentActiveNotification);
+//                                            } else {
+//                                                ActiveNotificationTimer.getInstance().setElapsedTime();
+//                                            }
+
+                                        }
+
+                                    }
                                 }
                                 activeTestResult.setVisibility(View.VISIBLE);
                                 activeTestresultLabel.setVisibility(View.VISIBLE);
@@ -154,5 +176,15 @@ public class ActiveTestActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         running = false;
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

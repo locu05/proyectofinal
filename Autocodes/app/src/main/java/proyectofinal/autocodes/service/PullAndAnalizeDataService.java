@@ -101,6 +101,7 @@ public class PullAndAnalizeDataService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
+            DeviceDataHolder.getInstance().setGroupId(groupId);
             try {
                 while(true) {
                     pollTrash();
