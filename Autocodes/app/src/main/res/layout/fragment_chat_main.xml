@@ -4,6 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@color/cardview_dark_background"
         tools:context=".ChatMainFragment">
 
     <android.support.v7.widget.RecyclerView
@@ -29,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="@string/prompt_message"
+                android:textColor="@color/white"
                 android:imeActionId="@+id/send"
                 android:imeActionLabel="@string/action_send"
                 android:imeOptions="actionSend"
