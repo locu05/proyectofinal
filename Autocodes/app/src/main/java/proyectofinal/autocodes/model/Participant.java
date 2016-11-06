@@ -1,6 +1,7 @@
 package proyectofinal.autocodes.model;
 
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 /**
  * Created by locu on 2/8/16.
@@ -15,6 +16,7 @@ public class Participant {
     boolean isDriver;
     CheckBox checkBox;
     Integer groupActive;
+    TextView driverState;
 
     public Participant(String name, String id) {
         this.name = name;
@@ -90,5 +92,13 @@ public class Participant {
 
     public void setCheckBox(CheckBox checkBox) {
         this.checkBox = checkBox;
+    }
+
+    public TextView getDriverState() {
+        return driverState;
+    }
+
+    public void setDriverState(TextView driverState) {
+        this.driverState = driverState;
     }
 }
