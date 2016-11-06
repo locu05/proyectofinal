@@ -143,7 +143,7 @@ public class TrackingService extends Service {
                                         if(response.has("driver_bac")) {
                                             activeGroup.setDriverBac(response.getDouble("driver_bac"));
                                             //TODO: Re cabeza papaaaa
-                                            if(response.getDouble("driver_bac") > 0.5d && previousAlcoholMeasure < 0.5d){
+                                            if(response.getDouble("driver_bac") >= 0.5d && previousAlcoholMeasure < 0.5d){
                                                 NotificationCompat.Builder mBuilder =
                                                         new NotificationCompat.Builder(getApplicationContext())
                                                                 .setSmallIcon(R.drawable.car_icon)
