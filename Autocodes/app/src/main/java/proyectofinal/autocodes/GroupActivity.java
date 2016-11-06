@@ -337,7 +337,7 @@ public class GroupActivity extends AppCompatActivity {
                                 if(group.getAdminId().equals(at.getUserId())){
                                     deactivateGroup.setVisibility(View.VISIBLE);
                                 } else {
-                                    deactivateGroup.setVisibility(View.GONE);
+                                    deactivateGroup.setVisibility(View.INVISIBLE);
                                 }
                                 chat.setVisibility(View.VISIBLE);
                             } else {
