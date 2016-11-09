@@ -24,7 +24,7 @@ public class DataAnalizer {
     public static final double ALCOHOL_1_2 = 400;
     public static final double ALCOHOL_1_4 = 470;
     public static final double ALCOHOL_1_6 = 570;
-    public static final int ALCOHOL_QUEUE_SIZE = 15;
+    public static final int ALCOHOL_QUEUE_SIZE = 13;
 
     public static final int PULSE_EVENT_COUNT_MAX = 10;
     public static final String PULSE_VALUE = "8";

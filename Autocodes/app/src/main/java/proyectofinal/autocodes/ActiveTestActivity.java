@@ -72,7 +72,7 @@ public class ActiveTestActivity extends AppCompatActivity {
                         }
                         try {
                             DeviceDataHolder.getInstance().setActiveAlcoholTest(true);
-                            Thread.sleep(8000);
+                            Thread.sleep(10000);
                             DeviceDataHolder.getInstance().setActiveAlcoholTest(false);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
