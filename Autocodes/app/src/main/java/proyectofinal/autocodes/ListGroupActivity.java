@@ -125,11 +125,11 @@ public class ListGroupActivity extends AppCompatActivity {
                 startActivity(goToNextActivity);
                 return true;
             }
-            case R.id.active_test_btn: {
-                Intent goToNextActivity = new Intent(getApplicationContext(), ActiveTestActivity.class);
-                startActivity(goToNextActivity);
-                return true;
-            }
+//           x case R.id.active_test_btn: {
+//                Intent goToNextActivity = new Intent(getApplicationContext(), ActiveTestActivity.class);
+//                startActivity(goToNextActivity);
+//                return true;
+//            }
             default:
                 return super.onOptionsItemSelected(item);
         }
